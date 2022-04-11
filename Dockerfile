@@ -7,6 +7,11 @@ LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 WORKDIR /mlflow/
 COPY pyproject.toml poetry.toml poetry.lock /mlflow/
 
+RUN ln -s /usr/bin/dpkg-split /usr/sbin/dpkg-split \
+    && ln -s /usr/bin/dpkg-deb /usr/sbin/dpkg-deb \
+    && ln -s /bin/rm /usr/sbin/rm \
+    && ln -s /bin/tar /usr/sbin/tar
+
 # install build-essential to compile extensions.
 RUN apt-get update && \
     apt-get install -y build-essential curl && \
