@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "mlflowstack"
+version = "0.1.0"
+description = ""
+authors = ["Burak Ince <burak.ince@linux.org.tr>"]
+
+[tool.poetry.dependencies]
+python = "3.9.*"
+mlflow = {extras = ["extras"], version = "^1.24.0"}
+azure-storage-blob = "^12.11.0"
+google-cloud-storage = "^2.2.1"
+SQLAlchemy = "^1.4.35"
+boto3 = "^1.21.38"
+psycopg2-binary = "^2.9.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
