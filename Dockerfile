@@ -1,6 +1,6 @@
-ARG MINICONDA_VERSION=4.10.3
+ARG PYTHON_VERSION=3.9.12
 
-FROM continuumio/miniconda3:${MINICONDA_VERSION} AS foundation
+FROM python:${PYTHON_VERSION} AS foundation
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
@@ -14,13 +14,15 @@ RUN ln -s /usr/bin/dpkg-split /usr/sbin/dpkg-split \
 
 # install build-essential to compile extensions.
 RUN apt-get update && \
-    apt-get install -y build-essential curl && \
+    apt-get install -y build-essential && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN python -m pip install --upgrade pip
 
 RUN pip install poetry wheel &&  \
     poetry install --no-root --no-dev
 
-FROM continuumio/miniconda3:${MINICONDA_VERSION}
+FROM python:${PYTHON_VERSION}-slim
 
 WORKDIR /mlflow/
 
