@@ -14,10 +14,8 @@ RUN ln -s /usr/bin/dpkg-split /usr/sbin/dpkg-split \
 
 # install build-essential to compile extensions.
 RUN apt-get update && \
-    apt-get install -y build-essential libssl-dev libffi-dev python-dev curl && \
+    apt-get install -y build-essential curl && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
-
-RUN pip install --upgrade pip
 
 RUN pip install poetry wheel &&  \
     poetry install --no-root --no-dev
