@@ -2,7 +2,7 @@ const { BlobServiceClient, StorageSharedKeyCredential } = require("@azure/storag
 
 const accountName = process.env.AZURE_STORAGE_ACCOUNT || "";
 const accountKey = process.env.AZURE_STORAGE_ACCESS_KEY || "";
-const commaSeparatedContainerNames = process.env.COMMA_SEPARATED_CONTAINER_NAMES || "mlflow";
+const commaSeparatedContainerNames = process.env.COMMA_SEPARATED_CONTAINER_NAMES || "defaultcontainer";
 
 async function createContainer(containerName) {
     const sharedKeyCredential = new StorageSharedKeyCredential(accountName, accountKey);
@@ -19,8 +19,7 @@ async function createContainer(containerName) {
 }
 
 function main() {
-    // const containerNames = commaSeparatedContainerNames.split(",").map(item => item.trim()).filter(item => item !== '');
-    const containerNames = [`mlflow`]
+    const containerNames = commaSeparatedContainerNames.split(",").map(item => item.trim()).filter(item => item !== '');
     for (var i = 0; i < containerNames.length; i++) {
         const containerName = containerNames[i]
         createContainer(containerName).catch((err) => {
