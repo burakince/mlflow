@@ -38,6 +38,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Run image
+        uses: abatilo/actions-poetry@v2.0.0
+
+      - name: Poetry install packages
+        run: poetry install
+
+      - name: Run Tests
+        run: poetry run pytest
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
         with:
