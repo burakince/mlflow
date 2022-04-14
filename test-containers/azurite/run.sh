@@ -9,7 +9,13 @@ wait_for() {
   done
 }
 
+# Azurite Blob service
 wait_for localhost 10000
+
+# Azurite Queue service
 wait_for localhost 10001
+
+# Azurite Table service
+wait_for localhost 10002
 
 node /create-container.js

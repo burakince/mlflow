@@ -12,7 +12,7 @@ RUN ln -s /usr/bin/dpkg-split /usr/sbin/dpkg-split \
     && ln -s /bin/rm /usr/sbin/rm \
     && ln -s /bin/tar /usr/sbin/tar
 
-# install build-essential to compile extensions.
+# Install build-essential to compile extensions.
 RUN apt-get update && \
     apt-get install -y build-essential && \
     apt-get clean && rm -rf /var/lib/apt/lists/*

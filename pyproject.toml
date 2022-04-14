@@ -15,6 +15,10 @@ psycopg2-binary = "^2.9.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
+testcontainers = "^3.5.3"
+requests = "^2.27.1"
+cloudpickle = "^2.0.0"
+pre-commit = "^2.18.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

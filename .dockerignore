@@ -1,1 +1,13 @@
 .venv
+.git
+.github
+.pre-commit-config.yaml
+.env
+
+LICENSE
+README.md
+docker-compose.azure-test.yaml
+
+test-containers
+tests
+mlflowstack
