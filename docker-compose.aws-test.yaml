@@ -53,7 +53,7 @@ services:
     volumes:
       - mlflow-storage:/mlflow
     depends_on:
-      - azurite
+      - minio
       - postgres
 
 volumes:
