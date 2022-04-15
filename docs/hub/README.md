@@ -1,4 +1,4 @@
-[![Docker](https://github.com/burakince/mlflow/actions/workflows/docker-publish.yml/badge.svg?branch=main)](https://github.com/burakince/mlflow/actions/workflows/docker-publish.yml)
+[![Build and Publish Mlflow Docker Image Status](https://github.com/burakince/mlflow/workflows/Build%20and%20Publish%20Mlflow%20Docker%20Image/badge.svg)](https://github.com/burakince/mlflow/actions/workflows/docker-publish.yml)
 ![Docker Pulls](https://img.shields.io/docker/pulls/burakince/mlflow)
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/burakince/mlflow?sort=date)
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/burakince/mlflow?sort=semver)
@@ -9,9 +9,9 @@ Please find mlflow docker files from [github repository](https://github.com/bura
 
 # Simple Tags
 
-- 1.25.1
-- 1.25.0
-- 1.24.0
+- [1.25.1](https://github.com/burakince/mlflow/blob/1.25.1/Dockerfile)
+- [1.25.0](https://github.com/burakince/mlflow/blob/1.25.0/Dockerfile)
+- [1.24.0](https://github.com/burakince/mlflow/blob/1.24.0/Dockerfile)
 
 # Usage
 
