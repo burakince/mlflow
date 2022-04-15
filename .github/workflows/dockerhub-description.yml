@@ -8,11 +8,6 @@ on:
       - 'docs/**/README.md'
       - .github/workflows/dockerhub-description.yml
 
-env:
-  DOCKERHUB_USERNAME: ${{ github.actor }}
-  DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
-  DOCKERHUB_REPOSITORY: docker.io/${{ github.repository }}
-
 jobs:
   dockerHubDescription:
     runs-on: ubuntu-latest
@@ -22,4 +17,7 @@ jobs:
       - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v3
         with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+          repository: ${{ github.repository }}
           readme-filepath: './docs/hub/README.md'
