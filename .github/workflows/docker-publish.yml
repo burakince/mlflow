@@ -1,38 +1,29 @@
-name: Docker
+name: Build and Publish Mlflow Docker Image
 
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
 
 on:
   schedule:
     - cron: '25 10 * * 0'
+
   push:
     branches: [ main ]
     # Publish semver tags as releases.
     tags: [ '*.*.*' ]
+    paths:
+      - '.github/workflows/docker-publish.yml'
+      - 'poetry.lock'
+      - 'poetry.toml'
+      - 'pyproject.toml'
+      - 'Dockerfile'
+      - 'mlflowstack/**'
+
   pull_request:
     branches: [ main ]
 
-env:
-  # Use docker.io for Docker Hub if empty
-#   REGISTRY: ghcr.io
-  REGISTRY: docker.io
-  # github.repository as <account>/<repo>
-  IMAGE_NAME: ${{ github.repository }}
-
 
 jobs:
-  build:
-
+  integrationtest:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
-      id-token: write
 
     steps:
       - name: Checkout repository
@@ -85,6 +76,26 @@ jobs:
           source .venv/bin/activate
           poetry run pytest
 
+  buildpush:
+    needs: integrationtest
+
+    runs-on: ubuntu-latest
+
+    env:
+      REGISTRY: docker.io
+      IMAGE_NAME: ${{ github.repository }}
+
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
         with:
@@ -102,7 +113,6 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-#           password: ${{ secrets.GITHUB_TOKEN }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       # Extract metadata (tags, labels) for Docker
