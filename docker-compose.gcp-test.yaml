@@ -47,7 +47,7 @@ services:
     volumes:
       - mlflow-gcp-storage:/mlflow
     depends_on:
-      - minio
+      - gcs
       - postgres
 
 volumes:
