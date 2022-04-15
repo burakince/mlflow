@@ -21,4 +21,5 @@ jobs:
 
       - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v3
-        readme-filepath: ./docs/hub/README.md
+        with:
+          readme-filepath: './docs/hub/README.md'
