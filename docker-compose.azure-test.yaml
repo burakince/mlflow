@@ -31,7 +31,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres-storage:/var/lib/postgresql/data
+      - postgres-azure-storage:/var/lib/postgresql/data
     networks:
       - azure_test_nw
 
@@ -53,15 +53,15 @@ services:
     networks:
       - azure_test_nw
     volumes:
-      - mlflow-storage:/mlflow
+      - mlflow-azure-storage:/mlflow
     depends_on:
       - azurite
       - postgres
 
 volumes:
-  postgres-storage:
+  postgres-azure-storage:
     driver: local
-  mlflow-storage:
+  mlflow-azure-storage:
     driver: local
   azurite-storage:
     driver: local

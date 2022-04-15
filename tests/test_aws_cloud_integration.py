@@ -9,7 +9,7 @@ from mlflow.tracking.client import MlflowClient
 
 def test_aws_model_upload_and_access_via_api(test_model, training_params, conda_env):
     with DockerCompose(
-        filepath=".", compose_file_name=["docker-compose.aws-test.yaml"], pull=True
+        filepath=".", compose_file_name=["docker-compose.aws-test.yaml"], pull=True, build=True
     ) as compose:
         mlflow_host = compose.get_service_host("mlflow", 5000)
         mlflow_port = compose.get_service_port("mlflow", 5000)

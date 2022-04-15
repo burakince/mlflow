@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  gcs:
+    container_name: gcs-test
+    hostname: gcs
+    image: fsouza/fake-gcs-server:${FAKE_GCS_SERVER_VERSION}
+    entrypoint: sh -c "mkdir -p /data/mlflow && /bin/fake-gcs-server -data /data -scheme http"
+    ports:
+      - "4443:4443"
+    volumes:
+      - gcs-storage:/data
+    networks:
+      - gcp_test_nw
+
+  postgres:
+    image: "postgres:${POSTGRES_VERSION}"
+    container_name: mlflow-gcp-postgres-db
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-gcp-storage:/var/lib/postgresql/data
+    networks:
+      - gcp_test_nw
+
+  mlflow:
+    container_name: mlflow-gcp-test
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "mlflow server --backend-store-uri=postgresql:// --default-artifact-root=gs://mlflow/ --host=0.0.0.0 --port=5000"
+    environment:
+      GOOGLE_CLOUD_PROJECT: mlflow
+      STORAGE_EMULATOR_HOST: http://gcs:4443
+      PGHOST: postgres
+      PGPORT: 5432
+      PGDATABASE: postgres
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    ports:
+      - "5000:5000"
+    networks:
+      - gcp_test_nw
+    volumes:
+      - mlflow-gcp-storage:/mlflow
+    depends_on:
+      - minio
+      - postgres
+
+volumes:
+  postgres-gcp-storage:
+    driver: local
+  mlflow-gcp-storage:
+    driver: local
+  gcs-storage:
+    driver: local
+
+networks:
+  gcp_test_nw:
+    driver: bridge

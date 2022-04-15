@@ -1,13 +1,21 @@
+# Dot Folders
 .venv
 .git
 .github
+.pytest_cache
+
+# Dot Files
 .pre-commit-config.yaml
 .env
+.isort.cfg
+.flake8
 
+# Files
 LICENSE
 README.md
-docker-compose.azure-test.yaml
+docker-compose.*.yaml
 
+# Folders
 test-containers
 tests
 mlflowstack
