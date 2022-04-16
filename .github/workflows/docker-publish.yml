@@ -148,14 +148,14 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: ${{ steps.meta.outputs.labels }}
-          args: --file=Dockerfile --severity-threshold=low --sarif-file-output=./docker.snyk.sarif
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          args: --file=Dockerfile --severity-threshold=low --sarif-file-output=snyk.sarif
 
       - name: Upload result to GitHub Code Scanning
         if: always()
         uses: github/codeql-action/upload-sarif@v1
         with:
-          sarif_file: ./docker.snyk.sarif
+          sarif_file: snyk.sarif
 
       # Break the pipeline with failure status if security scan failed
       - name: Check docker image scan status
