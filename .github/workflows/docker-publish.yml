@@ -128,9 +128,42 @@ jobs:
             type=sha
             type=ref,event=tag
 
-      # Build and push Docker image with Buildx (don't push on PR)
+      # Build Docker image with Buildx and don't push it
+      - name: Build and push Docker image
+        id: build-docker-image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/arm64/v8,linux/amd64
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Run Snyk to check Docker image for vulnerabilities
+        id: docker-image-scan
+        continue-on-error: true
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: ${{ steps.meta.outputs.labels }}
+          args: --file=Dockerfile --severity-threshold=low --sarif-file-output=./docker.snyk.sarif
+
+      - name: Upload result to GitHub Code Scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: ./docker.snyk.sarif
+
+      # Break the pipeline with failure status if security scan failed
+      - name: Check docker image scan status
+        if: ${{ steps.docker-image-scan.outcome == 'failure' }}
+        run: exit 1
+
+      # Build again and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
+        if: ${{ github.event_name != 'pull_request' }}
         id: build-and-push
         uses: docker/build-push-action@v2
         with:
