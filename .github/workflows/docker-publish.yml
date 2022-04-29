@@ -8,7 +8,9 @@ on:
   push:
     branches: [ main ]
     # Publish semver tags as releases.
-    tags: [ '*.*.*' ]
+    tags:
+      - '*.*.*'
+      - '*.*.*.*'
     paths:
       - '.github/workflows/docker-publish.yml'
       - 'poetry.lock'
@@ -127,7 +129,6 @@ jobs:
           flavor: |
             latest=true
           tags: |
-            type=sha
             type=ref,event=tag
 
       # Build Docker image with Buildx and don't push it
