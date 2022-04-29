@@ -79,9 +79,11 @@ jobs:
           poetry run pytest
 
   buildpush:
+    runs-on: ubuntu-latest
+
     needs: integrationtest
 
-    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
 
     env:
       REGISTRY: docker.io
