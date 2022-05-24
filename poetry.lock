@@ -291,14 +291,14 @@ typecheck = ["mypy"]
 
 [[package]]
 name = "boto3"
-version = "1.23.5"
+version = "1.23.6"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.6"
 
 [package.dependencies]
-botocore = ">=1.26.5,<1.27.0"
+botocore = ">=1.26.6,<1.27.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.5.0,<0.6.0"
 
@@ -307,7 +307,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.26.5"
+version = "1.26.6"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -1659,7 +1659,7 @@ full = ["itsdangerous", "jinja2", "python-multipart", "pyyaml", "requests"]
 
 [[package]]
 name = "starlette-exporter"
-version = "0.12.0"
+version = "0.13.0"
 description = "Prometheus metrics exporter for Starlette applications."
 category = "main"
 optional = false
@@ -1943,12 +1943,12 @@ bcrypt = [
     {file = "bcrypt-3.2.2.tar.gz", hash = "sha256:433c410c2177057705da2a9f2cd01dd157493b2a7ac14c8593a16b3dab6b6bfb"},
 ]
 boto3 = [
-    {file = "boto3-1.23.5-py3-none-any.whl", hash = "sha256:5cbbd985171b1e278b722dca48f71455b4938378962734828daeb76f73be6fba"},
-    {file = "boto3-1.23.5.tar.gz", hash = "sha256:73a0d092aaea1649150f43fb3f41451d5a0883940549a64d72781a23ce6b2d44"},
+    {file = "boto3-1.23.6-py3-none-any.whl", hash = "sha256:6fed94cfe8e4502ec176821d3fefed9c1973d18ef491530b158108966cfc8ae1"},
+    {file = "boto3-1.23.6.tar.gz", hash = "sha256:725e507211cde015184e2b5921512df89f63852fb079eda6ab6c282af66f45bd"},
 ]
 botocore = [
-    {file = "botocore-1.26.5-py3-none-any.whl", hash = "sha256:805db3ecf85ff89edfb6788f862b87426f990e3e6383ef3fca3076f7659a5454"},
-    {file = "botocore-1.26.5.tar.gz", hash = "sha256:32541873924e3ff0ad95f02dc331e9f278721a3b864a4e2a8d514346b2598ce5"},
+    {file = "botocore-1.26.6-py3-none-any.whl", hash = "sha256:2846ee4a548462ba6db70125bea1542b4ed39793240aabc62ddf96fb6ec7e4d1"},
+    {file = "botocore-1.26.6.tar.gz", hash = "sha256:ce3fb008ffb041d142cf3949b13529e8dc9a0db5f2ec0e86b159f10f2b56a46e"},
 ]
 cachetools = [
     {file = "cachetools-5.1.0-py3-none-any.whl", hash = "sha256:4ebbd38701cdfd3603d1f751d851ed248ab4570929f2d8a7ce69e30c420b141c"},
@@ -2940,8 +2940,8 @@ starlette = [
     {file = "starlette-0.19.1.tar.gz", hash = "sha256:c6d21096774ecb9639acad41b86b7706e52ba3bf1dc13ea4ed9ad593d47e24c7"},
 ]
 starlette-exporter = [
-    {file = "starlette_exporter-0.12.0-py3-none-any.whl", hash = "sha256:8d9537e94edef0a2afc396dfdc37687aa95dd594d00dbdab72bdd9dba6c28222"},
-    {file = "starlette_exporter-0.12.0.tar.gz", hash = "sha256:18d95d09cfb45427e6f54ae591982b5ef900aa150ce9b41e717675b18c5bdb74"},
+    {file = "starlette_exporter-0.13.0-py3-none-any.whl", hash = "sha256:9bdbca9e05ffc6b84a6491ee88ee47f12ffb3182b644a4998a496d859237c0cc"},
+    {file = "starlette_exporter-0.13.0.tar.gz", hash = "sha256:15f21098586eae73e453e4e05bf61890c94e2bd83dfe0fb33b0acdf984294e84"},
 ]
 tabulate = [
     {file = "tabulate-0.8.9-py3-none-any.whl", hash = "sha256:d7c013fe7abbc5e491394e10fa845f8f32fe54f8dc60c6622c6cf482d25d47e4"},
