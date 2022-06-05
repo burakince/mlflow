@@ -1216,7 +1216,7 @@ twisted = ["twisted"]
 
 [[package]]
 name = "prometheus-flask-exporter"
-version = "0.20.1"
+version = "0.20.2"
 description = "Prometheus metrics exporter for Flask"
 category = "main"
 optional = false
@@ -2513,8 +2513,8 @@ prometheus-client = [
     {file = "prometheus_client-0.14.1.tar.gz", hash = "sha256:5459c427624961076277fdc6dc50540e2bacb98eebde99886e59ec55ed92093a"},
 ]
 prometheus-flask-exporter = [
-    {file = "prometheus_flask_exporter-0.20.1-py3-none-any.whl", hash = "sha256:83f2c2b2744650658addf1cf15e54d1be4fc1bd86cfb37660f3f352b09fd2c57"},
-    {file = "prometheus_flask_exporter-0.20.1.tar.gz", hash = "sha256:9a594b78ea10e282780ce6c4b127ae1cfa0a666b5ad150ba1bfb34c7aad2c7cc"},
+    {file = "prometheus_flask_exporter-0.20.2-py3-none-any.whl", hash = "sha256:946f8d631430258b9bf76c037a9f51a1d51f369cff84c8decc7e142e38d41197"},
+    {file = "prometheus_flask_exporter-0.20.2.tar.gz", hash = "sha256:aab05c49880d12b7d4eaabee102cfe998da92ddaacf86ec4f37cfa08c00858da"},
 ]
 protobuf = [
     {file = "protobuf-3.20.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:3cc797c9d15d7689ed507b165cd05913acb992d78b379f6014e013f9ecb20996"},
