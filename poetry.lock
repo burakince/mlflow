@@ -291,14 +291,14 @@ typecheck = ["mypy"]
 
 [[package]]
 name = "boto3"
-version = "1.24.6"
+version = "1.24.7"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.7"
 
 [package.dependencies]
-botocore = ">=1.27.6,<1.28.0"
+botocore = ">=1.27.7,<1.28.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -307,7 +307,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.27.6"
+version = "1.27.7"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -423,7 +423,7 @@ test = ["pytest (>=6.2.0)", "pytest-cov", "pytest-subtests", "pytest-xdist", "pr
 
 [[package]]
 name = "databricks-cli"
-version = "0.16.6"
+version = "0.16.7"
 description = "A command line interface for Databricks"
 category = "main"
 optional = false
@@ -1947,12 +1947,12 @@ bcrypt = [
     {file = "bcrypt-3.2.2.tar.gz", hash = "sha256:433c410c2177057705da2a9f2cd01dd157493b2a7ac14c8593a16b3dab6b6bfb"},
 ]
 boto3 = [
-    {file = "boto3-1.24.6-py3-none-any.whl", hash = "sha256:1c13d555172cf88eb645af2429e4a7f42be85e365d6ffc110c952a556d3f8808"},
-    {file = "boto3-1.24.6.tar.gz", hash = "sha256:4af6a8bc5110b5f9d2fbd00a3c110e4c4cc36fae78d05afa354831f5789e363b"},
+    {file = "boto3-1.24.7-py3-none-any.whl", hash = "sha256:925a34a55257219f4601e803951fd4d61ed6eac2208dc834a04fe150b03f265e"},
+    {file = "boto3-1.24.7.tar.gz", hash = "sha256:6e243e28c804dccd2015935acfac0567e1861b20fdd96aa47f232b47aa214a69"},
 ]
 botocore = [
-    {file = "botocore-1.27.6-py3-none-any.whl", hash = "sha256:eeebe304161db6828413dc358ea80ece52f4ddbc8ecde4dd58978d5861a09293"},
-    {file = "botocore-1.27.6.tar.gz", hash = "sha256:97c909a6ec5ad421573c18ae67fc6ea4232502cd30cffaf03bfcb584d9df652d"},
+    {file = "botocore-1.27.7-py3-none-any.whl", hash = "sha256:3e0cbe26f08fe9a3f6df5de4dcc3bef686e01ba5f79ad03ffbe79d92f51ecea5"},
+    {file = "botocore-1.27.7.tar.gz", hash = "sha256:dc83ef991c730ab0f06b51fcefda74f493b990903b882452aff78c123e3040e2"},
 ]
 cachetools = [
     {file = "cachetools-5.2.0-py3-none-any.whl", hash = "sha256:f9f17d2aec496a9aa6b76f53e3b614c965223c061982d434d160f930c698a9db"},
@@ -2061,8 +2061,8 @@ cryptography = [
     {file = "cryptography-36.0.2.tar.gz", hash = "sha256:70f8f4f7bb2ac9f340655cbac89d68c527af5bb4387522a8413e841e3e6628c9"},
 ]
 databricks-cli = [
-    {file = "databricks-cli-0.16.6.tar.gz", hash = "sha256:b563f5ea158e182e3da12d25be76b91dc314779da3af44a73231f54d6e8e5ec4"},
-    {file = "databricks_cli-0.16.6-py2-none-any.whl", hash = "sha256:1a1d6032f32d07709aa8d4f73751b8539837bd9398c3dfc8649b703336dcfc96"},
+    {file = "databricks-cli-0.16.7.tar.gz", hash = "sha256:c18ca530d865c3a4e966dc76625d2d1316e886b6ae61ef3aa89561c797efef62"},
+    {file = "databricks_cli-0.16.7-py2-none-any.whl", hash = "sha256:d450f69e745a9cb8fdd0c70f85f5599d940e166d4194515aa7499d561a360964"},
 ]
 deprecation = [
     {file = "deprecation-2.1.0-py2.py3-none-any.whl", hash = "sha256:a10811591210e1fb0e768a8c25517cabeabcba6f0bf96564f8ff45189f90b14a"},
