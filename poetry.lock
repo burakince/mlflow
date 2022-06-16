@@ -13,6 +13,20 @@ python-dateutil = ">=2.1.0,<3"
 requests = ">=2.0.0,<3"
 
 [[package]]
+name = "aiokafka"
+version = "0.7.2"
+description = "Kafka integration with asyncio."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+kafka-python = ">=2.0.0"
+
+[package.extras]
+snappy = ["python-snappy (>=0.5)"]
+
+[[package]]
 name = "alembic"
 version = "1.8.0"
 description = "A database migration tool for SQLAlchemy."
@@ -150,14 +164,14 @@ msrest = ">=0.6.21"
 
 [[package]]
 name = "azure-mgmt-core"
-version = "1.3.0"
+version = "1.3.1"
 description = "Microsoft Azure Management Core Library for Python"
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.6"
 
 [package.dependencies]
-azure-core = ">=1.15.0,<2.0.0"
+azure-core = ">=1.23.0,<2.0.0"
 
 [[package]]
 name = "azure-mgmt-keyvault"
@@ -291,14 +305,14 @@ typecheck = ["mypy"]
 
 [[package]]
 name = "boto3"
-version = "1.24.9"
+version = "1.24.10"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.7"
 
 [package.dependencies]
-botocore = ">=1.27.9,<1.28.0"
+botocore = ">=1.27.10,<1.28.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -307,7 +321,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.27.9"
+version = "1.27.10"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -331,7 +345,7 @@ python-versions = "~=3.7"
 
 [[package]]
 name = "certifi"
-version = "2022.5.18.1"
+version = "2022.6.15"
 description = "Python package for providing Mozilla's CA Bundle."
 category = "main"
 optional = false
@@ -423,7 +437,7 @@ test = ["pytest (>=6.2.0)", "pytest-cov", "pytest-subtests", "pytest-xdist", "pr
 
 [[package]]
 name = "databricks-cli"
-version = "0.16.7"
+version = "0.16.8"
 description = "A command line interface for Databricks"
 category = "main"
 optional = false
@@ -554,7 +568,7 @@ gitdb = ">=4.0.1,<5"
 
 [[package]]
 name = "google-api-core"
-version = "2.8.1"
+version = "2.8.2"
 description = "Google API client core library"
 category = "main"
 optional = false
@@ -563,13 +577,11 @@ python-versions = ">=3.6"
 [package.dependencies]
 google-auth = ">=1.25.0,<3.0dev"
 googleapis-common-protos = ">=1.56.2,<2.0dev"
-protobuf = ">=3.15.0,<4.0.0dev"
+protobuf = ">=3.15.0,<5.0.0dev"
 requests = ">=2.18.0,<3.0.0dev"
 
 [package.extras]
 grpc = ["grpcio (>=1.33.2,<2.0dev)", "grpcio-status (>=1.33.2,<2.0dev)"]
-grpcgcp = ["grpcio-gcp (>=0.2.2,<1.0dev)"]
-grpcio-gcp = ["grpcio-gcp (>=0.2.2,<1.0dev)"]
 
 [[package]]
 name = "google-auth"
@@ -832,6 +844,17 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-black
 "testing.libs" = ["simplejson", "ujson", "yajl"]
 
 [[package]]
+name = "kafka-python"
+version = "2.0.2"
+description = "Pure Python client for Apache Kafka"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+crc32c = ["crc32c"]
+
+[[package]]
 name = "knack"
 version = "0.9.0"
 description = "A Command-Line Interface framework"
@@ -942,13 +965,14 @@ sqlserver = ["mlflow-dbstore"]
 
 [[package]]
 name = "mlserver"
-version = "1.0.1"
+version = "1.1.0"
 description = "ML server"
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
+aiokafka = "*"
 click = "*"
 fastapi = "*"
 grpcio = "*"
@@ -956,15 +980,17 @@ numpy = "*"
 pandas = "*"
 protobuf = "*"
 py-grpc-prometheus = "*"
+python-dotenv = "*"
 starlette-exporter = "*"
 uvicorn = "*"
+uvloop = {version = "*", markers = "sys_platform != \"win32\" and sys_platform != \"cygwin\" and platform_python_implementation != \"PyPy\""}
 
 [package.extras]
 all = ["orjson"]
 
 [[package]]
 name = "mlserver-mlflow"
-version = "1.0.1"
+version = "1.1.0"
 description = "MLflow runtime for MLServer"
 category = "main"
 optional = false
@@ -1446,6 +1472,17 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
 six = ">=1.5"
 
 [[package]]
+name = "python-dotenv"
+version = "0.20.0"
+description = "Read key-value pairs from a .env file and set them as environment variables"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.extras]
+cli = ["click (>=5.0)"]
+
+[[package]]
 name = "pytz"
 version = "2022.1"
 description = "World timezone definitions, modern and historical"
@@ -1768,6 +1805,19 @@ h11 = ">=0.8"
 standard = ["websockets (>=10.0)", "httptools (>=0.4.0)", "watchgod (>=0.6)", "python-dotenv (>=0.13)", "PyYAML (>=5.1)", "uvloop (>=0.14.0,!=0.15.0,!=0.15.1)", "colorama (>=0.4)"]
 
 [[package]]
+name = "uvloop"
+version = "0.16.0"
+description = "Fast implementation of asyncio event loop on top of libuv"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+dev = ["Cython (>=0.29.24,<0.30.0)", "pytest (>=3.6.0)", "Sphinx (>=4.1.2,<4.2.0)", "sphinxcontrib-asyncio (>=0.3.0,<0.4.0)", "sphinx-rtd-theme (>=0.5.2,<0.6.0)", "aiohttp", "flake8 (>=3.9.2,<3.10.0)", "psutil", "pycodestyle (>=2.7.0,<2.8.0)", "pyOpenSSL (>=19.0.0,<19.1.0)", "mypy (>=0.800)"]
+docs = ["Sphinx (>=4.1.2,<4.2.0)", "sphinxcontrib-asyncio (>=0.3.0,<0.4.0)", "sphinx-rtd-theme (>=0.5.2,<0.6.0)"]
+test = ["aiohttp", "flake8 (>=3.9.2,<3.10.0)", "psutil", "pycodestyle (>=2.7.0,<2.8.0)", "pyOpenSSL (>=19.0.0,<19.1.0)", "mypy (>=0.800)"]
+
+[[package]]
 name = "virtualenv"
 version = "20.14.1"
 description = "Virtual Python Environment builder"
@@ -1859,6 +1909,29 @@ adal = [
     {file = "adal-1.2.7-py2.py3-none-any.whl", hash = "sha256:2a7451ed7441ddbc57703042204a3e30ef747478eea022c70f789fc7f084bc3d"},
     {file = "adal-1.2.7.tar.gz", hash = "sha256:d74f45b81317454d96e982fd1c50e6fb5c99ac2223728aea8764433a39f566f1"},
 ]
+aiokafka = [
+    {file = "aiokafka-0.7.2-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:b19f077e12fe23e359f7a7dca9baf8532c63f4c8149703ce4c56de372d17e26c"},
+    {file = "aiokafka-0.7.2-cp36-cp36m-manylinux_2_12_i686.manylinux2010_i686.whl", hash = "sha256:d801bb2f5a4ae726a433ae74a5d34e7e0d44128de53c9c7eea5cb4cdaaf80175"},
+    {file = "aiokafka-0.7.2-cp36-cp36m-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:3b1f1e9ad66883ed809d737d57edfb13f1aeb9b08c6fd6b71afefce712c13dad"},
+    {file = "aiokafka-0.7.2-cp36-cp36m-win32.whl", hash = "sha256:383cc7d45b47676fea60dbedee747c5c08dde5c10b1be0afc6598fb21a7891b4"},
+    {file = "aiokafka-0.7.2-cp36-cp36m-win_amd64.whl", hash = "sha256:ce23baeaacf501f619967067d2c0d4c2b2b761012f9f9c8a49593e96c7550aff"},
+    {file = "aiokafka-0.7.2-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:c96824cef1a480fd2ab4bbd9e9aa737c9191211bab5f7787ef401926d5fda95d"},
+    {file = "aiokafka-0.7.2-cp37-cp37m-manylinux_2_12_i686.manylinux2010_i686.whl", hash = "sha256:34eda0b6eb794c36f4100be772f3b120a3c00daaf342f593f32994a762aed7e8"},
+    {file = "aiokafka-0.7.2-cp37-cp37m-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:e6e78206e5d031e6644d3a46153a146d2d2afff4cf9da9a81edb9f8714114b62"},
+    {file = "aiokafka-0.7.2-cp37-cp37m-win32.whl", hash = "sha256:ebbb258840f134bad0e6ca8681a87cd292a1f4ed7253a821c16b4e9f2610a04a"},
+    {file = "aiokafka-0.7.2-cp37-cp37m-win_amd64.whl", hash = "sha256:16731e8aa0fc70dc35c31041599c9a5237dd5d2c1a4d04af58f30a942191a281"},
+    {file = "aiokafka-0.7.2-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:1a9b6ecb606062b3595bc5104b85b42b62621a86d179b75d708279041152f461"},
+    {file = "aiokafka-0.7.2-cp38-cp38-manylinux_2_12_i686.manylinux2010_i686.whl", hash = "sha256:cda55f5cfb19ea7d2f55a51d320a57312f152dab3e333fa1fbfcdde7a9e25a53"},
+    {file = "aiokafka-0.7.2-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:7d56627c3250ba2359dfa90f2c8a3ab995795e0116038905b2f8a608cd1fd606"},
+    {file = "aiokafka-0.7.2-cp38-cp38-win32.whl", hash = "sha256:be43d7ddd700d501a6f4c59c859baa9888c2d086b69882f542951bae41234f6a"},
+    {file = "aiokafka-0.7.2-cp38-cp38-win_amd64.whl", hash = "sha256:594d2a29875f78d56251141ff95a982c5be64844dc9ae619c285f36c57a08c6e"},
+    {file = "aiokafka-0.7.2-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:5371bd663f545ced555775e7e49f39a54b243435098a9699582bb3b32884e332"},
+    {file = "aiokafka-0.7.2-cp39-cp39-manylinux_2_12_i686.manylinux2010_i686.whl", hash = "sha256:b1958277eaa702509591c0674790a8c9aced8fef7723dafae0f9aec6d2da71a5"},
+    {file = "aiokafka-0.7.2-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:7fe02a3868236d84356d5fa7c7625ed3a27e52699477c5ee8bd5dc9b5adb592f"},
+    {file = "aiokafka-0.7.2-cp39-cp39-win32.whl", hash = "sha256:a3bfe4ad7d3829a98c8391a9a28f179b47df4f66e26ea5b1c665f872b6e21809"},
+    {file = "aiokafka-0.7.2-cp39-cp39-win_amd64.whl", hash = "sha256:6116b68ca975caafd7efd338ffdaec63789e1c334af6174e20edc1d16d14e463"},
+    {file = "aiokafka-0.7.2.tar.gz", hash = "sha256:a8fc41d18731d8879483aecb93ae7ebf5457f63daf4c8923ddc046792c2c3096"},
+]
 alembic = [
     {file = "alembic-1.8.0-py3-none-any.whl", hash = "sha256:b5ae4bbfc7d1302ed413989d39474d102e7cfa158f6d5969d2497955ffe85a30"},
     {file = "alembic-1.8.0.tar.gz", hash = "sha256:a2d4d90da70b30e70352cd9455e35873a255a31402a438fe24815758d7a0e5e1"},
@@ -1904,8 +1977,8 @@ azure-mgmt-containerregistry = [
     {file = "azure_mgmt_containerregistry-9.1.0-py3-none-any.whl", hash = "sha256:06ab1bb871063a83b32d0d188b9da6cec4d7937102213f01491f3e53680ea2d3"},
 ]
 azure-mgmt-core = [
-    {file = "azure-mgmt-core-1.3.0.zip", hash = "sha256:3ffb7352b39e5495dccc2d2b47254f4d82747aff4735e8bf3267c335b0c9bb40"},
-    {file = "azure_mgmt_core-1.3.0-py2.py3-none-any.whl", hash = "sha256:7b7fa952aeb9d3eaa13eff905880f3d3b62200f7be7a8ba5a50c8b2e7295322a"},
+    {file = "azure-mgmt-core-1.3.1.zip", hash = "sha256:c89ebf18c227bc98a1eecca95460b8a7e230590d456c8fa9c2d5acdc670f7808"},
+    {file = "azure_mgmt_core-1.3.1-py3-none-any.whl", hash = "sha256:9667b9d65f2b41fed854e9d3a56f293739d327bf0d4e16252d9e785a6f4fe581"},
 ]
 azure-mgmt-keyvault = [
     {file = "azure-mgmt-keyvault-9.3.0.zip", hash = "sha256:54156422e618b686d52232a7989594b240bd18afd0fa381e12e4772ed4ab5ea8"},
@@ -1948,20 +2021,20 @@ bcrypt = [
     {file = "bcrypt-3.2.2.tar.gz", hash = "sha256:433c410c2177057705da2a9f2cd01dd157493b2a7ac14c8593a16b3dab6b6bfb"},
 ]
 boto3 = [
-    {file = "boto3-1.24.9-py3-none-any.whl", hash = "sha256:87d34861727699c795bf8d65703f2435e75f12879bdd483e08b35b7c5510e8c8"},
-    {file = "boto3-1.24.9.tar.gz", hash = "sha256:0821212ff521cb934801b1f655cef3c0e976775324b1018f1751700d0f42dbb4"},
+    {file = "boto3-1.24.10-py3-none-any.whl", hash = "sha256:32ffc0fd50408acc710cf5ce40037aa3c14926d6e3f6fbf61ed5990fb63cd881"},
+    {file = "boto3-1.24.10.tar.gz", hash = "sha256:88fd816274d4b64bcf90889441d4efa5f16a0048ed670bc33cbd0f5a678313a6"},
 ]
 botocore = [
-    {file = "botocore-1.27.9-py3-none-any.whl", hash = "sha256:5669b982b0583e73daef1fe0a4df311055e6287326f857dbb1dcc2de1d8412ad"},
-    {file = "botocore-1.27.9.tar.gz", hash = "sha256:7a7588b0170e571317496ac4104803329d5bc792bc008e8a757ffd440f1b6fa6"},
+    {file = "botocore-1.27.10-py3-none-any.whl", hash = "sha256:24ec42b4f29a50f7ef78f9f863c3c25e00f65b5a48db669c8068457789a90803"},
+    {file = "botocore-1.27.10.tar.gz", hash = "sha256:b39da97452c9e2c856e7778d8c908252394da81e2e5792f1d4cb0ece4ce1043a"},
 ]
 cachetools = [
     {file = "cachetools-5.2.0-py3-none-any.whl", hash = "sha256:f9f17d2aec496a9aa6b76f53e3b614c965223c061982d434d160f930c698a9db"},
     {file = "cachetools-5.2.0.tar.gz", hash = "sha256:6a94c6402995a99c3970cc7e4884bb60b4a8639938157eeed436098bf9831757"},
 ]
 certifi = [
-    {file = "certifi-2022.5.18.1-py3-none-any.whl", hash = "sha256:f1d53542ee8cbedbe2118b5686372fb33c297fcd6379b050cca0ef13a597382a"},
-    {file = "certifi-2022.5.18.1.tar.gz", hash = "sha256:9c5705e395cd70084351dd8ad5c41e65655e08ce46f2ec9cf6c2c08390f71eb7"},
+    {file = "certifi-2022.6.15-py3-none-any.whl", hash = "sha256:fe86415d55e84719d75f8b69414f6438ac3547d2078ab91b67e779ef69378412"},
+    {file = "certifi-2022.6.15.tar.gz", hash = "sha256:84c85a9078b11105f04f3036a9482ae10e4621616db313fe045dd24743a0820d"},
 ]
 cffi = [
     {file = "cffi-1.15.0-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:c2502a1a03b6312837279c8c1bd3ebedf6c12c4228ddbad40912d671ccc8a962"},
@@ -2062,8 +2135,8 @@ cryptography = [
     {file = "cryptography-36.0.2.tar.gz", hash = "sha256:70f8f4f7bb2ac9f340655cbac89d68c527af5bb4387522a8413e841e3e6628c9"},
 ]
 databricks-cli = [
-    {file = "databricks-cli-0.16.7.tar.gz", hash = "sha256:c18ca530d865c3a4e966dc76625d2d1316e886b6ae61ef3aa89561c797efef62"},
-    {file = "databricks_cli-0.16.7-py2-none-any.whl", hash = "sha256:d450f69e745a9cb8fdd0c70f85f5599d940e166d4194515aa7499d561a360964"},
+    {file = "databricks-cli-0.16.8.tar.gz", hash = "sha256:b40138f8ec74f36e4a5103bc37cb87edb6f74dc97b9603206f76f68bdd76d37e"},
+    {file = "databricks_cli-0.16.8-py2-none-any.whl", hash = "sha256:880856978bfc67487bbff066ab441a549a4a963a5857c32ab61037fcb50bc15f"},
 ]
 deprecation = [
     {file = "deprecation-2.1.0-py2.py3-none-any.whl", hash = "sha256:a10811591210e1fb0e768a8c25517cabeabcba6f0bf96564f8ff45189f90b14a"},
@@ -2102,8 +2175,8 @@ gitpython = [
     {file = "GitPython-3.1.27.tar.gz", hash = "sha256:1c885ce809e8ba2d88a29befeb385fcea06338d3640712b59ca623c220bb5704"},
 ]
 google-api-core = [
-    {file = "google-api-core-2.8.1.tar.gz", hash = "sha256:958024c6aa3460b08f35741231076a4dd9a4c819a6a39d44da9627febe8b28f0"},
-    {file = "google_api_core-2.8.1-py3-none-any.whl", hash = "sha256:ce1daa49644b50398093d2a9ad886501aa845e2602af70c3001b9f402a9d7359"},
+    {file = "google-api-core-2.8.2.tar.gz", hash = "sha256:06f7244c640322b508b125903bb5701bebabce8832f85aba9335ec00b3d02edc"},
+    {file = "google_api_core-2.8.2-py3-none-any.whl", hash = "sha256:93c6a91ccac79079ac6bbf8b74ee75db970cc899278b97d53bc012f35908cf50"},
 ]
 google-auth = [
     {file = "google-auth-2.8.0.tar.gz", hash = "sha256:819b70140d05501739e1387291d39f0de3b4dff3b00ae4aff8e7a05369957f89"},
@@ -2335,6 +2408,10 @@ jsonpickle = [
     {file = "jsonpickle-2.2.0-py2.py3-none-any.whl", hash = "sha256:de7f2613818aa4f234138ca11243d6359ff83ae528b2185efdd474f62bcf9ae1"},
     {file = "jsonpickle-2.2.0.tar.gz", hash = "sha256:7b272918b0554182e53dc340ddd62d9b7f902fec7e7b05620c04f3ccef479a0e"},
 ]
+kafka-python = [
+    {file = "kafka-python-2.0.2.tar.gz", hash = "sha256:04dfe7fea2b63726cd6f3e79a2d86e709d608d74406638c5da33a01d45a9d7e3"},
+    {file = "kafka_python-2.0.2-py2.py3-none-any.whl", hash = "sha256:2d92418c7cb1c298fa6c7f0fb3519b520d0d7526ac6cb7ae2a4fc65a51a94b6e"},
+]
 knack = [
     {file = "knack-0.9.0-py3-none-any.whl", hash = "sha256:d609abcca2604086b2e41935f7ffade2f83b709891af87df5088d23240ecbecc"},
     {file = "knack-0.9.0.tar.gz", hash = "sha256:7fcab17585c0236885eaef311c01a1e626d84c982aabcac81703afda3f89c81f"},
@@ -2394,12 +2471,12 @@ mlflow = [
     {file = "mlflow-1.26.1.tar.gz", hash = "sha256:568044484958ea71bd314ed42026cfd95e641feebe18568a32ecbf9afe9b93d4"},
 ]
 mlserver = [
-    {file = "mlserver-1.0.1-py3-none-any.whl", hash = "sha256:c4ea369976012e306eb69104db17f70bd89086d90adda17c8e3f06c47d4747ff"},
-    {file = "mlserver-1.0.1.tar.gz", hash = "sha256:491be6210776fccdb5ba22545c8c2833bbf61df486c4d965e43a55ec3da0c913"},
+    {file = "mlserver-1.1.0-py3-none-any.whl", hash = "sha256:bb183567f2ffd2678b1ea8ceec5c0b5e1c6dc8f83cc8e3f7a91a91ee5f3d472e"},
+    {file = "mlserver-1.1.0.tar.gz", hash = "sha256:132755317bae119e9020b87783616ca46a532c710dad7016f0bfbc44b1002cd2"},
 ]
 mlserver-mlflow = [
-    {file = "mlserver-mlflow-1.0.1.tar.gz", hash = "sha256:cabf24ca0324b0233fddd8893e7ddb93a59d9ee0d0fd2cb2b20d0c8bf6502921"},
-    {file = "mlserver_mlflow-1.0.1-py3-none-any.whl", hash = "sha256:a99daa0883559b13234fc9f06e69b60d13cd275ff788be1c8c3951b6b6f66f1a"},
+    {file = "mlserver-mlflow-1.1.0.tar.gz", hash = "sha256:85f24dd67c60b4d346cd194d805768c9d2f5ee2c01136da5a6f4294ab0067bba"},
+    {file = "mlserver_mlflow-1.1.0-py3-none-any.whl", hash = "sha256:21645552349013af95554a05454c2219cb0c5262f880f84a25178f58c04045f4"},
 ]
 more-itertools = [
     {file = "more-itertools-8.13.0.tar.gz", hash = "sha256:a42901a0a5b169d925f6f217cd5a190e32ef54360905b9c39ee7db5313bfec0f"},
@@ -2764,6 +2841,10 @@ python-dateutil = [
     {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
     {file = "python_dateutil-2.8.2-py2.py3-none-any.whl", hash = "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"},
 ]
+python-dotenv = [
+    {file = "python-dotenv-0.20.0.tar.gz", hash = "sha256:b7e3b04a59693c42c36f9ab1cc2acc46fa5df8c78e178fc33a8d4cd05c8d498f"},
+    {file = "python_dotenv-0.20.0-py3-none-any.whl", hash = "sha256:d92a187be61fe482e4fd675b6d52200e7be63a12b724abbf931a40ce4fa92938"},
+]
 pytz = [
     {file = "pytz-2022.1-py2.py3-none-any.whl", hash = "sha256:e68985985296d9a66a881eb3193b0906246245294a881e7c8afe623866ac6a5c"},
     {file = "pytz-2022.1.tar.gz", hash = "sha256:1e760e2fe6a8163bc0b3d9a19c4f84342afa0a2affebfaa84b01b978a02ecaa7"},
@@ -2974,6 +3055,24 @@ urllib3 = [
 uvicorn = [
     {file = "uvicorn-0.17.6-py3-none-any.whl", hash = "sha256:19e2a0e96c9ac5581c01eb1a79a7d2f72bb479691acd2b8921fce48ed5b961a6"},
     {file = "uvicorn-0.17.6.tar.gz", hash = "sha256:5180f9d059611747d841a4a4c4ab675edf54c8489e97f96d0583ee90ac3bfc23"},
+]
+uvloop = [
+    {file = "uvloop-0.16.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:6224f1401025b748ffecb7a6e2652b17768f30b1a6a3f7b44660e5b5b690b12d"},
+    {file = "uvloop-0.16.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:30ba9dcbd0965f5c812b7c2112a1ddf60cf904c1c160f398e7eed3a6b82dcd9c"},
+    {file = "uvloop-0.16.0-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:bd53f7f5db562f37cd64a3af5012df8cac2c464c97e732ed556800129505bd64"},
+    {file = "uvloop-0.16.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:772206116b9b57cd625c8a88f2413df2fcfd0b496eb188b82a43bed7af2c2ec9"},
+    {file = "uvloop-0.16.0-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:b572256409f194521a9895aef274cea88731d14732343da3ecdb175228881638"},
+    {file = "uvloop-0.16.0-cp37-cp37m-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:04ff57aa137230d8cc968f03481176041ae789308b4d5079118331ab01112450"},
+    {file = "uvloop-0.16.0-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3a19828c4f15687675ea912cc28bbcb48e9bb907c801873bd1519b96b04fb805"},
+    {file = "uvloop-0.16.0-cp38-cp38-macosx_10_9_universal2.whl", hash = "sha256:e814ac2c6f9daf4c36eb8e85266859f42174a4ff0d71b99405ed559257750382"},
+    {file = "uvloop-0.16.0-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:bd8f42ea1ea8f4e84d265769089964ddda95eb2bb38b5cbe26712b0616c3edee"},
+    {file = "uvloop-0.16.0-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:647e481940379eebd314c00440314c81ea547aa636056f554d491e40503c8464"},
+    {file = "uvloop-0.16.0-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8e0d26fa5875d43ddbb0d9d79a447d2ace4180d9e3239788208527c4784f7cab"},
+    {file = "uvloop-0.16.0-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:6ccd57ae8db17d677e9e06192e9c9ec4bd2066b77790f9aa7dede2cc4008ee8f"},
+    {file = "uvloop-0.16.0-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:089b4834fd299d82d83a25e3335372f12117a7d38525217c2258e9b9f4578897"},
+    {file = "uvloop-0.16.0-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:98d117332cc9e5ea8dfdc2b28b0a23f60370d02e1395f88f40d1effd2cb86c4f"},
+    {file = "uvloop-0.16.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1e5f2e2ff51aefe6c19ee98af12b4ae61f5be456cd24396953244a30880ad861"},
+    {file = "uvloop-0.16.0.tar.gz", hash = "sha256:f74bc20c7b67d1c27c72601c78cf95be99d5c2cdd4514502b4f3eb0933ff1228"},
 ]
 virtualenv = [
     {file = "virtualenv-20.14.1-py2.py3-none-any.whl", hash = "sha256:e617f16e25b42eb4f6e74096b9c9e37713cf10bf30168fb4a739f3fa8f898a3a"},
