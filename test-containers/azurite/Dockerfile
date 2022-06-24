@@ -1,5 +1,5 @@
 # https://mcr.microsoft.com/v2/azure-storage/azurite/tags/list
-ARG AZURITE_VERSION=3.17.1
+ARG AZURITE_VERSION=3.18.0
 ARG AZURE_STORAGE_BLOB_VERSION=12.10.0
 
 FROM mcr.microsoft.com/azure-storage/azurite:${AZURITE_VERSION}
