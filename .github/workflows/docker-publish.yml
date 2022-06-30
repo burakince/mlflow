@@ -106,18 +106,6 @@ jobs:
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v2
 
-      # Extract metadata (tags, labels) for Docker
-      # https://github.com/docker/metadata-action
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          flavor: |
-            latest=true
-          tags: |
-            type=ref,event=tag
-
       # Build Docker image with Buildx and don't push it
       - name: Build and push Docker image
         id: build-docker-image
@@ -126,8 +114,7 @@ jobs:
           context: .
           platforms: linux/arm64/v8,linux/amd64
           push: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Run Snyk to check Docker image for vulnerabilities
         id: docker-image-scan
@@ -136,7 +123,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           args: --file=Dockerfile --severity-threshold=medium --sarif-file-output=snyk.sarif
 
       - name: Upload result to GitHub Code Scanning
