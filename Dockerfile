@@ -34,6 +34,8 @@ RUN apt-get update && \
       liblzma-dev && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+RUN ln -s /usr/bin/llvm-config-9 /usr/bin/llvm-config
+
 RUN python -m pip install --upgrade pip
 
 RUN pip install poetry wheel &&  \
