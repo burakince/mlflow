@@ -127,7 +127,7 @@ jobs:
           args: --file=Dockerfile --severity-threshold=medium --sarif-file-output=snyk.sarif
 
       - name: Upload result to GitHub Code Scanning
-        if: always()
+        if: hashFiles('snyk.sarif') != ''
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: snyk.sarif
