@@ -325,14 +325,14 @@ typecheck = ["mypy"]
 
 [[package]]
 name = "boto3"
-version = "1.24.27"
+version = "1.24.28"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.7"
 
 [package.dependencies]
-botocore = ">=1.27.27,<1.28.0"
+botocore = ">=1.27.28,<1.28.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -341,7 +341,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.27.27"
+version = "1.27.28"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -651,7 +651,7 @@ grpc = ["grpcio (>=1.33.2,<2.0dev)", "grpcio-status (>=1.33.2,<2.0dev)"]
 
 [[package]]
 name = "google-auth"
-version = "2.9.0"
+version = "2.9.1"
 description = "Google Authentication Library"
 category = "main"
 optional = false
@@ -730,11 +730,11 @@ requests = ["requests (>=2.18.0,<3.0.0dev)"]
 
 [[package]]
 name = "googleapis-common-protos"
-version = "1.56.3"
+version = "1.56.4"
 description = "Common protobufs used in Google APIs"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 protobuf = ">=3.15.0,<5.0.0dev"
@@ -2434,15 +2434,15 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 
 [[package]]
 name = "zipp"
-version = "3.8.0"
+version = "3.8.1"
 description = "Backport of pathlib-compatible object wrapper for zip files"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 
 [package.extras]
-docs = ["sphinx", "jaraco.packaging (>=9)", "rst.linker (>=1.9)"]
-testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-cov", "pytest-enabler (>=1.0.1)", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy (>=0.9.1)"]
+docs = ["sphinx", "jaraco.packaging (>=9)", "rst.linker (>=1.9)", "jaraco.tidelift (>=1.4)"]
+testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-cov", "pytest-enabler (>=1.3)", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy (>=0.9.1)"]
 
 [metadata]
 lock-version = "1.1"
@@ -2573,12 +2573,12 @@ bcrypt = [
     {file = "bcrypt-3.2.2.tar.gz", hash = "sha256:433c410c2177057705da2a9f2cd01dd157493b2a7ac14c8593a16b3dab6b6bfb"},
 ]
 boto3 = [
-    {file = "boto3-1.24.27-py3-none-any.whl", hash = "sha256:7e0a5c86059866d7f9e27d6574da9bfb4f8a03c4caf055724145f3cd44785b81"},
-    {file = "boto3-1.24.27.tar.gz", hash = "sha256:626bbec91ca2423e427636db207a03c854b52d22715c9b34a953ee8260817f6f"},
+    {file = "boto3-1.24.28-py3-none-any.whl", hash = "sha256:efce6dcf0b708cf609b2583f0134b1896f4e76c8b1e25702d50c81719a213664"},
+    {file = "boto3-1.24.28.tar.gz", hash = "sha256:af12023bb8f3059bb72697bcf9be860c492760c8201ec09246bd0b04cea88573"},
 ]
 botocore = [
-    {file = "botocore-1.27.27-py3-none-any.whl", hash = "sha256:524da451350c41e3136353183e7424c95952124163ea8ec03f57f29597bbcb4b"},
-    {file = "botocore-1.27.27.tar.gz", hash = "sha256:583b85f8a799fb89d1a762db041163b5848b08e79cee06b609bcaaeb69ea1fa6"},
+    {file = "botocore-1.27.28-py3-none-any.whl", hash = "sha256:cd4dff88419c7b6865f91551db3eb526283ebc56dc99f1d9b7adb5aa080674f8"},
+    {file = "botocore-1.27.28.tar.gz", hash = "sha256:b00da6290d8d42c6c3048b045d6537421e8b83e03b4f24bb44c5ea9f37ab6258"},
 ]
 cachetools = [
     {file = "cachetools-5.2.0-py3-none-any.whl", hash = "sha256:f9f17d2aec496a9aa6b76f53e3b614c965223c061982d434d160f930c698a9db"},
@@ -2763,8 +2763,8 @@ google-api-core = [
     {file = "google_api_core-2.8.2-py3-none-any.whl", hash = "sha256:93c6a91ccac79079ac6bbf8b74ee75db970cc899278b97d53bc012f35908cf50"},
 ]
 google-auth = [
-    {file = "google-auth-2.9.0.tar.gz", hash = "sha256:3b2f9d2f436cc7c3b363d0ac66470f42fede249c3bafcc504e9f0bcbe983cff0"},
-    {file = "google_auth-2.9.0-py2.py3-none-any.whl", hash = "sha256:75b3977e7e22784607e074800048f44d6a56df589fb2abe58a11d4d20c97c314"},
+    {file = "google-auth-2.9.1.tar.gz", hash = "sha256:14292fa3429f2bb1e99862554cde1ee730d6840ebae067814d3d15d8549c0888"},
+    {file = "google_auth-2.9.1-py2.py3-none-any.whl", hash = "sha256:5a7eed0cb0e3a83989fad0b59fe1329dfc8c479543039cd6fd1e01e9adf39475"},
 ]
 google-cloud-core = [
     {file = "google-cloud-core-2.3.1.tar.gz", hash = "sha256:34334359cb04187bdc80ddcf613e462dfd7a3aabbc3fe4d118517ab4b9303d53"},
@@ -2824,8 +2824,8 @@ google-resumable-media = [
     {file = "google_resumable_media-2.3.3-py2.py3-none-any.whl", hash = "sha256:5b52774ea7a829a8cdaa8bd2d4c3d4bc660c91b30857ab2668d0eb830f4ea8c5"},
 ]
 googleapis-common-protos = [
-    {file = "googleapis-common-protos-1.56.3.tar.gz", hash = "sha256:6f1369b58ed6cf3a4b7054a44ebe8d03b29c309257583a2bbdc064cd1e4a1442"},
-    {file = "googleapis_common_protos-1.56.3-py2.py3-none-any.whl", hash = "sha256:87955d7b3a73e6e803f2572a33179de23989ebba725e05ea42f24838b792e461"},
+    {file = "googleapis-common-protos-1.56.4.tar.gz", hash = "sha256:c25873c47279387cfdcbdafa36149887901d36202cb645a0e4f29686bf6e4417"},
+    {file = "googleapis_common_protos-1.56.4-py2.py3-none-any.whl", hash = "sha256:8eb2cbc91b69feaf23e32452a7ae60e791e09967d81d4fcc7fc388182d1bd394"},
 ]
 greenlet = [
     {file = "greenlet-1.1.2-cp27-cp27m-macosx_10_14_x86_64.whl", hash = "sha256:58df5c2a0e293bf665a51f8a100d3e9956febfbf1d9aaf8c0677cf70218910c6"},
@@ -4102,6 +4102,6 @@ wrapt = [
     {file = "wrapt-1.14.1.tar.gz", hash = "sha256:380a85cf89e0e69b7cfbe2ea9f765f004ff419f34194018a6827ac0e3edfed4d"},
 ]
 zipp = [
-    {file = "zipp-3.8.0-py3-none-any.whl", hash = "sha256:c4f6e5bbf48e74f7a38e7cc5b0480ff42b0ae5178957d564d18932525d5cf099"},
-    {file = "zipp-3.8.0.tar.gz", hash = "sha256:56bf8aadb83c24db6c4b577e13de374ccfb67da2078beba1d037c17980bf43ad"},
+    {file = "zipp-3.8.1-py3-none-any.whl", hash = "sha256:47c40d7fe183a6f21403a199b3e4192cca5774656965b0a4988ad2f8feb5f009"},
+    {file = "zipp-3.8.1.tar.gz", hash = "sha256:05b45f1ee8f807d0cc928485ca40a07cb491cf092ff587c0df9cb1fd154848d2"},
 ]
