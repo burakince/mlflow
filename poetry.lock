@@ -123,11 +123,11 @@ python-versions = "*"
 
 [[package]]
 name = "azure-core"
-version = "1.24.2"
+version = "1.25.0"
 description = "Microsoft Azure Core Library for Python"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 requests = ">=2.18.4"
@@ -225,7 +225,7 @@ msrest = ">=0.6.21"
 
 [[package]]
 name = "azure-storage-blob"
-version = "12.13.0"
+version = "12.13.1"
 description = "Microsoft Azure Blob Storage Client Library for Python"
 category = "main"
 optional = false
@@ -324,14 +324,14 @@ typecheck = ["mypy"]
 
 [[package]]
 name = "boto3"
-version = "1.24.45"
+version = "1.24.46"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.7"
 
 [package.dependencies]
-botocore = ">=1.27.45,<1.28.0"
+botocore = ">=1.27.46,<1.28.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -340,7 +340,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.27.45"
+version = "1.27.46"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -2338,20 +2338,20 @@ test = ["aiohttp", "flake8 (>=3.9.2,<3.10.0)", "psutil", "pycodestyle (>=2.7.0,<
 
 [[package]]
 name = "virtualenv"
-version = "20.16.2"
+version = "20.16.3"
 description = "Virtual Python Environment builder"
 category = "main"
 optional = false
 python-versions = ">=3.6"
 
 [package.dependencies]
-distlib = ">=0.3.1,<1"
-filelock = ">=3.2,<4"
-platformdirs = ">=2,<3"
+distlib = ">=0.3.5,<1"
+filelock = ">=3.4.1,<4"
+platformdirs = ">=2.4,<3"
 
 [package.extras]
-docs = ["proselint (>=0.10.2)", "sphinx (>=3)", "sphinx-argparse (>=0.2.5)", "sphinx-rtd-theme (>=0.4.3)", "towncrier (>=21.3)"]
-testing = ["coverage (>=4)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", "packaging (>=20.0)", "pytest (>=4)", "pytest-env (>=0.6.2)", "pytest-freezegun (>=0.4.1)", "pytest-mock (>=2)", "pytest-randomly (>=1)", "pytest-timeout (>=1)"]
+docs = ["proselint (>=0.13)", "sphinx (>=5.1.1)", "sphinx-argparse (>=0.3.1)", "sphinx-rtd-theme (>=1)", "towncrier (>=21.9)"]
+testing = ["coverage (>=6.2)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7)", "packaging (>=21.3)", "pytest (>=7.0.1)", "pytest-env (>=0.6.2)", "pytest-freezegun (>=0.4.2)", "pytest-mock (>=3.6.1)", "pytest-randomly (>=3.10.3)", "pytest-timeout (>=2.1)"]
 
 [[package]]
 name = "visions"
@@ -2511,8 +2511,8 @@ azure-common = [
     {file = "azure_common-1.1.28-py2.py3-none-any.whl", hash = "sha256:5c12d3dcf4ec20599ca6b0d3e09e86e146353d443e7fcc050c9a19c1f9df20ad"},
 ]
 azure-core = [
-    {file = "azure-core-1.24.2.zip", hash = "sha256:0f3a20d245659bf81fb3670070a5410c8d4a43298d5a981e62dce393000a9084"},
-    {file = "azure_core-1.24.2-py3-none-any.whl", hash = "sha256:a76856fa83efe1925a4fd917dc179c7daa15917dd71da2774833fa82a96f3dfa"},
+    {file = "azure-core-1.25.0.zip", hash = "sha256:c4a7d0d9e63a70dbde502b5d0cbe58b52244db4fbf247cca6768899e45fa3336"},
+    {file = "azure_core-1.25.0-py3-none-any.whl", hash = "sha256:c26ad5f3612b8a2207cf2be0ef67e478a74acfa450b8d25d778c939921f650dc"},
 ]
 azure-graphrbac = [
     {file = "azure-graphrbac-0.61.1.zip", hash = "sha256:53e98ae2ca7c19b349e9e9bb1b6a824aeae8dcfcbe17190d20fe69c0f185b2e2"},
@@ -2543,8 +2543,8 @@ azure-mgmt-storage = [
     {file = "azure_mgmt_storage-20.0.0-py3-none-any.whl", hash = "sha256:bc7a79d16b2979a2d6e6adb0b90b323ddbd91457848095c89f73119df6c34565"},
 ]
 azure-storage-blob = [
-    {file = "azure-storage-blob-12.13.0.zip", hash = "sha256:53f0d4cd32970ac9ff9b9753f83dd2fb3f9ac30e1d01e71638c436c509bfd884"},
-    {file = "azure_storage_blob-12.13.0-py3-none-any.whl", hash = "sha256:280a6ab032845bab9627582bee78a50497ca2f14772929b5c5ee8b4605af0cb3"},
+    {file = "azure-storage-blob-12.13.1.zip", hash = "sha256:899c4b8e2671812d2cf78f107556a27dbb128caaa2bb06094e72a3d5836740af"},
+    {file = "azure_storage_blob-12.13.1-py3-none-any.whl", hash = "sha256:726b86f733dc76218ce45b7a3254b61ba4f0cc3d68b7621be4985248c92ee483"},
 ]
 azureml-core = [
     {file = "azureml_core-1.44.0-py3-none-any.whl", hash = "sha256:f511a19e7f869c4fe31d72d075acdd6ea770ce802e4e6bda55ced7890e4d6e6e"},
@@ -2575,12 +2575,12 @@ bcrypt = [
     {file = "bcrypt-3.2.2.tar.gz", hash = "sha256:433c410c2177057705da2a9f2cd01dd157493b2a7ac14c8593a16b3dab6b6bfb"},
 ]
 boto3 = [
-    {file = "boto3-1.24.45-py3-none-any.whl", hash = "sha256:0f7888eaa493b201821290d4798d1326c7390c89a423369564c1eae68fd96767"},
-    {file = "boto3-1.24.45.tar.gz", hash = "sha256:293c9ce9cea0f4fe6393d8052eecb67868004940e4b1379996196f8bc5f9da2a"},
+    {file = "boto3-1.24.46-py3-none-any.whl", hash = "sha256:44026e44549148dbc5b261ead5f6b339e785680c350ef621bf85f7e2fca05b49"},
+    {file = "boto3-1.24.46.tar.gz", hash = "sha256:b2d9d55f123a9a91eea2fd8e379d90abf37634420fbb45c22d67e10b324ec71b"},
 ]
 botocore = [
-    {file = "botocore-1.27.45-py3-none-any.whl", hash = "sha256:75f450d373059b057132d72ffcb6f897aaa1985ea0e6ca9dd03c90119bd0b71b"},
-    {file = "botocore-1.27.45.tar.gz", hash = "sha256:04bc95fd65a6b557b953bba24c9dc1b314f27a588b50437b2a02796a1c683542"},
+    {file = "botocore-1.27.46-py3-none-any.whl", hash = "sha256:747b7e94aef41498f063fc0be79c5af102d940beea713965179e1ead89c7e9ec"},
+    {file = "botocore-1.27.46.tar.gz", hash = "sha256:f66d8305d1f59d83334df9b11b6512bb1e14698ec4d5d6d42f833f39f3304ca7"},
 ]
 cachetools = [
     {file = "cachetools-5.2.0-py3-none-any.whl", hash = "sha256:f9f17d2aec496a9aa6b76f53e3b614c965223c061982d434d160f930c698a9db"},
@@ -4010,8 +4010,8 @@ uvloop = [
     {file = "uvloop-0.16.0.tar.gz", hash = "sha256:f74bc20c7b67d1c27c72601c78cf95be99d5c2cdd4514502b4f3eb0933ff1228"},
 ]
 virtualenv = [
-    {file = "virtualenv-20.16.2-py2.py3-none-any.whl", hash = "sha256:635b272a8e2f77cb051946f46c60a54ace3cb5e25568228bd6b57fc70eca9ff3"},
-    {file = "virtualenv-20.16.2.tar.gz", hash = "sha256:0ef5be6d07181946891f5abc8047fda8bc2f0b4b9bf222c64e6e8963baee76db"},
+    {file = "virtualenv-20.16.3-py2.py3-none-any.whl", hash = "sha256:4193b7bc8a6cd23e4eb251ac64f29b4398ab2c233531e66e40b19a6b7b0d30c1"},
+    {file = "virtualenv-20.16.3.tar.gz", hash = "sha256:d86ea0bb50e06252d79e6c241507cb904fcd66090c3271381372d6221a3970f9"},
 ]
 visions = [
     {file = "visions-0.7.4-py3-none-any.whl", hash = "sha256:16f007e70362b788478b95129bb044dc0718b7530205ebddd8a1ff34a281d28e"},
