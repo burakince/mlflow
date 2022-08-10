@@ -1,0 +1,61 @@
+version: "3.8"
+
+services:
+  gcs:
+    container_name: gcs-mysql-test
+    hostname: gcs
+    image: fsouza/fake-gcs-server:${FAKE_GCS_SERVER_VERSION}
+    entrypoint: sh -c "mkdir -p /data/mlflow && /bin/fake-gcs-server -data /data -scheme http"
+    ports:
+      - "4443:4443"
+    volumes:
+      - gcs-mysql-storage:/data
+    networks:
+      - gcp_mysql_test_nw
+
+  mysql:
+    image: "mysql:${MYSQL_VERSION}"
+    container_name: mlflow-azure-mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mlflow
+      MYSQL_USER: mlflow
+      MYSQL_PASSWORD: password
+      MYSQL_TCP_PORT: 3306
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-gcp-storage:/var/lib/mysql
+    networks:
+      - gcp_mysql_test_nw
+
+  mlflow:
+    container_name: mlflow-gcp-mysql-test
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "mlflow server --backend-store-uri=mysql+pymysql://mlflow:password@mysql:3306/mlflow --default-artifact-root=gs://mlflow/ --host=0.0.0.0 --port=5000"
+    environment:
+      GOOGLE_CLOUD_PROJECT: mlflow
+      STORAGE_EMULATOR_HOST: http://gcs:4443
+    ports:
+      - "5000:5000"
+    networks:
+      - gcp_mysql_test_nw
+    volumes:
+      - mlflow-gcp-mysql-storage:/mlflow
+    depends_on:
+      - gcs
+      - mysql
+
+volumes:
+  mysql-gcp-storage:
+    driver: local
+  mlflow-gcp-mysql-storage:
+    driver: local
+  gcs-mysql-storage:
+    driver: local
+
+networks:
+  gcp_mysql_test_nw:
+    driver: bridge

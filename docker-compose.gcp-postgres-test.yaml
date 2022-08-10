@@ -2,16 +2,16 @@ version: "3.8"
 
 services:
   gcs:
-    container_name: gcs-test
+    container_name: gcs-pg-test
     hostname: gcs
     image: fsouza/fake-gcs-server:${FAKE_GCS_SERVER_VERSION}
     entrypoint: sh -c "mkdir -p /data/mlflow && /bin/fake-gcs-server -data /data -scheme http"
     ports:
       - "4443:4443"
     volumes:
-      - gcs-storage:/data
+      - gcs-pg-storage:/data
     networks:
-      - gcp_test_nw
+      - gcp_pg_test_nw
 
   postgres:
     image: "postgres:${POSTGRES_VERSION}"
@@ -24,10 +24,10 @@ services:
     volumes:
       - postgres-gcp-storage:/var/lib/postgresql/data
     networks:
-      - gcp_test_nw
+      - gcp_pg_test_nw
 
   mlflow:
-    container_name: mlflow-gcp-test
+    container_name: mlflow-gcp-pg-test
     build:
       context: .
       dockerfile: Dockerfile
@@ -43,9 +43,9 @@ services:
     ports:
       - "5000:5000"
     networks:
-      - gcp_test_nw
+      - gcp_pg_test_nw
     volumes:
-      - mlflow-gcp-storage:/mlflow
+      - mlflow-gcp-pg-storage:/mlflow
     depends_on:
       - gcs
       - postgres
@@ -53,11 +53,11 @@ services:
 volumes:
   postgres-gcp-storage:
     driver: local
-  mlflow-gcp-storage:
+  mlflow-gcp-pg-storage:
     driver: local
-  gcs-storage:
+  gcs-pg-storage:
     driver: local
 
 networks:
-  gcp_test_nw:
+  gcp_pg_test_nw:
     driver: bridge

@@ -7,29 +7,33 @@ import mlflow
 from mlflow.tracking.client import MlflowClient
 
 
-def test_azure_model_upload_and_access_via_api(test_model, training_params, conda_env):
+def test_postgres_backended_gcp_simulation_model_upload_and_access_via_api(
+    test_model, training_params, conda_env
+):
     with DockerCompose(
-        filepath=".", compose_file_name=["docker-compose.azure-test.yaml"], pull=True, build=True
+        filepath=".",
+        compose_file_name=["docker-compose.gcp-postgres-test.yaml"],
+        pull=True,
+        build=True,
     ) as compose:
         mlflow_host = compose.get_service_host("mlflow", 5000)
         mlflow_port = compose.get_service_port("mlflow", 5000)
-        azurite_host = compose.get_service_host("azurite", 10000)
-        azurite_blob_port = compose.get_service_port("azurite", 10000)
-        azurite_queue_port = compose.get_service_port("azurite", 10001)
+        gcs_host = compose.get_service_host("gcs", 4443)
+        gcs_port = compose.get_service_port("gcs", 4443)
 
         base_url = f"http://{mlflow_host}:{mlflow_port}"
 
         compose.wait_for(base_url)
 
-        experiment_name = "azure-cloud-experiment"
-        model_name = "test-azure-model"
+        experiment_name = "gcp-cloud-postgres-experiment"
+        model_name = "test-gcp-pg-model"
         stage_name = "Staging"
         mlflow.set_tracking_uri(base_url)
         mlflow.set_experiment(experiment_name)
         experiment = mlflow.get_experiment_by_name(experiment_name)
-        os.environ["AZURE_STORAGE_CONNECTION_STRING"] = connection_str(
-            azurite_host, azurite_blob_port, azurite_queue_port
-        )
+
+        os.environ["STORAGE_EMULATOR_HOST"] = f"http://{gcs_host}:{gcs_port}"
+        os.environ["GOOGLE_CLOUD_PROJECT"] = "mlflow"
 
         with mlflow.start_run(experiment_id=experiment.experiment_id) as run:
             mlflow.log_params(training_params)
@@ -52,12 +56,3 @@ def test_azure_model_upload_and_access_via_api(test_model, training_params, cond
 
         assert "1" == r.json()["model_versions"][0]["version"]
         assert "READY" == r.json()["model_versions"][0]["status"]
-
-
-def connection_str(host, blob_port, queue_port):
-    return (
-        "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;"
-        "AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;"
-        f"BlobEndpoint=http://{host}:{blob_port}/devstoreaccount1;"
-        f"QueueEndpoint=http://{host}:{queue_port}/devstoreaccount1"
-    )

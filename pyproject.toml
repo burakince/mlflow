@@ -13,6 +13,7 @@ SQLAlchemy = "^1.4.35"
 boto3 = "^1.21.38"
 psycopg2-binary = "^2.9.3"
 protobuf = "<4.0.0"
+PyMySQL = "^1.0.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

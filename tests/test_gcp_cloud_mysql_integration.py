@@ -7,29 +7,33 @@ import mlflow
 from mlflow.tracking.client import MlflowClient
 
 
-def test_aws_model_upload_and_access_via_api(test_model, training_params, conda_env):
+def test_mysql_backended_gcp_simulation_model_upload_and_access_via_api(
+    test_model, training_params, conda_env
+):
     with DockerCompose(
-        filepath=".", compose_file_name=["docker-compose.aws-test.yaml"], pull=True, build=True
+        filepath=".",
+        compose_file_name=["docker-compose.gcp-mysql-test.yaml"],
+        pull=True,
+        build=True,
     ) as compose:
         mlflow_host = compose.get_service_host("mlflow", 5000)
         mlflow_port = compose.get_service_port("mlflow", 5000)
-        minio_host = compose.get_service_host("minio", 9000)
-        minio_port = compose.get_service_port("minio", 9000)
+        gcs_host = compose.get_service_host("gcs", 4443)
+        gcs_port = compose.get_service_port("gcs", 4443)
 
         base_url = f"http://{mlflow_host}:{mlflow_port}"
 
         compose.wait_for(base_url)
 
-        experiment_name = "aws-cloud-experiment"
-        model_name = "test-aws-model"
+        experiment_name = "gcp-cloud-mysql-experiment"
+        model_name = "test-gcp-mysql-model"
         stage_name = "Staging"
         mlflow.set_tracking_uri(base_url)
         mlflow.set_experiment(experiment_name)
         experiment = mlflow.get_experiment_by_name(experiment_name)
 
-        os.environ["MLFLOW_S3_ENDPOINT_URL"] = f"http://{minio_host}:{minio_port}"
-        os.environ["AWS_ACCESS_KEY_ID"] = "minioadmin"
-        os.environ["AWS_SECRET_ACCESS_KEY"] = "minioadmin"
+        os.environ["STORAGE_EMULATOR_HOST"] = f"http://{gcs_host}:{gcs_port}"
+        os.environ["GOOGLE_CLOUD_PROJECT"] = "mlflow"
 
         with mlflow.start_run(experiment_id=experiment.experiment_id) as run:
             mlflow.log_params(training_params)

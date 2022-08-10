@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   minio:
-    container_name: minio-test
+    container_name: minio-mysql-test
     hostname: minio
     image: minio/minio:${MINIO_VERSION}
     entrypoint: sh
@@ -14,56 +14,54 @@ services:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - minio-storage:/data
+      - minio-mysql-storage:/data
     networks:
-      - aws_test_nw
+      - aws_mysql_test_nw
 
-  postgres:
-    image: "postgres:${POSTGRES_VERSION}"
-    container_name: mlflow-aws-postgres-db
+  mysql:
+    image: "mysql:${MYSQL_VERSION}"
+    container_name: mlflow-aws-mysql-db
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mlflow
+      MYSQL_USER: mlflow
+      MYSQL_PASSWORD: password
+      MYSQL_TCP_PORT: 3306
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres-aws-storage:/var/lib/postgresql/data
+      - mysql-aws-storage:/var/lib/mysql
     networks:
-      - aws_test_nw
+      - aws_mysql_test_nw
 
   mlflow:
-    container_name: mlflow-aws-test
+    container_name: mlflow-aws-mysql-test
     build:
       context: .
       dockerfile: Dockerfile
-    command: "mlflow server --backend-store-uri=postgresql:// --default-artifact-root=s3://mlflow/ --host=0.0.0.0 --port=5000"
+    command: "mlflow server --backend-store-uri=mysql+pymysql://mlflow:password@mysql:3306/mlflow --default-artifact-root=s3://mlflow/ --host=0.0.0.0 --port=5000"
     environment:
       MLFLOW_S3_ENDPOINT_URL: http://minio:9000
       AWS_ACCESS_KEY_ID: minioadmin
       AWS_SECRET_ACCESS_KEY: minioadmin
-      PGHOST: postgres
-      PGPORT: 5432
-      PGDATABASE: postgres
-      PGUSER: postgres
-      PGPASSWORD: postgres
     ports:
       - "5000:5000"
     networks:
-      - aws_test_nw
+      - aws_mysql_test_nw
     volumes:
-      - mlflow-aws-storage:/mlflow
+      - mlflow-aws-mysql-storage:/mlflow
     depends_on:
       - minio
-      - postgres
+      - mysql
 
 volumes:
-  postgres-aws-storage:
+  mysql-aws-storage:
     driver: local
-  mlflow-aws-storage:
+  mlflow-aws-mysql-storage:
     driver: local
-  minio-storage:
+  minio-mysql-storage:
     driver: local
 
 networks:
-  aws_test_nw:
+  aws_mysql_test_nw:
     driver: bridge
