@@ -18,7 +18,6 @@ RUN apt-get update && \
       make \
       build-essential \
       openssl \
-      rust \
       libssl-dev \
       zlib1g-dev \
       libbz2-dev \
@@ -37,6 +36,10 @@ RUN apt-get update && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN ln -s /usr/bin/llvm-config-9 /usr/bin/llvm-config
+
+RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
+
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 RUN python -m pip install --upgrade pip
 
