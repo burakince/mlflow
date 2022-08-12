@@ -17,6 +17,8 @@ RUN apt-get update && \
     apt-get install -y \
       make \
       build-essential \
+      openssl \
+      rust \
       libssl-dev \
       zlib1g-dev \
       libbz2-dev \
