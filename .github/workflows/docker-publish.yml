@@ -107,12 +107,12 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       # Build Docker image with Buildx and don't push it
-      - name: Build and push Docker image
+      - name: Build Docker image
         id: build-docker-image
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/arm64/v8,linux/amd64
+          platforms: linux/arm64/v8,linux/amd64,linux/ppc64le
           push: false
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
@@ -200,7 +200,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/arm64/v8,linux/amd64
+          platforms: linux/arm64/v8,linux/amd64,linux/ppc64le
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
