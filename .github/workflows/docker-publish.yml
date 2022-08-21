@@ -119,6 +119,7 @@ jobs:
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
+        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
         id: meta
         uses: docker/metadata-action@v4
         with:
@@ -142,8 +143,7 @@ jobs:
           context: .
           platforms: linux/arm64/v8,linux/amd64
           push: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Run Snyk to check Docker image for vulnerabilities
         id: docker-image-scan
