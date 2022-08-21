@@ -130,7 +130,7 @@ jobs:
             type=ref,event=tag
           labels: |
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/burakince/mlflow/main/README.md
-            io.artifacthub.package.maintainers='[{"name":"burakince","email":"burak.ince@linux.org.tr"}]'
+            io.artifacthub.package.maintainers=[{"name":"burakince","email":"burak.ince@linux.org.tr"}]
             io.artifacthub.package.logo-url=https://raw.githubusercontent.com/mlflow/mlflow/master/assets/logo.svg
             io.artifacthub.package.keywords='machine-learning,ai,ml,model-management,mlflow,mlflow-tracking-server,mlflow-docker,mlflow-tracking,mlflow-kube'
             io.artifacthub.package.license=MIT
