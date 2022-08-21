@@ -2,6 +2,7 @@
 ![Docker Pulls](https://img.shields.io/docker/pulls/burakince/mlflow)
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/burakince/mlflow?sort=date)
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/burakince/mlflow?sort=semver)
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/mlflow)](https://artifacthub.io/packages/search?repo=mlflow)
 
 # Mlflow Docker Image
 
