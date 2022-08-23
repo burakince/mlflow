@@ -17,6 +17,7 @@ on:
       - 'mlflowstack/**'
       - 'docker-compose.*.yaml'
       - 'tests/**'
+      - 'test-containers/**'
 
   pull_request:
     branches: [ main ]
