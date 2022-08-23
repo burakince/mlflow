@@ -39,7 +39,7 @@ services:
       - azure_mysql_test_nw
 
   mlflow:
-    container_name: mlflow-azure-pg-test
+    container_name: mlflow-azure-mysql-test
     build:
       context: .
       dockerfile: Dockerfile
