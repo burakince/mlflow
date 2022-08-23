@@ -1,5 +1,4 @@
 import os
-import time
 
 import requests
 from azure.storage.blob import BlobServiceClient
@@ -41,10 +40,16 @@ def test_postgres_backended_azure_simulation_model_upload_and_access_via_api(
         blob_service_client = BlobServiceClient.from_connection_string(
             os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
         )
-        while "mlflow" not in [
-            container["name"] for container in blob_service_client.list_containers()
-        ]:
-            time.sleep(0.1)
+        os.environ["STORAGE_CONTAINER"] = "mlflow"
+
+        # Create a container for Azurite for the first run
+        blob_service_client = BlobServiceClient.from_connection_string(
+            os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
+        )
+        try:
+            blob_service_client.create_container(os.environ.get("STORAGE_CONTAINER"))
+        except Exception as e:
+            print(e)
 
         with mlflow.start_run(experiment_id=experiment.experiment_id) as run:
             mlflow.log_params(training_params)
