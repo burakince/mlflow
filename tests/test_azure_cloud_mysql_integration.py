@@ -1,6 +1,8 @@
 import os
+import time
 
 import requests
+from azure.storage.blob import BlobServiceClient
 from testcontainers.compose import DockerCompose
 
 import mlflow
@@ -35,6 +37,14 @@ def test_mysql_backended_azure_simulation_model_upload_and_access_via_api(
         os.environ["AZURE_STORAGE_CONNECTION_STRING"] = connection_str(
             azurite_host, azurite_blob_port, azurite_queue_port
         )
+
+        blob_service_client = BlobServiceClient.from_connection_string(
+            os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
+        )
+        while "mlflow" not in [
+            container["name"] for container in blob_service_client.list_containers()
+        ]:
+            time.sleep(0.1)
 
         with mlflow.start_run(experiment_id=experiment.experiment_id) as run:
             mlflow.log_params(training_params)
