@@ -23,10 +23,8 @@ def test_postgres_backended_azure_simulation_model_upload_and_access_via_api(
         azurite_queue_port = compose.get_service_port("azurite", 10001)
 
         base_url = f"http://{mlflow_host}:{mlflow_port}"
-        azurite_blob_url = f"http://{azurite_host}:{azurite_blob_port}"
 
         compose.wait_for(base_url)
-        compose.wait_for(azurite_blob_url)
 
         experiment_name = "azure-cloud-postgres-experiment"
         model_name = "test-azure-pg-model"
