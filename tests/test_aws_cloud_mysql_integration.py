@@ -50,10 +50,9 @@ def test_mysql_backended_aws_simulation_model_upload_and_access_via_api(
             )
 
         params = {"name": model_name, "stages": stage_name}
-        latest_version_url = (
-            f"{base_url}/api/2.0/preview/mlflow/registered-models/get-latest-versions"
-        )
+        latest_version_url = f"{base_url}/api/2.0/mlflow/registered-models/get-latest-versions"
         r = requests.get(url=latest_version_url, params=params)
 
+        print(r.json())
         assert "1" == r.json()["model_versions"][0]["version"]
         assert "READY" == r.json()["model_versions"][0]["status"]
