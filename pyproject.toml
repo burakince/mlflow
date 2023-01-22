@@ -17,7 +17,7 @@ PyMySQL = "^1.0.2"
 cryptography = "38.0.4"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^7.2"
 testcontainers = "^3.5.3"
 requests = "^2.27.1"
 cloudpickle = "^2.0.0"
