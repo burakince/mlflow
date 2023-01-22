@@ -13,6 +13,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    reviewers:
+      - "burakince"
 
   - package-ecosystem: "pip"
     directory: "/"
@@ -21,3 +23,5 @@ updates:
     ignore:
       - dependency-name: "cryptography"
         update-types: ["version-update:semver-major"]
+    reviewers:
+      - "burakince"
