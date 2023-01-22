@@ -12,7 +12,7 @@ google-cloud-storage = "^2.2.1"
 SQLAlchemy = "^1.4.35"
 boto3 = "^1.26.54"
 psycopg2-binary = "^2.9.3"
-protobuf = "<4.0.0"
+protobuf = "<5.0.0"
 PyMySQL = "^1.0.2"
 cryptography = "38.0.4"
 
