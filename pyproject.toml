@@ -20,7 +20,7 @@ cryptography = "38.0.4"
 pytest = "^7.2"
 testcontainers = "^3.5.3"
 requests = "^2.27.1"
-cloudpickle = "^2.0.0"
+cloudpickle = "^2.2.1"
 pre-commit = "^2.18.1"
 
 [build-system]
