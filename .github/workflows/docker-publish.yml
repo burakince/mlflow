@@ -105,11 +105,7 @@ jobs:
       - name: Install ORAS
         id: install_oras
         if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
-        run: |
-          orasVersion=$( curl --silent https://api.github.com/repos/oras-project/oras/releases/latest | jq -r '.tag_name' | sed 's/v//' )
-          curl -LO https://github.com/oras-project/oras/releases/download/v${orasVersion}/oras_${orasVersion}_linux_amd64.tar.gz
-          tar -zxvf oras_${orasVersion}_linux_amd64.tar.gz
-          rm -f oras_${orasVersion}_linux_amd64.tar.gz
+        uses: oras-project/setup-oras@main
 
       - name: Install Cosign
         id: install_cosign
