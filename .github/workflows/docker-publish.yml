@@ -104,16 +104,14 @@ jobs:
 
       - name: Install ORAS
         id: install_oras
-        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
         uses: oras-project/setup-oras@main
 
       - name: Install Cosign
         id: install_cosign
-        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
-        uses: sigstore/cosign-installer@main
+        uses: sigstore/cosign-installer@v2.8.1
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@master
+        uses: docker/setup-qemu-action@v2.1.0
         with:
           platforms: all
 
@@ -193,7 +191,7 @@ jobs:
       - name: Run Snyk to check Docker image for vulnerabilities
         id: docker-image-scan
         continue-on-error: true
-        uses: snyk/actions/docker@master
+        uses: snyk/actions/docker@0.3.0
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
