@@ -25,3 +25,10 @@ updates:
         update-types: ["version-update:semver-major"]
     reviewers:
       - "burakince"
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "burakince"
