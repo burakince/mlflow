@@ -181,7 +181,7 @@ jobs:
       # Build Docker image with Buildx and don't push it
       - name: Build Docker image
         id: build-docker-image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           platforms: linux/arm64/v8,linux/amd64
@@ -214,7 +214,7 @@ jobs:
       - name: Build and push Docker image
         if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
         id: build-and-push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           platforms: linux/arm64/v8,linux/amd64
