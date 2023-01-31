@@ -1,6 +1,4 @@
-ARG PYTHON_VERSION=3.9.16
-
-FROM python:${PYTHON_VERSION} AS foundation
+FROM python:3.9.16 AS foundation
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
@@ -41,7 +39,7 @@ RUN python -m pip install --upgrade pip
 RUN pip install poetry wheel &&  \
     poetry install --no-root --no-dev
 
-FROM python:${PYTHON_VERSION}-slim
+FROM python:3.9.16-slim
 
 WORKDIR /mlflow/
 
