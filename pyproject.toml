@@ -14,7 +14,7 @@ boto3 = "^1.26.66"
 psycopg2-binary = "^2.9.3"
 protobuf = "<5.0.0"
 PyMySQL = "^1.0.2"
-cryptography = "38.0.4"
+cryptography = "39.0.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2"
