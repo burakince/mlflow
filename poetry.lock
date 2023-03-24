@@ -2339,14 +2339,14 @@ python-dateutil = ">=2.7"
 
 [[package]]
 name = "mlflow"
-version = "2.1.1"
+version = "2.2.1"
 description = "MLflow: A Platform for ML Development and Productionization"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mlflow-2.1.1-py3-none-any.whl", hash = "sha256:42cfb0c4c316398217237cc08f2b08604fb29f21057c83d6705157d18b47565c"},
-    {file = "mlflow-2.1.1.tar.gz", hash = "sha256:a116b3cd45bbfb509a1723bfd4388bdb566a3e5045e3cde5390e667f591498a6"},
+    {file = "mlflow-2.2.1-py3-none-any.whl", hash = "sha256:861dc2f0d965daaa67d9925b8f1ea155317fb7c4ddee5133d3ec705f7885a0a2"},
+    {file = "mlflow-2.2.1.tar.gz", hash = "sha256:85a19929292aafa08cc5c8d297c1d0e666ace775a59a414c5f67cb65967fe967"},
 ]
 
 [package.dependencies]
@@ -2362,7 +2362,7 @@ Flask = "<3"
 gitpython = ">=2.1.0,<4"
 google-cloud-storage = {version = ">=1.30.0", optional = true, markers = "extra == \"extras\""}
 gunicorn = {version = "<21", markers = "platform_system != \"Windows\""}
-importlib-metadata = ">=3.7.0,<4.7.0 || >4.7.0,<6"
+importlib-metadata = ">=3.7.0,<4.7.0 || >4.7.0,<7"
 Jinja2 = [
     {version = ">=2.11,<4", markers = "platform_system != \"Windows\""},
     {version = ">=3.0,<4", markers = "platform_system == \"Windows\""},
@@ -2373,12 +2373,12 @@ matplotlib = "<4"
 mlserver = {version = ">=1.2.0.dev13", optional = true, markers = "extra == \"extras\""}
 mlserver-mlflow = {version = ">=1.2.0.dev13", optional = true, markers = "extra == \"extras\""}
 numpy = "<2"
-packaging = "<23"
-pandas = "<2"
+packaging = "<24"
+pandas = "<3"
 prometheus-flask-exporter = {version = "*", optional = true, markers = "extra == \"extras\""}
 protobuf = ">=3.12.0,<5"
 pyarrow = [
-    {version = ">=4.0.0,<11"},
+    {version = ">=4.0.0,<12"},
     {version = "*", optional = true, markers = "extra == \"extras\""},
 ]
 pysftp = {version = "*", optional = true, markers = "extra == \"extras\""}
@@ -2387,20 +2387,17 @@ pyyaml = ">=5.1,<7"
 querystring-parser = "<2"
 requests = ">=2.17.3,<3"
 requests-auth-aws-sigv4 = {version = "*", optional = true, markers = "extra == \"extras\""}
-scikit-learn = [
-    {version = "<2"},
-    {version = "*", optional = true, markers = "extra == \"extras\""},
-]
+scikit-learn = "<2"
 scipy = "<2"
 shap = ">=0.40,<1"
-sqlalchemy = ">=1.4.0,<2"
+sqlalchemy = ">=1.4.0,<3"
 sqlparse = ">=0.4.0,<1"
 virtualenv = {version = "*", optional = true, markers = "extra == \"extras\""}
 waitress = {version = "<3", markers = "platform_system == \"Windows\""}
 
 [package.extras]
 aliyun-oss = ["aliyunstoreplugin"]
-extras = ["azureml-core (>=1.2.0)", "boto3", "google-cloud-storage (>=1.30.0)", "kubernetes", "mlserver (>=1.2.0.dev13)", "mlserver-mlflow (>=1.2.0.dev13)", "prometheus-flask-exporter", "pyarrow", "pysftp", "requests-auth-aws-sigv4", "scikit-learn", "virtualenv"]
+extras = ["azureml-core (>=1.2.0)", "boto3", "google-cloud-storage (>=1.30.0)", "kubernetes", "mlserver (>=1.2.0.dev13)", "mlserver-mlflow (>=1.2.0.dev13)", "prometheus-flask-exporter", "pyarrow", "pysftp", "requests-auth-aws-sigv4", "virtualenv"]
 sqlserver = ["mlflow-dbstore"]
 
 [[package]]
@@ -4654,4 +4651,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "3.9.*"
-content-hash = "8a556741d1803042d1e721a0b2264240f5b38f519c8e4219a4feb1feac524f75"
+content-hash = "27c90559aa1ae9fe8f61775a9fbcf6359392932a86476dd24da8dcb8a4e06410"
