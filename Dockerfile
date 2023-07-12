@@ -1,4 +1,4 @@
-FROM python:3.9.16 AS foundation
+FROM python:3.11.4 AS foundation
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
@@ -22,7 +22,7 @@ RUN apt-get update && \
       libsqlite3-dev \
       wget \
       curl \
-      llvm-9 \
+      llvm-15 \
       libncursesw5-dev \
       xz-utils \
       tk-dev \
@@ -32,14 +32,14 @@ RUN apt-get update && \
       liblzma-dev && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN ln -s /usr/bin/llvm-config-9 /usr/bin/llvm-config
+RUN ln -s /usr/bin/llvm-config-15 /usr/bin/llvm-config
 
 RUN python -m pip install --upgrade pip
 
 RUN pip install poetry wheel &&  \
     poetry install --no-root --no-dev
 
-FROM python:3.9.16-slim
+FROM python:3.11.4-slim
 
 WORKDIR /mlflow/
 

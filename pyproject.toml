@@ -1,27 +1,27 @@
 [tool.poetry]
 name = "mlflowstack"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
-authors = ["Burak Ince <burak.ince@linux.org.tr>"]
+authors = ["Burak Ince <burak.ince@linux.org.tr>","Bob Rasey <bob.rasey@verusen.com>"]
 
 [tool.poetry.dependencies]
-python = "3.9.*"
-mlflow = {version = "2.1.1", extras = ["extras", "pipelines"]}
-azure-storage-blob = "^12.11.0"
-google-cloud-storage = "^2.2.1"
-SQLAlchemy = "^1.4.35"
-boto3 = "^1.26.66"
-psycopg2-binary = "^2.9.3"
+python = "3.11.*"
+mlflow = {version = "2.4.2", extras = ["extras", "pipelines"]}
+azure-storage-blob = "^12.17.0"
+google-cloud-storage = "^2.10.0"
+SQLAlchemy = "^2.0.18"
+boto3 = "^1.28.2"
+psycopg2-binary = "^2.9.6"
 protobuf = "<5.0.0"
-PyMySQL = "^1.0.2"
-cryptography = "38.0.4"
+PyMySQL = "^1.1.0"
+cryptography = "41.0.2"
 
 [tool.poetry.dev-dependencies]
-pytest = "^7.2"
-testcontainers = "^3.5.3"
-requests = "^2.27.1"
+pytest = "^7.4.0"
+testcontainers = "^3.7.1"
+requests = "^2.31.0"
 cloudpickle = "^2.2.1"
-pre-commit = "^3.0.4"
+pre-commit = "^3.3.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
