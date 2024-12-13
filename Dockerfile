@@ -1,4 +1,4 @@
-FROM python:3.13.1 AS foundation
+FROM python:3.12.8 AS foundation
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
@@ -38,7 +38,7 @@ RUN python -m pip install --upgrade pip
 RUN pip install poetry wheel &&  \
     poetry install --no-root --no-dev
 
-FROM python:3.13.1-slim
+FROM python:3.12.8-slim
 
 WORKDIR /mlflow/
 
