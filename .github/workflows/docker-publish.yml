@@ -30,6 +30,13 @@ jobs:
   integrationtest:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        database-combo:
+          - { postgres: "15", mysql: "8.0" }
+          - { postgres: "16", mysql: "8.4" }
+          - { postgres: "17", mysql: "9.1" }
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -74,9 +81,22 @@ jobs:
         run: poetry install --no-interaction
 
       #----------------------------------------------
+      # Overwrite .env file to test different version of databases
+      #----------------------------------------------
+      - name: Set up .env file
+        run: |
+          echo "POSTGRES_VERSION=${{ matrix.database-combo.postgres }}" > .env
+          echo "MYSQL_VERSION=${{ matrix.database-combo.mysql }}" >> .env
+          echo "MINIO_VERSION=RELEASE.2024-11-07T00-52-20Z" >> .env
+          echo "FAKE_GCS_SERVER_VERSION=1.50.2" >> .env
+
+      #----------------------------------------------
       #              run test suite
       #----------------------------------------------
       - name: Run tests
+        env:
+          POSTGRES_VERSION: ${{ matrix.database-combo.postgres }}
+          MYSQL_VERSION: ${{ matrix.database-combo.mysql }}
         run: |
           source .venv/bin/activate
           poetry run pytest
