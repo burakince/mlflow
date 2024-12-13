@@ -47,6 +47,6 @@ COPY --from=foundation /mlflow /mlflow
 ENV PATH=/mlflow/.venv/bin:$PATH
 
 # Tell Python *not* to buffer output. Useful to have "real-time" log output within containers.
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 
-CMD mlflow server --backend-store-uri sqlite:///:memory --default-artifact-root ./mlruns --host=0.0.0.0 --port=5000
+CMD ["mlflow", "server", "--backend-store-uri", "sqlite:///:memory", "--default-artifact-root", "./mlruns", "--host=0.0.0.0", "--port=5000"]
