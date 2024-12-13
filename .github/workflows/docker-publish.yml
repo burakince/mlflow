@@ -91,6 +91,8 @@ jobs:
           echo "MYSQL_VERSION=${{ matrix.database-combo.mysql }}" >> .env
           echo "MINIO_VERSION=RELEASE.2024-11-07T00-52-20Z" >> .env
           echo "FAKE_GCS_SERVER_VERSION=1.50.2" >> .env
+          echo "AZURITE_VERSION=3.33.0" >> .env
+          echo "AZURE_STORAGE_BLOB_VERSION=12.26.0" >> .env
 
       #----------------------------------------------
       #              run test suite
