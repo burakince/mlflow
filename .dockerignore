@@ -3,6 +3,7 @@
 .git
 .github
 .pytest_cache
+.vscode
 
 # Dot Files
 .pre-commit-config.yaml

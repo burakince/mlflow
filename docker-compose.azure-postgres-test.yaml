@@ -7,6 +7,9 @@ services:
     build:
       context: test-containers/azurite
       dockerfile: Dockerfile
+      args:
+        AZURITE_VERSION: ${AZURITE_VERSION}
+        AZURE_STORAGE_BLOB_VERSION: ${AZURE_STORAGE_BLOB_VERSION}
     command: sh -c "sh /run.sh | azurite -l /data --blobHost 0.0.0.0 --queueHost 0.0.0.0 --loose --skipApiVersionCheck"
     environment:
       AZURE_STORAGE_ACCOUNT: devstoreaccount1

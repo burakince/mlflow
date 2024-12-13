@@ -13,7 +13,7 @@ def test_postgres_backended_aws_simulation_model_upload_and_access_via_api(
     with DockerCompose(
         context=".",
         compose_file_name=["docker-compose.aws-postgres-test.yaml"],
-        pull=True,
+        # pull=True,
         build=True,
     ) as compose:
         mlflow_host = compose.get_service_host("mlflow", 8080)
@@ -43,15 +43,15 @@ def test_postgres_backended_aws_simulation_model_upload_and_access_via_api(
             model_details = mlflow.register_model(model_uri, model_name)
 
             client = MlflowClient()
-            client.transition_model_version_stage(
+            client.set_registered_model_alias(
                 name=model_details.name,
+                alias=stage_name,
                 version=model_details.version,
-                stage=stage_name,
             )
 
-        params = {"name": model_name, "stages": stage_name}
-        latest_version_url = f"{base_url}/api/2.0/mlflow/registered-models/get-latest-versions"
-        r = requests.get(url=latest_version_url, params=params)
+        params = {"name": model_name, "alias": stage_name}
+        latest_version_url = f"{base_url}/api/2.0/mlflow/registered-models/alias"
+        r = requests.get(url=latest_version_url, params=params, timeout=300)
 
-        assert "1" == r.json()["model_versions"][0]["version"]
-        assert "READY" == r.json()["model_versions"][0]["status"]
+        assert "1" == r.json()["model_version"]["version"]
+        assert "READY" == r.json()["model_version"]["status"]
