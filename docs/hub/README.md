@@ -9,6 +9,16 @@ Please find mlflow docker files from [github repository](https://github.com/bura
 
 # Simple Tags
 
+- [2.19.0](https://github.com/burakince/mlflow/blob/2.19.0/Dockerfile)
+- [2.1.1](https://github.com/burakince/mlflow/blob/2.1.1/Dockerfile)
+- [2.1.0](https://github.com/burakince/mlflow/blob/2.1.0/Dockerfile)
+- [2.0.1](https://github.com/burakince/mlflow/blob/2.0.1/Dockerfile)
+- [1.30.0](https://github.com/burakince/mlflow/blob/1.30.0/Dockerfile)
+- [1.29.0](https://github.com/burakince/mlflow/blob/1.29.0/Dockerfile)
+- [1.28.0](https://github.com/burakince/mlflow/blob/1.28.0/Dockerfile)
+- [1.27.0](https://github.com/burakince/mlflow/blob/1.27.0/Dockerfile)
+- [1.26.1](https://github.com/burakince/mlflow/blob/1.26.1/Dockerfile)
+- [1.26.0](https://github.com/burakince/mlflow/blob/1.26.0/Dockerfile)
 - [1.25.1](https://github.com/burakince/mlflow/blob/1.25.1/Dockerfile)
 - [1.25.0](https://github.com/burakince/mlflow/blob/1.25.0/Dockerfile)
 - [1.24.0](https://github.com/burakince/mlflow/blob/1.24.0/Dockerfile)

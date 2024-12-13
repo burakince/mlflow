@@ -209,6 +209,8 @@ jobs:
           platforms: linux/arm64/v8,linux/amd64
           push: false
           tags: docker.io/${{ env.IMAGE_NAME }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Run Snyk to check Docker image for vulnerabilities
         id: docker-image-scan
@@ -251,7 +253,7 @@ jobs:
       # repository is public to avoid leaking data.  If you would like to publish
       # transparency data even for private images, pass --force to cosign below.
       # https://github.com/sigstore/cosign
-      - name: Sign the published Docker image
+      - name: Sign the published Docker images
         if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
         run: |
           echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign -y {}@${{ steps.build-and-push.outputs.digest }}

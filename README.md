@@ -8,6 +8,15 @@
 
 Please find mlflow docker images from [mlflow docker hub repository](https://hub.docker.com/r/burakince/mlflow).
 
+# Database Requirements
+
+The following database versions have been tested for compatibility:
+
+- PostgreSQL: 15, 16, 17
+- MySQL: 8.0, 8.4, 9.1
+
+It is recommended to use at least the minimum tested major version of the database to ensure proper functionality and compatibility.
+
 # Usage
 
 Run following command
