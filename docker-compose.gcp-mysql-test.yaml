@@ -34,12 +34,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: "mlflow server --backend-store-uri=mysql+pymysql://mlflow:password@mysql:3306/mlflow --default-artifact-root=gs://mlflow/ --host=0.0.0.0 --port=5000"
+    command: "mlflow server --backend-store-uri=mysql+pymysql://mlflow:password@mysql:3306/mlflow --default-artifact-root=gs://mlflow/ --host=0.0.0.0 --port=8080"
     environment:
       GOOGLE_CLOUD_PROJECT: mlflow
       STORAGE_EMULATOR_HOST: http://gcs:4443
     ports:
-      - "5000:5000"
+      - "8080:8080"
     networks:
       - gcp_mysql_test_nw
     volumes:

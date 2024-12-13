@@ -12,9 +12,13 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     reviewers:
       - "burakince"
+    groups:
+      actions-deps:
+        patterns:
+          - "*"
 
   - package-ecosystem: "pip"
     directory: "/"
@@ -25,13 +29,21 @@ updates:
         update-types: ["version-update:semver-major"]
     reviewers:
       - "burakince"
+    groups:
+      pip-deps:
+        patterns:
+          - "*"
 
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     ignore:
       - dependency-name: "python"
         update-types: ["version-update:semver-minor"]
     reviewers:
       - "burakince"
+    groups:
+      docker-deps:
+        patterns:
+          - "*"

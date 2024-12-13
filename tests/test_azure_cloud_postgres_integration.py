@@ -12,13 +12,13 @@ def test_postgres_backended_azure_simulation_model_upload_and_access_via_api(
     test_model, training_params, conda_env
 ):
     with DockerCompose(
-        filepath=".",
+        context=".",
         compose_file_name=["docker-compose.azure-postgres-test.yaml"],
         pull=True,
         build=True,
     ) as compose:
-        mlflow_host = compose.get_service_host("mlflow", 5000)
-        mlflow_port = compose.get_service_port("mlflow", 5000)
+        mlflow_host = compose.get_service_host("mlflow", 8080)
+        mlflow_port = compose.get_service_port("mlflow", 8080)
         azurite_host = compose.get_service_host("azurite", 10000)
         azurite_blob_port = compose.get_service_port("azurite", 10000)
         azurite_queue_port = compose.get_service_port("azurite", 10001)

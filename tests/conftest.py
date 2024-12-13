@@ -1,9 +1,11 @@
-from platform import python_version
+from sys import version_info
 
 import cloudpickle
 import pytest
 
 import mlflow
+
+PYTHON_VERSION = f"{version_info.major}.{version_info.minor}.{version_info.micro}"
 
 
 class TestModel(mlflow.pyfunc.PythonModel):
@@ -22,18 +24,17 @@ def training_params():
 
 @pytest.fixture
 def test_model(training_params):
-    test_model = TestModel(**training_params)
-    return test_model
+    return TestModel(**training_params)
 
 
 @pytest.fixture
 def conda_env():
     return {
         "channels": ["defaults", "conda-forge"],
-        "dependencies": [
-            "python={}".format(python_version()),
-            "pip",
-            {"pip": ["cloudpickle={}".format(cloudpickle.__version__)]},
+        "dependencies": [f"python={PYTHON_VERSION}", "pip"],
+        "pip": [
+            "mlflow",
+            f"cloudpickle=={cloudpickle.__version__}",
         ],
         "name": "mlflow-env",
     }

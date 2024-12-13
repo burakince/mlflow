@@ -11,13 +11,13 @@ def test_mysql_backended_gcp_simulation_model_upload_and_access_via_api(
     test_model, training_params, conda_env
 ):
     with DockerCompose(
-        filepath=".",
+        context=".",
         compose_file_name=["docker-compose.gcp-mysql-test.yaml"],
         pull=True,
         build=True,
     ) as compose:
-        mlflow_host = compose.get_service_host("mlflow", 5000)
-        mlflow_port = compose.get_service_port("mlflow", 5000)
+        mlflow_host = compose.get_service_host("mlflow", 8080)
+        mlflow_port = compose.get_service_port("mlflow", 8080)
         gcs_host = compose.get_service_host("gcs", 4443)
         gcs_port = compose.get_service_port("gcs", 4443)
 

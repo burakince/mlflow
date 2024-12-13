@@ -5,23 +5,24 @@ description = ""
 authors = ["Burak Ince <burak.ince@linux.org.tr>"]
 
 [tool.poetry.dependencies]
-python = "3.9.*"
-mlflow = {version = "2.1.1", extras = ["extras", "pipelines"]}
-azure-storage-blob = "^12.11.0"
-google-cloud-storage = "^2.2.1"
-SQLAlchemy = "^1.4.35"
-boto3 = "^1.26.66"
-psycopg2-binary = "^2.9.3"
-protobuf = "<5.0.0"
-PyMySQL = "^1.0.2"
-cryptography = "38.0.4"
+python = "3.13.*"
+mlflow = {extras = ["extras", "pipelines"], version = "^2.19.0"}
+azure-storage-blob = "^12.24.0"
+google-cloud-storage = "^2.19.0"
+SQLAlchemy = "^2.0.36"
+boto3 = "^1.35.80"
+psycopg2-binary = "^2.9.10"
+protobuf = "^5.29.1"
+PyMySQL = "^1.1.1"
+cryptography = "^44.0.0"
+cffi = "1.17.1"
 
-[tool.poetry.dev-dependencies]
-pytest = "^7.2"
-testcontainers = "^3.5.3"
-requests = "^2.27.1"
-cloudpickle = "^2.2.1"
-pre-commit = "^3.0.4"
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+testcontainers = "^4.9.0"
+requests = "^2.32.3"
+cloudpickle = "^3.1.0"
+pre-commit = "^4.0.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -15,3 +15,12 @@ Run following command
 ```
 docker run -d -p 5000:5000 burakince/mlflow
 ```
+
+## Development
+
+Enabling Colima for testcontainers.
+
+```bash
+export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
+export DOCKER_HOST="unix://${HOME}/.colima/docker.sock"
+```

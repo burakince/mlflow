@@ -11,13 +11,13 @@ def test_mysql_backended_aws_simulation_model_upload_and_access_via_api(
     test_model, training_params, conda_env
 ):
     with DockerCompose(
-        filepath=".",
+        context=".",
         compose_file_name=["docker-compose.aws-mysql-test.yaml"],
         pull=True,
         build=True,
     ) as compose:
-        mlflow_host = compose.get_service_host("mlflow", 5000)
-        mlflow_port = compose.get_service_port("mlflow", 5000)
+        mlflow_host = compose.get_service_host("mlflow", 8080)
+        mlflow_port = compose.get_service_port("mlflow", 8080)
         minio_host = compose.get_service_host("minio", 9000)
         minio_port = compose.get_service_port("minio", 9000)
 
