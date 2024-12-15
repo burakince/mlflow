@@ -1,39 +1,54 @@
 import re
-import subprocess
 import time
 
+import docker
 from testcontainers.compose import DockerCompose
 
 
 class ExtendedDockerCompose(DockerCompose):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.docker_client = docker.from_env()
+
     def wait_for_logs(self, service_name, expected_log, timeout=120, interval=5):
-        # Get the directory where the compose file is located (context)
-        compose_dir = self.context
-        compose_files = self.compose_file_name
+        """
+        Wait for a specific log entry in the Docker service's logs.
 
-        if isinstance(compose_files, list):
-            compose_file_args = []
-            for file in compose_files:
-                compose_file_args.extend(["-f", file])
-        else:
-            compose_file_args = ["-f", compose_files]
-
+        :param service_name: The name of the service in the Docker Compose file.
+        :param expected_log: A string or regex pattern to match in the service logs.
+        :param timeout: Maximum time to wait for the log in seconds.
+        :param interval: Time interval between log checks in seconds.
+        """
         start_time = time.time()
+
         while time.time() - start_time < timeout:
-            try:
-                # Fetch the logs of the specific service using subprocess
-                logs = subprocess.check_output(
-                    ["docker-compose", *compose_file_args, "logs", service_name],
-                    cwd=compose_dir,  # Use the correct directory
-                    text=True,
-                )
-                # Use regex search to match the expected log pattern
-                if re.search(expected_log, logs):
-                    print(f"Found expected log matching: {expected_log}")
-                    return
-            except subprocess.CalledProcessError as e:
-                print(f"Error fetching logs: {e}")
+            logs = self.get_service_logs(service_name)
+
+            # Use regex to match the expected log pattern
+            if re.search(expected_log, logs):
+                print(f"Found expected log matching: {expected_log}")
+                return
+
             time.sleep(interval)
+
         raise TimeoutError(
             f"Log message matching '{expected_log!r}' not found within {timeout} seconds."
         )
+
+    def get_service_logs(self, service_name):
+        """
+        Fetch logs for a specific service using the Docker SDK.
+
+        :param service_name: The name of the service in the Docker Compose file.
+        :return: The logs as a decoded string.
+        """
+        try:
+            containers = self.docker_client.containers.list(filters={"name": service_name})
+            if not containers:
+                raise ValueError(f"No container found for service '{service_name!r}'")
+
+            logs = containers[0].logs().decode("utf-8")
+            return logs
+        except Exception as e:
+            # Explicitly re-raise the exception with additional context
+            raise RuntimeError(f"Error fetching logs for service '{service_name!r}': {e}") from e

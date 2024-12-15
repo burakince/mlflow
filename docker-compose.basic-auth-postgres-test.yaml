@@ -66,7 +66,7 @@ services:
       - basic_auth_test_nw
     volumes:
       - mlflow-basic-auth-storage:/mlflow
-      - ./test-containers/basic-auth/basic_auth.ini:/mlflow/basic_auth.ini
+      - ./test-containers/basic-auth/postgres/basic_auth.ini:/mlflow/basic_auth.ini
     depends_on:
       - minio
       - postgres

@@ -15,7 +15,7 @@ def test_postgres_backended_model_upload_and_access_with_basic_auth(
 ):
     with ExtendedDockerCompose(
         context=".",
-        compose_file_name=["docker-compose.basic-auth-test.yaml"],
+        compose_file_name=["docker-compose.basic-auth-postgres-test.yaml"],
         # pull=True,
         build=True,
     ) as compose:
