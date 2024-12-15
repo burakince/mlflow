@@ -12,18 +12,13 @@ from mlflow.tracking.client import MlflowClient
 from .extended_docker_compose import ExtendedDockerCompose
 
 
-@pytest.mark.skip(
-    reason="""
-auth alembic migrations getting duplicate key value violates unique constraint
- `pg_type_typname_nsp_index` error and craches the gunicorn server
-"""
-)
-def test_postgres_backended_model_upload_and_access_with_basic_auth(
+@pytest.mark.skip(reason="alembic auth migrations doesn't work for mysql")
+def test_mysql_backended_model_upload_and_access_with_basic_auth(
     test_model, training_params, conda_env
 ):
     with ExtendedDockerCompose(
         context=".",
-        compose_file_name=["docker-compose.basic-auth-postgres-test.yaml"],
+        compose_file_name=["docker-compose.basic-auth-mysql-test.yaml"],
         # pull=True,
         build=True,
     ) as compose:
@@ -45,8 +40,8 @@ def test_postgres_backended_model_upload_and_access_with_basic_auth(
         compose.wait_for_logs("mlflow", ".*8606fa83a998, initial_migration")
         time.sleep(5)  # Wait 5 seconds more the get flask ready
 
-        experiment_name = "basic-auth-postgres-experiment"
-        model_name = "test-basic-auth-pg-model"
+        experiment_name = "basic-auth-mysql-experiment"
+        model_name = "test-basic-auth-mysql-model"
         stage_name = "Staging"
         os.environ["MLFLOW_TRACKING_USERNAME"] = mlflow_admin_username
         os.environ["MLFLOW_TRACKING_PASSWORD"] = mlflow_admin_password
