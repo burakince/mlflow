@@ -35,10 +35,11 @@ def test_postgres_backended_model_upload_and_access_with_basic_auth(
 
         log_message = f".*Listening at: {re.escape(base_url)}.*"
         compose.wait_for_logs("mlflow", log_message)
-        time.sleep(3)  # Wait 3 seconds more the get flask ready
+        compose.wait_for_logs("mlflow", ".*8606fa83a998, initial_migration")
+        time.sleep(5)  # Wait 5 seconds more the get flask ready
 
-        experiment_name = "aws-cloud-postgres-experiment"
-        model_name = "test-aws-pg-model"
+        experiment_name = "basic-auth-postgres-experiment"
+        model_name = "test-basic-auth-pg-model"
         stage_name = "Staging"
         os.environ["MLFLOW_TRACKING_USERNAME"] = mlflow_admin_username
         os.environ["MLFLOW_TRACKING_PASSWORD"] = mlflow_admin_password

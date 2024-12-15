@@ -1,6 +1,6 @@
 services:
   minio:
-    container_name: minio-basic-auth-test
+    container_name: minio-basic-auth-pg-test
     hostname: minio
     image: minio/minio:${MINIO_VERSION}
     entrypoint: sh
@@ -12,13 +12,13 @@ services:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - minio-basic-auth-storage:/data
+      - minio-basic-auth-pg-storage:/data
     networks:
-      - basic_auth_test_nw
+      - basic_auth_pg_test_nw
 
   postgres:
     image: "postgres:${POSTGRES_VERSION}"
-    container_name: mlflow-basic-auth-db
+    container_name: mlflow-basic-auth-pg-db
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
@@ -28,11 +28,11 @@ services:
     volumes:
       - postgres-basic-auth-storage:/var/lib/postgresql/data
     networks:
-      - basic_auth_test_nw
+      - basic_auth_pg_test_nw
 
   usersdb:
     image: "postgres:${POSTGRES_VERSION}"
-    container_name: mlflow-basic-auth-users-db
+    container_name: mlflow-basic-auth-users-pg-db
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
@@ -42,10 +42,10 @@ services:
     volumes:
       - postgres-basic-auth-users-storage:/var/lib/postgresql/data
     networks:
-      - basic_auth_test_nw
+      - basic_auth_pg_test_nw
 
   mlflow:
-    container_name: mlflow-basic-auth-test
+    container_name: mlflow-basic-auth-pg-test
     build:
       context: .
       dockerfile: Dockerfile
@@ -63,9 +63,9 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - basic_auth_test_nw
+      - basic_auth_pg_test_nw
     volumes:
-      - mlflow-basic-auth-storage:/mlflow
+      - mlflow-basic-auth-pg-storage:/mlflow
       - ./test-containers/basic-auth/postgres/basic_auth.ini:/mlflow/basic_auth.ini
     depends_on:
       - minio
@@ -77,11 +77,11 @@ volumes:
     driver: local
   postgres-basic-auth-users-storage:
     driver: local
-  mlflow-basic-auth-storage:
+  mlflow-basic-auth-pg-storage:
     driver: local
-  minio-basic-auth-storage:
+  minio-basic-auth-pg-storage:
     driver: local
 
 networks:
-  basic_auth_test_nw:
+  basic_auth_pg_test_nw:
     driver: bridge
