@@ -2,11 +2,11 @@ import os
 import re
 import time
 
+import requests
+
 import mlflow
 from mlflow.server.auth.client import AuthServiceClient
 from mlflow.tracking.client import MlflowClient
-
-import requests
 
 from .extended_docker_compose import ExtendedDockerCompose
 
