@@ -1,30 +1,28 @@
 name: Build and Publish Mlflow Docker Image
 
-
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     # Publish semver tags as releases.
     tags:
-      - '*.*.*'
-      - '*.*.*.*'
+      - "*.*.*"
+      - "*.*.*.*"
     paths:
-      - '.github/workflows/docker-publish.yml'
-      - '.env'
-      - 'poetry.lock'
-      - 'poetry.toml'
-      - 'pyproject.toml'
-      - 'Dockerfile'
-      - 'mlflowstack/**'
-      - 'docker-compose.*.yaml'
-      - 'tests/**'
-      - 'test-containers/**'
+      - ".github/workflows/docker-publish.yml"
+      - ".env"
+      - "poetry.lock"
+      - "poetry.toml"
+      - "pyproject.toml"
+      - "Dockerfile"
+      - "mlflowstack/**"
+      - "docker-compose.*.yaml"
+      - "tests/**"
+      - "test-containers/**"
 
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
   workflow_dispatch:
-
 
 jobs:
   integrationtest:
@@ -33,9 +31,30 @@ jobs:
     strategy:
       matrix:
         database-combo:
-          - { postgres: "15", mysql: "8.0", minio: "RELEASE.2024-11-07T00-52-20Z", gcs: "1.50.2", azurite: "3.33.0", azure-storage-blob: "12.26.0" }
-          - { postgres: "16", mysql: "8.4", minio: "RELEASE.2024-11-07T00-52-20Z", gcs: "1.50.2", azurite: "3.33.0", azure-storage-blob: "12.26.0" }
-          - { postgres: "17", mysql: "9.1", minio: "RELEASE.2024-11-07T00-52-20Z", gcs: "1.50.2", azurite: "3.33.0", azure-storage-blob: "12.26.0" }
+          - {
+              postgres: "15",
+              mysql: "8.0",
+              minio: "RELEASE.2024-11-07T00-52-20Z",
+              gcs: "1.50.2",
+              azurite: "3.33.0",
+              azure-storage-blob: "12.26.0",
+            }
+          - {
+              postgres: "16",
+              mysql: "8.4",
+              minio: "RELEASE.2024-11-07T00-52-20Z",
+              gcs: "1.50.2",
+              azurite: "3.33.0",
+              azure-storage-blob: "12.26.0",
+            }
+          - {
+              postgres: "17",
+              mysql: "9.1",
+              minio: "RELEASE.2024-11-07T00-52-20Z",
+              gcs: "1.50.2",
+              azurite: "3.33.0",
+              azure-storage-blob: "12.26.0",
+            }
 
     name: Test PostgreSQL ${{ matrix.database-combo.postgres }} & MySQL ${{ matrix.database-combo.mysql }}
 
@@ -89,8 +108,8 @@ jobs:
         id: cache-docker-images
         uses: actions/cache@v4
         with:
-          path: /tmp/.docker  # This path stores the Docker images and cache
-          key: ${{ runner.os }}-docker-images-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}
+          path: /tmp/.docker # This path stores the Docker images and cache
+          key: ${{ runner.os }}-docker-images-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}
           restore-keys: |
             ${{ runner.os }}-docker-images-
 
@@ -101,7 +120,7 @@ jobs:
         run: |
           # Pull PostgreSQL image if not cached
           if ! docker image inspect postgres:${{ matrix.database-combo.postgres }} > /dev/null 2>&1; then
-            echo "PostgreSQL image not found locally. Pulling image..."
+            echo "PostgreSQL ${{ matrix.database-combo.postgres }} image not found locally. Pulling image..."
             docker pull postgres:${{ matrix.database-combo.postgres }}
           else
             echo "PostgreSQL image already exists. Using cache."
@@ -109,7 +128,7 @@ jobs:
 
           # Pull MySQL image if not cached
           if ! docker image inspect mysql:${{ matrix.database-combo.mysql }} > /dev/null 2>&1; then
-            echo "MySQL image not found locally. Pulling image..."
+            echo "MySQL ${{ matrix.database-combo.mysql }} image not found locally. Pulling image..."
             docker pull mysql:${{ matrix.database-combo.mysql }}
           else
             echo "MySQL image already exists. Using cache."
@@ -117,7 +136,7 @@ jobs:
 
           # Pull Minio image if not cached
           if ! docker image inspect minio/minio:${{ matrix.database-combo.minio }} > /dev/null 2>&1; then
-            echo "Minio image not found locally. Pulling image..."
+            echo "Minio ${{ matrix.database-combo.minio }} image not found locally. Pulling image..."
             docker pull minio/minio:${{ matrix.database-combo.minio }}
           else
             echo "Minio image already exists. Using cache."
@@ -125,7 +144,7 @@ jobs:
 
           # Pull Fake GCS Server image if not cached
           if ! docker image inspect fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }} > /dev/null 2>&1; then
-            echo "Fake GCS Server image not found locally. Pulling image..."
+            echo "Fake GCS Server ${{ matrix.database-combo.gcs }} image not found locally. Pulling image..."
             docker pull fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }}
           else
             echo "Fake GCS Server image already exists. Using cache."
@@ -133,8 +152,10 @@ jobs:
 
           # Pull Azurite image if not cached
           if ! docker image inspect mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }} > /dev/null 2>&1; then
-            echo "Azurite image not found locally. Pulling image..."
+            echo "Azurite ${{ matrix.database-combo.azurite }} image not found locally. Pulling image..."
             docker pull mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }}
+            docker-compose -f docker-compose.azure-mysql-test.yaml build
+            docker-compose -f docker-compose.azure-postgres-test.yaml build
           else
             echo "Azurite image already exists. Using cache."
           fi
