@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   gcs:
     container_name: gcs-pg-test
