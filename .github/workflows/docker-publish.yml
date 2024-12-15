@@ -101,64 +101,35 @@ jobs:
       - name: Install library
         run: poetry install --no-interaction
 
-      #----------------------------------------------
-      # Cache or Restore docker images
-      #----------------------------------------------
       - name: Cache Docker images
         id: cache-docker-images
         uses: actions/cache@v4
         with:
-          # Path to Docker image cache directory
           path: /tmp/docker-cache
           key: ${{ runner.os }}-docker-images-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}
           restore-keys: |
             ${{ runner.os }}-docker-images-
 
-      #----------------------------------------------
-      # Pull does not exist docker images
-      #----------------------------------------------
-      - name: Pull Dependency Docker images
+      - name: Load Cached Docker Images
+        if: steps.cache-docker-images.outputs.cache-hit == 'true'
         run: |
-          # Pull PostgreSQL image if not cached
-          if ! docker image inspect postgres:${{ matrix.database-combo.postgres }} > /dev/null 2>&1; then
-            echo "PostgreSQL ${{ matrix.database-combo.postgres }} image not found locally. Pulling image..."
-            docker pull postgres:${{ matrix.database-combo.postgres }}
-          else
-            echo "PostgreSQL image already exists. Using cache."
-          fi
+          docker load --input /tmp/docker-cache/docker-images.tar
 
-          # Pull MySQL image if not cached
-          if ! docker image inspect mysql:${{ matrix.database-combo.mysql }} > /dev/null 2>&1; then
-            echo "MySQL ${{ matrix.database-combo.mysql }} image not found locally. Pulling image..."
-            docker pull mysql:${{ matrix.database-combo.mysql }}
-          else
-            echo "MySQL image already exists. Using cache."
-          fi
+      - name: Pull and Save Docker Images if not Cached
+        if: steps.cache-docker-images.outputs.cache-hit != 'true'
+        run: |
+          docker pull postgres:${{ matrix.database-combo.postgres }}
+          docker pull mysql:${{ matrix.database-combo.mysql }}
+          docker pull minio/minio:${{ matrix.database-combo.minio }}
+          docker pull fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }}
+          docker pull mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }}
 
-          # Pull Minio image if not cached
-          if ! docker image inspect minio/minio:${{ matrix.database-combo.minio }} > /dev/null 2>&1; then
-            echo "Minio ${{ matrix.database-combo.minio }} image not found locally. Pulling image..."
-            docker pull minio/minio:${{ matrix.database-combo.minio }}
-          else
-            echo "Minio image already exists. Using cache."
-          fi
-
-          # Pull Fake GCS Server image if not cached
-          if ! docker image inspect fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }} > /dev/null 2>&1; then
-            echo "Fake GCS Server ${{ matrix.database-combo.gcs }} image not found locally. Pulling image..."
-            docker pull fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }}
-          else
-            echo "Fake GCS Server image already exists. Using cache."
-          fi
-
-          # Pull Azurite image if not cached
-          if ! docker image inspect mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }} > /dev/null 2>&1; then
-            echo "Azurite ${{ matrix.database-combo.azurite }} image not found locally. Pulling image..."
-            docker pull mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }}
-            docker build -t azurite-test test-containers/azurite
-          else
-            echo "Azurite image already exists. Using cache."
-          fi
+          docker save -o /tmp/docker-cache/docker-images.tar \
+            postgres:${{ matrix.database-combo.postgres }} \
+            mysql:${{ matrix.database-combo.mysql }} \
+            minio/minio:${{ matrix.database-combo.minio }} \
+            fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }} \
+            mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }}
 
       #----------------------------------------------
       # Overwrite .env file to test different version of databases
