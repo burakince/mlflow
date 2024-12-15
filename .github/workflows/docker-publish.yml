@@ -105,7 +105,7 @@ jobs:
         id: cache-docker-images
         uses: actions/cache@v4
         with:
-          path: /tmp/docker-cache
+          path: ${{ github.workspace }}/.docker-cache
           key: ${{ runner.os }}-docker-images-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}
           restore-keys: |
             ${{ runner.os }}-docker-images-
@@ -118,13 +118,14 @@ jobs:
       - name: Pull and Save Docker Images if not Cached
         if: steps.cache-docker-images.outputs.cache-hit != 'true'
         run: |
+          mkdir -p ${{ github.workspace }}/.docker-cache
           docker pull postgres:${{ matrix.database-combo.postgres }}
           docker pull mysql:${{ matrix.database-combo.mysql }}
           docker pull minio/minio:${{ matrix.database-combo.minio }}
           docker pull fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }}
           docker pull mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }}
 
-          docker save -o /tmp/docker-cache/docker-images.tar \
+          docker save -o ${{ github.workspace }}/.docker-cache/docker-images.tar \
             postgres:${{ matrix.database-combo.postgres }} \
             mysql:${{ matrix.database-combo.mysql }} \
             minio/minio:${{ matrix.database-combo.minio }} \
