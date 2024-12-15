@@ -11,8 +11,6 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
-    volumes:
-      - minio-pg-storage:/data
     networks:
       - aws_pg_test_nw
 
@@ -24,8 +22,6 @@ services:
       POSTGRES_USER: postgres
     ports:
       - "5432:5432"
-    volumes:
-      - postgres-aws-storage:/var/lib/postgresql/data
     networks:
       - aws_pg_test_nw
 
@@ -48,19 +44,9 @@ services:
       - "8080:8080"
     networks:
       - aws_pg_test_nw
-    volumes:
-      - mlflow-aws-pg-storage:/mlflow
     depends_on:
       - minio
       - postgres
-
-volumes:
-  postgres-aws-storage:
-    driver: local
-  mlflow-aws-pg-storage:
-    driver: local
-  minio-pg-storage:
-    driver: local
 
 networks:
   aws_pg_test_nw:

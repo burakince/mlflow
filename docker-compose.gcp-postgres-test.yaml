@@ -6,8 +6,6 @@ services:
     entrypoint: sh -c "mkdir -p /data/mlflow && /bin/fake-gcs-server -data /data -scheme http"
     ports:
       - "4443:4443"
-    volumes:
-      - gcs-pg-storage:/data
     networks:
       - gcp_pg_test_nw
 
@@ -19,8 +17,6 @@ services:
       POSTGRES_USER: postgres
     ports:
       - "5432:5432"
-    volumes:
-      - postgres-gcp-storage:/var/lib/postgresql/data
     networks:
       - gcp_pg_test_nw
 
@@ -42,19 +38,9 @@ services:
       - "8080:8080"
     networks:
       - gcp_pg_test_nw
-    volumes:
-      - mlflow-gcp-pg-storage:/mlflow
     depends_on:
       - gcs
       - postgres
-
-volumes:
-  postgres-gcp-storage:
-    driver: local
-  mlflow-gcp-pg-storage:
-    driver: local
-  gcs-pg-storage:
-    driver: local
 
 networks:
   gcp_pg_test_nw:

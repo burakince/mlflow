@@ -6,8 +6,6 @@ services:
     entrypoint: sh -c "mkdir -p /data/mlflow && /bin/fake-gcs-server -data /data -scheme http"
     ports:
       - "4443:4443"
-    volumes:
-      - gcs-mysql-storage:/data
     networks:
       - gcp_mysql_test_nw
 
@@ -22,8 +20,6 @@ services:
       MYSQL_TCP_PORT: 3306
     ports:
       - "3306:3306"
-    volumes:
-      - mysql-gcp-storage:/var/lib/mysql
     networks:
       - gcp_mysql_test_nw
 
@@ -40,19 +36,9 @@ services:
       - "8080:8080"
     networks:
       - gcp_mysql_test_nw
-    volumes:
-      - mlflow-gcp-mysql-storage:/mlflow
     depends_on:
       - gcs
       - mysql
-
-volumes:
-  mysql-gcp-storage:
-    driver: local
-  mlflow-gcp-mysql-storage:
-    driver: local
-  gcs-mysql-storage:
-    driver: local
 
 networks:
   gcp_mysql_test_nw:

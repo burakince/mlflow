@@ -11,8 +11,6 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
-    volumes:
-      - minio-basic-auth-pg-storage:/data
     networks:
       - basic_auth_pg_test_nw
 
@@ -25,8 +23,6 @@ services:
       POSTGRES_DB: mlflow
     ports:
       - "5432:5432"
-    volumes:
-      - postgres-basic-auth-storage:/var/lib/postgresql/data
     networks:
       - basic_auth_pg_test_nw
 
@@ -39,8 +35,6 @@ services:
       POSTGRES_DB: users
     ports:
       - "5433:5432"
-    volumes:
-      - postgres-basic-auth-users-storage:/var/lib/postgresql/data
     networks:
       - basic_auth_pg_test_nw
 
@@ -65,22 +59,11 @@ services:
     networks:
       - basic_auth_pg_test_nw
     volumes:
-      - mlflow-basic-auth-pg-storage:/mlflow
       - ./test-containers/basic-auth/postgres/basic_auth.ini:/mlflow/basic_auth.ini
     depends_on:
       - minio
       - postgres
       - usersdb
-
-volumes:
-  postgres-basic-auth-storage:
-    driver: local
-  postgres-basic-auth-users-storage:
-    driver: local
-  mlflow-basic-auth-pg-storage:
-    driver: local
-  minio-basic-auth-pg-storage:
-    driver: local
 
 networks:
   basic_auth_pg_test_nw:

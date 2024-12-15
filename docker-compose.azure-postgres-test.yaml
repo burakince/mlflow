@@ -17,7 +17,6 @@ services:
       - "10000:10000"
       - "10001:10001"
     volumes:
-      - azurite-pg-storage:/data
       - ./test-containers/azurite/create-container.js:/create-container.js
       - ./test-containers/azurite/run.sh:/run.sh
     networks:
@@ -31,8 +30,6 @@ services:
       POSTGRES_USER: postgres
     ports:
       - "5432:5432"
-    volumes:
-      - postgres-azure-storage:/var/lib/postgresql/data
     networks:
       - azure_pg_test_nw
 
@@ -53,19 +50,9 @@ services:
       - "8080:8080"
     networks:
       - azure_pg_test_nw
-    volumes:
-      - mlflow-azure-pg-storage:/mlflow
     depends_on:
       - azurite
       - postgres
-
-volumes:
-  postgres-azure-storage:
-    driver: local
-  mlflow-azure-pg-storage:
-    driver: local
-  azurite-pg-storage:
-    driver: local
 
 networks:
   azure_pg_test_nw:

@@ -17,7 +17,6 @@ services:
       - "10000:10000"
       - "10001:10001"
     volumes:
-      - azurite-mysql-storage:/data
       - ./test-containers/azurite/create-container.js:/create-container.js
       - ./test-containers/azurite/run.sh:/run.sh
     networks:
@@ -34,8 +33,6 @@ services:
       MYSQL_TCP_PORT: 3306
     ports:
       - "3306:3306"
-    volumes:
-      - mysql-azure-storage:/var/lib/mysql
     networks:
       - azure_mysql_test_nw
 
@@ -51,19 +48,9 @@ services:
       - "8080:8080"
     networks:
       - azure_mysql_test_nw
-    volumes:
-      - mlflow-azure-mysql-storage:/mlflow
     depends_on:
       - azurite
       - mysql
-
-volumes:
-  mysql-azure-storage:
-    driver: local
-  mlflow-azure-mysql-storage:
-    driver: local
-  azurite-mysql-storage:
-    driver: local
 
 networks:
   azure_mysql_test_nw:
