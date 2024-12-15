@@ -108,7 +108,8 @@ jobs:
         id: cache-docker-images
         uses: actions/cache@v4
         with:
-          path: /tmp/.docker # This path stores the Docker images and cache
+          # Path to Docker image cache directory
+          path: /tmp/docker-cache
           key: ${{ runner.os }}-docker-images-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}
           restore-keys: |
             ${{ runner.os }}-docker-images-
