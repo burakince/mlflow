@@ -1,15 +1,13 @@
 import os
 import re
 
+import mlflow
+from mlflow.server.auth.client import AuthServiceClient
+from mlflow.tracking.client import MlflowClient
+
 import requests
 
 from .extended_docker_compose import ExtendedDockerCompose
-
-import mlflow
-from mlflow.tracking.client import MlflowClient
-
-# from testcontainers.compose import DockerCompose
-# from testcontainers.core.waiting_utils import wait_for_logs
 
 
 def test_postgres_backended_model_upload_and_access_with_basic_auth(
@@ -26,8 +24,11 @@ def test_postgres_backended_model_upload_and_access_with_basic_auth(
         minio_host = compose.get_service_host("minio", 9000)
         minio_port = compose.get_service_port("minio", 9000)
 
-        admin_username = "testuser"
-        admin_password = "simpletestpassword"
+        mlflow_admin_username = "testuser"
+        mlflow_admin_password = "simpletestpassword"
+
+        mlflow_user_username = "basicuser"
+        mlflow_user_password = "userpassword1"
 
         base_url = f"http://{mlflow_host}:{mlflow_port}"
 
@@ -37,8 +38,14 @@ def test_postgres_backended_model_upload_and_access_with_basic_auth(
         experiment_name = "aws-cloud-postgres-experiment"
         model_name = "test-aws-pg-model"
         stage_name = "Staging"
-        os.environ["MLFLOW_TRACKING_USERNAME"] = admin_username
-        os.environ["MLFLOW_TRACKING_PASSWORD"] = admin_password
+        os.environ["MLFLOW_TRACKING_USERNAME"] = mlflow_admin_username
+        os.environ["MLFLOW_TRACKING_PASSWORD"] = mlflow_admin_password
+
+        client = AuthServiceClient(base_url)
+        client.create_user(mlflow_user_username, mlflow_user_password)
+
+        os.environ["MLFLOW_TRACKING_USERNAME"] = mlflow_user_username
+        os.environ["MLFLOW_TRACKING_PASSWORD"] = mlflow_user_password
 
         mlflow.set_tracking_uri(base_url)
         mlflow.set_experiment(experiment_name)
@@ -66,7 +73,7 @@ def test_postgres_backended_model_upload_and_access_with_basic_auth(
         r = requests.get(
             url=latest_version_url,
             params=params,
-            auth=(admin_username, admin_password),
+            auth=(mlflow_user_username, mlflow_user_password),
             timeout=300,
         )
 
