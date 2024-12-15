@@ -154,8 +154,7 @@ jobs:
           if ! docker image inspect mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }} > /dev/null 2>&1; then
             echo "Azurite ${{ matrix.database-combo.azurite }} image not found locally. Pulling image..."
             docker pull mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }}
-            docker-compose -f docker-compose.azure-mysql-test.yaml build
-            docker-compose -f docker-compose.azure-postgres-test.yaml build
+            docker build -t azurite-test test-containers/azurite
           else
             echo "Azurite image already exists. Using cache."
           fi
