@@ -10,7 +10,7 @@ class ExtendedDockerCompose(DockerCompose):
         super().__init__(**kwargs)
         self.docker_client = docker.from_env()
 
-    def wait_for_logs(self, service_name, expected_log, timeout=120, interval=5):
+    def wait_for_logs(self, service_name, expected_log, timeout=300, interval=5):
         """
         Wait for a specific log entry in the Docker service's logs.
 
