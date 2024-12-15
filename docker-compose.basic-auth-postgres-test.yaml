@@ -16,7 +16,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 15s
+      start_period: 5s
     networks:
       - basic_auth_pg_test_nw
 
@@ -34,7 +34,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    restart: always
+      start_period: 5s
     networks:
       - basic_auth_pg_test_nw
 
@@ -52,7 +52,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    restart: always
+      start_period: 5s
     networks:
       - basic_auth_pg_test_nw
 
@@ -76,6 +76,7 @@ services:
       FLASK_ENV: development
       DEBUG: True
       GUNICORN_CMD_ARGS: --log-level debug
+    restart: always
     ports:
       - "8080:8080"
     networks:

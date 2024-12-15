@@ -2,7 +2,7 @@ import os
 import re
 import time
 
-import pytest
+# import pytest
 import requests
 
 import mlflow
@@ -12,12 +12,12 @@ from mlflow.tracking.client import MlflowClient
 from .extended_docker_compose import ExtendedDockerCompose
 
 
-@pytest.mark.skip(
-    reason="""
-auth alembic migrations getting duplicate key value violates unique constraint
- `pg_type_typname_nsp_index` error and craches the gunicorn server
-"""
-)
+# @pytest.mark.skip(
+#     reason="""
+# auth alembic migrations getting duplicate key value violates unique constraint
+#  `pg_type_typname_nsp_index` error and craches the gunicorn server
+# """
+# )
 def test_postgres_backended_model_upload_and_access_with_basic_auth(
     test_model, training_params, conda_env
 ):
@@ -89,3 +89,5 @@ def test_postgres_backended_model_upload_and_access_with_basic_auth(
 
         assert "1" == r.json()["model_version"]["version"]
         assert "READY" == r.json()["model_version"]["status"]
+
+        compose.stop()

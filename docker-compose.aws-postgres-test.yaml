@@ -16,7 +16,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 15s
+      start_period: 5s
     networks:
       - aws_pg_test_nw
 
@@ -33,7 +33,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    restart: always
+      start_period: 5s
     networks:
       - aws_pg_test_nw
 

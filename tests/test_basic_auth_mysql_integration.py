@@ -84,3 +84,5 @@ def test_mysql_backended_model_upload_and_access_with_basic_auth(
 
         assert "1" == r.json()["model_version"]["version"]
         assert "READY" == r.json()["model_version"]["status"]
+
+        compose.stop()
