@@ -113,7 +113,7 @@ jobs:
       - name: Load Cached Docker Images
         if: steps.cache-docker-images.outputs.cache-hit == 'true'
         run: |
-          docker load --input /tmp/docker-cache/docker-images.tar
+          docker load --input ${{ github.workspace }}/.docker-cache/docker-images.tar
 
       - name: Pull and Save Docker Images if not Cached
         if: steps.cache-docker-images.outputs.cache-hit != 'true'
