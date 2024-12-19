@@ -31,8 +31,6 @@ RUN apt-get update && \
       liblzma-dev && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN ln -s /usr/bin/llvm-config-9 /usr/bin/llvm-config
-
 RUN python -m pip install --upgrade pip
 
 RUN pip install poetry wheel &&  \
@@ -42,7 +40,7 @@ FROM python:3.12.8-slim
 
 WORKDIR /mlflow/
 
-COPY --from=foundation /mlflow /mlflow
+COPY --from=foundation /mlflow/.venv /mlflow/.venv
 
 ENV PATH=/mlflow/.venv/bin:$PATH
 

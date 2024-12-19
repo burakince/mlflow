@@ -10,13 +10,19 @@
 .env
 .isort.cfg
 .flake8
+.editorconfig
+.gitattributes
+.gitignore
+.dive-ci
 
 # Files
 LICENSE
-README.md
+artifacthub-repo.yml
 docker-compose.*.yaml
+*.md
 
 # Folders
 test-containers
 tests
 mlflowstack
+docs
