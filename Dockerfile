@@ -1,18 +1,23 @@
-FROM python:3.12.8 AS foundation
+ARG PYTHON_VERSION=3.12.8
+# Stage 1: Build and dependencies
+FROM python:${PYTHON_VERSION} AS foundation
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
 WORKDIR /mlflow/
+
+# Copy only necessary files for dependency installation
 COPY pyproject.toml poetry.toml poetry.lock /mlflow/
 
+# Create necessary symlinks
 RUN ln -s /usr/bin/dpkg-split /usr/sbin/dpkg-split \
     && ln -s /usr/bin/dpkg-deb /usr/sbin/dpkg-deb \
     && ln -s /bin/rm /usr/sbin/rm \
     && ln -s /bin/tar /usr/sbin/tar
 
-# Install build-essential to compile extensions.
+# Install required build tools and libraries
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install -y --no-install-recommends \
       make \
       build-essential \
       libssl-dev \
@@ -29,22 +34,31 @@ RUN apt-get update && \
       libxmlsec1-dev \
       libffi-dev \
       liblzma-dev && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /var/cache/* /var/log/* /tmp/* /var/tmp/*
 
-RUN python -m pip install --upgrade pip
+# Upgrade pip and install Poetry with no cache
+RUN python -m pip install --upgrade pip --no-cache-dir && \
+    pip install poetry wheel --no-cache-dir
 
-RUN pip install poetry wheel &&  \
-    poetry install --no-root --no-dev
+# Install project dependencies without development tools
+RUN poetry install --no-root --no-dev
 
-FROM python:3.12.8-slim
+# Stage 2: Final slim image
+FROM python:${PYTHON_VERSION}-slim
+
+LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
 WORKDIR /mlflow/
 
+# Copy the virtual environment from the foundation stage
 COPY --from=foundation /mlflow/.venv /mlflow/.venv
 
+# Set PATH to include the virtual environment
 ENV PATH=/mlflow/.venv/bin:$PATH
 
-# Tell Python *not* to buffer output. Useful to have "real-time" log output within containers.
+# Prevent Python from buffering stdout/stderr
 ENV PYTHONUNBUFFERED=1
 
+# Default command to run MLflow server
 CMD ["mlflow", "server", "--backend-store-uri", "sqlite:///:memory", "--default-artifact-root", "./mlruns", "--host=0.0.0.0", "--port=5000"]
