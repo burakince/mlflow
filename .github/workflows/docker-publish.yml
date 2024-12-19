@@ -260,7 +260,9 @@ jobs:
           context: .
           platforms: linux/arm64/v8,linux/amd64
           push: false
-          tags: docker.io/${{ env.IMAGE_NAME }}:latest
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -294,20 +296,11 @@ jobs:
       - name: Analyse Efficiency and Wastes on Image
         run: dive docker.io/${{ env.IMAGE_NAME }}:latest
 
-      # Build again and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
-      - name: Build and push Docker image
+      - name: Push All Docker Image Tags
         if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
-        id: build-and-push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/arm64/v8,linux/amd64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+        run: |
+          docker push --all-tags docker.io/${{ env.IMAGE_NAME }}
+          docker push --all-tags ghcr.io/${{ env.IMAGE_NAME }}
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
@@ -317,4 +310,4 @@ jobs:
       - name: Sign the published Docker images
         if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
         run: |
-          echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign -y {}@${{ steps.build-and-push.outputs.digest }}
+          echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign -y {}@${{ steps.build-docker-image.outputs.digest }}
