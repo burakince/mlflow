@@ -43,7 +43,3 @@ updates:
         update-types: ["version-update:semver-minor"]
     reviewers:
       - "burakince"
-    groups:
-      docker-deps:
-        patterns:
-          - "*"
