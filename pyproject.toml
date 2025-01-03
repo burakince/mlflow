@@ -10,7 +10,7 @@ mlflow = {extras = ["extras", "pipelines"], version = "^2.19.0"}
 azure-storage-blob = "^12.24.0"
 google-cloud-storage = "^2.19.0"
 SQLAlchemy = "^2.0.36"
-boto3 = "^1.35.91"
+boto3 = "^1.35.92"
 psycopg2-binary = "^2.9.10"
 protobuf = "^5.29.2"
 PyMySQL = "^1.1.1"
