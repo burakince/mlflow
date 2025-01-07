@@ -42,7 +42,7 @@ RUN python -m pip install --upgrade pip --no-cache-dir && \
     pip install poetry wheel --no-cache-dir
 
 # Install project dependencies without development tools
-RUN poetry install --no-root --no-dev
+RUN poetry install --no-root --only main
 
 # Stage 2: Final slim image
 FROM python:${PYTHON_VERSION}-slim
