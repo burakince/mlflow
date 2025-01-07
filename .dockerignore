@@ -16,10 +16,8 @@
 .dive-ci
 
 # Files
-LICENSE
 artifacthub-repo.yml
 docker-compose.*.yaml
-*.md
 
 # Folders
 test-containers

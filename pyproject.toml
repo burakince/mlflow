@@ -1,21 +1,28 @@
-[tool.poetry]
+[project]
 name = "mlflowstack"
-version = "0.1.0"
-description = ""
-authors = ["Burak Ince <burak.ince@linux.org.tr>"]
+description = "Mlflow with AWS, Azure Cloud, and GCP support."
+dynamic = [ "version" ]
+license = { file = "LICENSE" }
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+    { name = "Burak Ince", email = "burak.ince@linux.org.tr" },
+]
+dependencies = [
+  "mlflow[extras,pipelines] >=2.19.0",
+  "pymysql >=1.1.1",
+  "psycopg2-binary >=2.9.10",
+  "boto3 >=1.35.93",
+  "sqlalchemy >=2.0.36",
+  "google-cloud-storage >=2.19.0",
+  "azure-storage-blob >=12.24.0"
+]
+
+[tool.poetry]
+version = "1.0"
 
 [tool.poetry.dependencies]
-python = "3.12.*"
-mlflow = {extras = ["extras", "pipelines"], version = "^2.19.0"}
-azure-storage-blob = "^12.24.0"
-google-cloud-storage = "^2.19.0"
-SQLAlchemy = "^2.0.36"
-boto3 = "^1.35.93"
-psycopg2-binary = "^2.9.10"
-protobuf = "^5.29.2"
-PyMySQL = "^1.1.1"
-cryptography = "^44.0.0"
-cffi = "1.17.1"
+python = ">=3.12,<4.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"

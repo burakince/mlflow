@@ -7,7 +7,7 @@ LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 WORKDIR /mlflow/
 
 # Copy only necessary files for dependency installation
-COPY pyproject.toml poetry.toml poetry.lock /mlflow/
+COPY pyproject.toml poetry.toml poetry.lock LICENSE /mlflow/
 
 # Create necessary symlinks
 RUN ln -s /usr/bin/dpkg-split /usr/sbin/dpkg-split \
