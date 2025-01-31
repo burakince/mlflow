@@ -382,18 +382,18 @@ files = [
 
 [[package]]
 name = "boto3"
-version = "1.36.8"
+version = "1.36.10"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "boto3-1.36.8-py3-none-any.whl", hash = "sha256:7f61c9d0ea64f484a17c1e3115fdf90fd7b17ab6771e07cb4549f42b9fd28fb9"},
-    {file = "boto3-1.36.8.tar.gz", hash = "sha256:ac47215d320b0c2534340db58d6d5284cb1860b7bff172b4dd6eee2dee1d5779"},
+    {file = "boto3-1.36.10-py3-none-any.whl", hash = "sha256:5f8d5c2024a2d1411d3d67abb7357ec7d4c6162e3f1c396dc9b79d042cfd0a80"},
+    {file = "boto3-1.36.10.tar.gz", hash = "sha256:d2f1010db699326b26fbd465d91c4b49177c9d995d7e72c0f31335f139efa0d2"},
 ]
 
 [package.dependencies]
-botocore = ">=1.36.8,<1.37.0"
+botocore = ">=1.36.10,<1.37.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.11.0,<0.12.0"
 
@@ -402,14 +402,14 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.36.8"
+version = "1.36.10"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "botocore-1.36.8-py3-none-any.whl", hash = "sha256:59d3fdfbae6d916b046e973bebcbeb70a102f9e570ca86d5ba512f1854b78fc2"},
-    {file = "botocore-1.36.8.tar.gz", hash = "sha256:81c88e5566cf018e1411a68304dc1fb9e4156ca2b50a3a0f0befc274299e67fa"},
+    {file = "botocore-1.36.10-py3-none-any.whl", hash = "sha256:45c8a6e01dc18d44a13ba688f1d60ad562db8154b08c46b412387ea040a741c2"},
+    {file = "botocore-1.36.10.tar.gz", hash = "sha256:d27bb73f0ea81395527a6298ac0a7ea5b2958094169f7cf7d48e3f4e4bc21b65"},
 ]
 
 [package.dependencies]
@@ -418,7 +418,7 @@ python-dateutil = ">=2.1,<3.0.0"
 urllib3 = {version = ">=1.25.4,<2.2.0 || >2.2.0,<3", markers = "python_version >= \"3.10\""}
 
 [package.extras]
-crt = ["awscrt (==0.23.4)"]
+crt = ["awscrt (==0.23.8)"]
 
 [[package]]
 name = "cachetools"
@@ -1138,14 +1138,14 @@ grpc = ["grpcio (>=1.38.0,<2.0dev)", "grpcio-status (>=1.38.0,<2.0.dev0)"]
 
 [[package]]
 name = "google-cloud-storage"
-version = "2.19.0"
+version = "3.0.0"
 description = "Google Cloud Storage API client library"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "google_cloud_storage-2.19.0-py2.py3-none-any.whl", hash = "sha256:aeb971b5c29cf8ab98445082cbfe7b161a1f48ed275822f59ed3f1524ea54fba"},
-    {file = "google_cloud_storage-2.19.0.tar.gz", hash = "sha256:cd05e9e7191ba6cb68934d8eb76054d9be4562aa89dbc4236feee4d7d51342b2"},
+    {file = "google_cloud_storage-3.0.0-py2.py3-none-any.whl", hash = "sha256:f85fd059650d2dbb0ac158a9a6b304b66143b35ed2419afec2905ca522eb2c6a"},
+    {file = "google_cloud_storage-3.0.0.tar.gz", hash = "sha256:2accb3e828e584888beff1165e5f3ac61aa9088965eb0165794a82d8c7f95297"},
 ]
 
 [package.dependencies]
@@ -1884,14 +1884,14 @@ dev = ["meson-python (>=0.13.1,<0.17.0)", "pybind11 (>=2.13.2,!=2.13.3)", "setup
 
 [[package]]
 name = "mlflow"
-version = "2.20.0"
+version = "2.20.1"
 description = "MLflow is an open source platform for the complete machine learning lifecycle"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "mlflow-2.20.0-py3-none-any.whl", hash = "sha256:e285694c002eeca8e478ddc615a4113c02c0a4f95f19e9c63114e8e752d351fd"},
-    {file = "mlflow-2.20.0.tar.gz", hash = "sha256:151b0f982f40255183df459f1f67f5b8e387676859c7de048e3517548827405d"},
+    {file = "mlflow-2.20.1-py3-none-any.whl", hash = "sha256:ee8781d8c3bda2265f433cf385b09b1af1ad4cb1186ffc755fe5af2e0feda7ce"},
+    {file = "mlflow-2.20.1.tar.gz", hash = "sha256:354ebedc5785ae7296ac146667ffe541612a9a004cb4fc545ddda35c589c68fe"},
 ]
 
 [package.dependencies]
@@ -1911,7 +1911,7 @@ Jinja2 = [
 kubernetes = {version = "*", optional = true, markers = "extra == \"extras\""}
 markdown = ">=3.3,<4"
 matplotlib = "<4"
-mlflow-skinny = "2.20.0"
+mlflow-skinny = "2.20.1"
 numpy = "<3"
 pandas = "<3"
 prometheus-flask-exporter = {version = "*", optional = true, markers = "extra == \"extras\""}
@@ -1941,14 +1941,14 @@ xethub = ["mlflow-xethub"]
 
 [[package]]
 name = "mlflow-skinny"
-version = "2.20.0"
+version = "2.20.1"
 description = "MLflow is an open source platform for the complete machine learning lifecycle"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "mlflow_skinny-2.20.0-py3-none-any.whl", hash = "sha256:983559c1fde2ad5debbcaf36f86575d11f28d042673882205195238d12e872f7"},
-    {file = "mlflow_skinny-2.20.0.tar.gz", hash = "sha256:7c3cb1bcb2d258605d2a54d6701d16b72b573bb545b071542ae8b3739ae02904"},
+    {file = "mlflow_skinny-2.20.1-py3-none-any.whl", hash = "sha256:de094d6495e2e6a842bd47a68641aa400528b6ea48be258f269cc4e2a43b3288"},
+    {file = "mlflow_skinny-2.20.1.tar.gz", hash = "sha256:98c3c73aea528a03a25ba422506a9d37dff4061707569e6e6cb8ea6e7382385e"},
 ]
 
 [package.dependencies]
@@ -3869,4 +3869,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<4.0"
-content-hash = "7a540ad0f59a3925bffe1f52e3e69893a81939202a8ebd728dca5fa5cc69110a"
+content-hash = "309f9dc57e6bbe4b4add87258ea07cf5418b8997f5aa92b2d4a7454885f0f7d8"
