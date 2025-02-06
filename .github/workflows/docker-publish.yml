@@ -185,7 +185,7 @@ jobs:
         uses: sigstore/cosign-installer@v3.8.0
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3.3.0
+        uses: docker/setup-qemu-action@v3.4.0
         with:
           platforms: all
 
