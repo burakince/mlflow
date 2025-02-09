@@ -1,6 +1,5 @@
-ARG PYTHON_VERSION=3.12.8
 # Stage 1: Build and dependencies
-FROM python:${PYTHON_VERSION} AS foundation
+FROM python:3.12.8 AS foundation
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
@@ -45,7 +44,7 @@ RUN python -m pip install --upgrade pip --no-cache-dir && \
 RUN poetry install --no-root --only main
 
 # Stage 2: Final slim image
-FROM python:${PYTHON_VERSION}-slim
+FROM python:3.12.8-slim
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
