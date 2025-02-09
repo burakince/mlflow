@@ -1,5 +1,5 @@
 # Stage 1: Build and dependencies
-FROM python:3.12.8 AS foundation
+FROM python:3.12.9 AS foundation
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
@@ -44,7 +44,7 @@ RUN python -m pip install --upgrade pip --no-cache-dir && \
 RUN poetry install --no-root --only main
 
 # Stage 2: Final slim image
-FROM python:3.12.8-slim
+FROM python:3.12.9-slim
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
