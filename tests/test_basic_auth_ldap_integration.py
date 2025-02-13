@@ -12,7 +12,7 @@ from mlflow.tracking.client import MlflowClient
 from .extended_docker_compose import ExtendedDockerCompose
 
 
-#@pytest.mark.skip(reason="alembic auth migrations doesn't work for ldap")
+@pytest.mark.skip(reason="alembic auth migrations doesn't work for ldap")
 def test_ldap_backended_model_upload_and_access_with_basic_auth(
     test_model, training_params, conda_env
 ):
