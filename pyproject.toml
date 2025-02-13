@@ -5,6 +5,8 @@ dynamic = [ "version" ]
 license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.12"
+package-mode = true
+packages = [{ include = "mlflowstack" }]
 authors = [
     { name = "Burak Ince", email = "burak.ince@linux.org.tr" },
 ]
@@ -15,7 +17,8 @@ dependencies = [
   "boto3 (>=1.36.19,<2.0.0)",
   "sqlalchemy (>=2.0.38,<3.0.0)",
   "google-cloud-storage (>=3.0.0,<4.0.0)",
-  "azure-storage-blob (>=12.24.1,<13.0.0)"
+  "azure-storage-blob (>=12.24.1,<13.0.0)",
+  "ldap3 (>=2.0.0, <3.0.0)",
 ]
 
 [tool.poetry]
