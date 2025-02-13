@@ -6,7 +6,7 @@ LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 WORKDIR /mlflow-build/
 
 # Copy only necessary files for dependency installation
-COPY pyproject.toml poetry.toml poetry.lock LICENSE ./
+COPY pyproject.toml poetry.toml poetry.lock LICENSE README.md ./
 COPY mlflowstack ./mlflowstack
 
 # Create necessary symlinks
