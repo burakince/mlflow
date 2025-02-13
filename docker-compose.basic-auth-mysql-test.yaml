@@ -67,6 +67,7 @@ services:
       dockerfile: Dockerfile
     command: "mlflow server --backend-store-uri=mysql+pymysql://mlflow:password@mysql:3306/mlflow --default-artifact-root=s3://mlflow/ --host=0.0.0.0 --port=8080 --app-name basic-auth"
     environment:
+      MLFLOW_FLASK_SERVER_SECRET_KEY: 0123456789
       MLFLOW_S3_ENDPOINT_URL: http://minio:9000
       AWS_ACCESS_KEY_ID: minioadmin
       AWS_SECRET_ACCESS_KEY: minioadmin
