@@ -75,6 +75,7 @@ services:
       ALEMBIC_LOG_LEVEL: DEBUG
       FLASK_ENV: development
       DEBUG: True
+    restart: always
     ports:
       - "8080:8080"
     networks:

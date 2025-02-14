@@ -81,6 +81,7 @@ services:
       LDAP_GROUP_SEARCH_FILTER: (&(objectclass=groupOfUniqueNames)(uniquemember=%s))
       LDAP_GROUP_USER_DN: cn=test-user,ou=groups,dc=mlflow,dc=test
       LDAP_GROUP_ADMIN_DN: cn=test-admin,ou=groups,dc=mlflow,dc=test
+    restart: always
     ports:
       - "8080:8080"
     networks:
