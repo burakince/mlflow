@@ -20,25 +20,6 @@ services:
     networks:
       - basic_auth_ldap_test_nw
 
-  lldap-bootstrap:
-    container_name: lldap-bootstrap-ldap-test
-    hostname: lldapboot
-    image: lldap/lldap:stable
-    entrypoint: ./bootstrap.sh
-    environment:
-      LLDAP_URL: http://lldap:17170
-      LLDAP_ADMIN_USERNAME: admin
-      LLDAP_ADMIN_PASSWORD: admin123
-      DO_CLEANUP: true
-    volumes:
-      - ./test-containers/basic-auth/ldap/group:/group-configs:ro
-      - ./test-containers/basic-auth/ldap/user:/user-configs:ro
-    networks:
-      - basic_auth_ldap_test_nw
-    depends_on:
-      lldap:
-        condition: service_healthy
-
   lldap:
     image: lldap/lldap:stable
     hostname: lldap
@@ -53,12 +34,36 @@ services:
     networks:
       - basic_auth_ldap_test_nw
 
+  lldap-bootstrap:
+    container_name: lldap-bootstrap-ldap-test
+    hostname: lldapboot
+    image: lldap/lldap:stable
+    entrypoint: sh -c './bootstrap.sh; tail -f /dev/null'
+    environment:
+      LLDAP_URL: http://lldap:17170
+      LLDAP_ADMIN_USERNAME: admin
+      LLDAP_ADMIN_PASSWORD: admin123
+      DO_CLEANUP: true
+    volumes:
+      - ./test-containers/basic-auth/ldap/group:/group-configs:ro
+      - ./test-containers/basic-auth/ldap/user:/user-configs:ro
+    networks:
+      - basic_auth_ldap_test_nw
+    depends_on:
+      lldap:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 1s
+      timeout: 1s
+      retries: 1
+
   mlflow:
     container_name: mlflow-basic-auth-ldap-test
     build:
       context: .
       dockerfile: Dockerfile
-    command: "mlflow server --backend-store-uri sqlite:///db.sqlite --default-artifact-root=s3://mlflow/ --host=0.0.0.0 --port=8080 --app-name basic-auth"
+    command: 'mlflow server --backend-store-uri sqlite:///db.sqlite --default-artifact-root=s3://mlflow/ --host=0.0.0.0 --port=8080 --workers 4 --gunicorn-opts="--timeout=120 --log-level=debug" --app-name basic-auth'
     environment:
       MLFLOW_FLASK_SERVER_SECRET_KEY: 0123456789
       MLFLOW_S3_ENDPOINT_URL: http://minio:9000
@@ -83,10 +88,12 @@ services:
     volumes:
       - ./test-containers/basic-auth/ldap/basic_auth.ini:/mlflow/basic_auth.ini
     depends_on:
-     minio:
-       condition: service_healthy
-     lldap:
-       condition: service_healthy
+      minio:
+        condition: service_healthy
+      lldap:
+        condition: service_healthy
+      lldap-bootstrap:
+        condition: service_healthy
 
 networks:
   basic_auth_ldap_test_nw:

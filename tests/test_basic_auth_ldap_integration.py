@@ -12,7 +12,6 @@ from mlflow.tracking.client import MlflowClient
 from .extended_docker_compose import ExtendedDockerCompose
 
 
-@pytest.mark.skip(reason="alembic auth migrations doesn't work for ldap")
 def test_ldap_backended_model_upload_and_access_with_basic_auth(
     test_model, training_params, conda_env
 ):
@@ -27,8 +26,11 @@ def test_ldap_backended_model_upload_and_access_with_basic_auth(
         minio_host = compose.get_service_host("minio", 9000)
         minio_port = compose.get_service_port("minio", 9000)
 
-        mlflow_user_username = "admin1"
-        mlflow_user_password = "admin1-1234"
+        mlflow_admin_username = "admin1"
+        mlflow_admin_password = "admin1-1234"
+
+        mlflow_user_username = "user1"
+        mlflow_user_password = "user1-1234"
 
         base_url = f"http://{mlflow_host}:{mlflow_port}"
 
@@ -40,9 +42,10 @@ def test_ldap_backended_model_upload_and_access_with_basic_auth(
         experiment_name = "basic-auth-ldap-experiment"
         model_name = "test-basic-auth-ldap-model"
         stage_name = "Staging"
+        os.environ["MLFLOW_TRACKING_USERNAME"] = mlflow_admin_username
+        os.environ["MLFLOW_TRACKING_PASSWORD"] = mlflow_admin_password
 
         mlflow_auth_client = AuthServiceClient(base_url)
-        mlflow_auth_client.create_user(mlflow_user_username, mlflow_user_password)
 
         mlflow.set_tracking_uri(base_url)
         mlflow.set_experiment(experiment_name)
