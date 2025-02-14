@@ -21,7 +21,7 @@ services:
       - basic_auth_ldap_test_nw
 
   lldap:
-    image: lldap/lldap:stable
+    image: lldap/lldap:${LLDAP_VERSION}
     hostname: lldap
     container_name: lldap-ldap-test
     ports:
@@ -37,7 +37,7 @@ services:
   lldap-bootstrap:
     container_name: lldap-bootstrap-ldap-test
     hostname: lldapboot
-    image: lldap/lldap:stable
+    image: lldap/lldap:${LLDAP_VERSION}
     entrypoint: sh -c './bootstrap.sh; tail -f /dev/null'
     environment:
       LLDAP_URL: http://lldap:17170
