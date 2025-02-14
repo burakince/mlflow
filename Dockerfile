@@ -3,10 +3,11 @@ FROM python:3.12.9 AS foundation
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
-WORKDIR /mlflow/
+WORKDIR /mlflow-build/
 
 # Copy only necessary files for dependency installation
-COPY pyproject.toml poetry.toml poetry.lock LICENSE /mlflow/
+COPY pyproject.toml poetry.toml poetry.lock LICENSE README.md ./
+COPY mlflowstack ./mlflowstack
 
 # Create necessary symlinks
 RUN ln -s /usr/bin/dpkg-split /usr/sbin/dpkg-split \
@@ -41,7 +42,13 @@ RUN python -m pip install --upgrade pip --no-cache-dir && \
     pip install poetry wheel --no-cache-dir
 
 # Install project dependencies without development tools
-RUN poetry install --no-root --only main
+RUN poetry build
+
+WORKDIR /mlflow/
+
+RUN python -m venv .venv && \
+    . .venv/bin/activate && \
+    pip install /mlflow-build/dist/mlflowstack-1.0-py3-none-any.whl
 
 # Stage 2: Final slim image
 FROM python:3.12.9-slim

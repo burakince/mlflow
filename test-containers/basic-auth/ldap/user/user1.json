@@ -1,0 +1,9 @@
+{
+    "id": "user1",
+    "email": "user1@test-exmaple.noreply",
+    "password": "user1-1234",
+    "displayName": "User 1",
+    "firstName": "1st",
+    "lastName": "User",
+    "groups": ["test-user"]
+}

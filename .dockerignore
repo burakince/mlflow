@@ -22,5 +22,5 @@ docker-compose.*.yaml
 # Folders
 test-containers
 tests
-mlflowstack
 docs
+**/__pycache__

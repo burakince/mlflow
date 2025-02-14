@@ -38,6 +38,7 @@ jobs:
               gcs: "1.50.2",
               azurite: "3.33.0",
               azure-storage-blob: "12.26.0",
+              lldap: "v0.6.1",
             }
           - {
               postgres: "16",
@@ -46,6 +47,7 @@ jobs:
               gcs: "1.50.2",
               azurite: "3.33.0",
               azure-storage-blob: "12.26.0",
+              lldap: "v0.6.1",
             }
           - {
               postgres: "17",
@@ -54,6 +56,7 @@ jobs:
               gcs: "1.50.2",
               azurite: "3.33.0",
               azure-storage-blob: "12.26.0",
+              lldap: "v0.6.1",
             }
 
     name: Test PostgreSQL ${{ matrix.database-combo.postgres }} & MySQL ${{ matrix.database-combo.mysql }}
@@ -106,7 +109,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.docker-cache
-          key: ${{ runner.os }}-docker-images-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}
+          key: ${{ runner.os }}-docker-images-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}-${{ matrix.database-combo.lldap }}
           restore-keys: |
             ${{ runner.os }}-docker-images-
 
@@ -124,13 +127,15 @@ jobs:
           docker pull minio/minio:${{ matrix.database-combo.minio }}
           docker pull fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }}
           docker pull mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }}
+          docker pull lldap/lldap:${{ matrix.database-combo.lldap }}
 
           docker save -o ${{ github.workspace }}/.docker-cache/docker-images.tar \
             postgres:${{ matrix.database-combo.postgres }} \
             mysql:${{ matrix.database-combo.mysql }} \
             minio/minio:${{ matrix.database-combo.minio }} \
             fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }} \
-            mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }}
+            mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }} \
+            lldap/lldap:${{ matrix.database-combo.lldap }}
 
       #----------------------------------------------
       # Overwrite .env file to test different version of databases
@@ -143,6 +148,7 @@ jobs:
           echo "FAKE_GCS_SERVER_VERSION=${{ matrix.database-combo.gcs }}" >> .env
           echo "AZURITE_VERSION=${{ matrix.database-combo.azurite }}" >> .env
           echo "AZURE_STORAGE_BLOB_VERSION=${{ matrix.database-combo.azure-storage-blob }}" >> .env
+          echo "LLDAP_VERSION=${{ matrix.database-combo.lldap }}" >> .env
 
       #----------------------------------------------
       #              run test suite
