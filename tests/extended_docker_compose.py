@@ -45,7 +45,8 @@ class ExtendedDockerCompose(DockerCompose):
         try:
             containers = self.docker_client.containers.list(filters={"name": service_name})
             if not containers:
-                raise ValueError(f"No container found for service '{service_name!r}'")
+                print(f"No container found for service '{service_name!r}'. Probably it's not ready yet.")
+                return ""
 
             logs = containers[0].logs().decode("utf-8")
             return logs
