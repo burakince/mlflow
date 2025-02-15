@@ -33,3 +33,7 @@ Enabling Colima for testcontainers.
 export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
 export DOCKER_HOST="unix://${HOME}/.colima/docker.sock"
 ```
+
+## Contributions
+
+![Alt](https://repobeats.axiom.co/api/embed/79f658ee4736137b7fbcc5cab6abcf1b078c39ab.svg "Repobeats analytics image")
