@@ -1,0 +1,106 @@
+services:
+  minio:
+    container_name: minio-ldap-ssl-test
+    hostname: minio
+    image: minio/minio:${MINIO_VERSION}
+    entrypoint: sh
+    command: -c 'mkdir -p /data/mlflow && minio server /data --console-address ":9001"'
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live || exit 1"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - basic_auth_ldap_ssl_test_nw
+
+  lldap:
+    image: lldap/lldap:${LLDAP_VERSION}
+    hostname: lldap
+    container_name: lldap-ldap-ssl-test
+    ports:
+      - "6360:6360"
+      - "17170:17170"
+    environment:
+      LLDAP_LDAP_USER_DN: admin
+      LLDAP_LDAP_USER_PASS: admin123
+      LLDAP_LDAP_BASE_DN: dc=mlflow,dc=test
+      LLDAP_LDAPS_OPTIONS_ENABLED: true
+      LLDAP_LDAPS_OPTIONS__CERT_FILE: ./ldap.crt
+      LLDAP_LDAPS_OPTIONS__KEY_FILE: ./ldap.key
+    networks:
+      - basic_auth_ldap_ssl_test_nw
+
+  lldap-bootstrap:
+    container_name: lldap-bootstrap-ldap-ssl-test
+    hostname: lldapboot
+    image: lldap/lldap:${LLDAP_VERSION}
+    entrypoint: sh -c './bootstrap.sh; tail -f /dev/null'
+    environment:
+      LLDAP_URL: http://lldap:17170
+      LLDAP_ADMIN_USERNAME: admin
+      LLDAP_ADMIN_PASSWORD: admin123
+      DO_CLEANUP: true
+    volumes:
+      - ./test-containers/basic-auth/ldap/group:/group-configs:ro
+      - ./test-containers/basic-auth/ldap/user:/user-configs:ro
+    networks:
+      - basic_auth_ldap_ssl_test_nw
+    depends_on:
+      lldap:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 1s
+      timeout: 1s
+      retries: 1
+
+  mlflow:
+    container_name: mlflow-basic-auth-ldap-ssl-test
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "mlflow server --backend-store-uri sqlite:///db.sqlite --default-artifact-root=s3://mlflow/ --host=0.0.0.0 --port=8080 --workers 4 --gunicorn-opts='--timeout=120 --log-level=debug' --app-name basic-auth"
+    environment:
+      MLFLOW_FLASK_SERVER_SECRET_KEY: 0123456789
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
+      MLFLOW_AUTH_CONFIG_PATH: /mlflow/basic_auth.ini
+      ALEMBIC_LOG_LEVEL: DEBUG
+      FLASK_ENV: development
+      DEBUG: True
+
+      LDAP_URI: ldaps://lldap:6360/dc=mlflow,dc=test
+      LDAP_CA: /cert/ca.crt
+      LDAP_LOOKUP_BIND: uid=%s,ou=people,dc=mlflow,dc=test
+      LDAP_GROUP_ATTRIBUTE: dn
+      LDAP_GROUP_SEARCH_BASE_DN: ou=groups,dc=mlflow,dc=test
+      LDAP_GROUP_SEARCH_FILTER: (&(objectclass=groupOfUniqueNames)(uniquemember=%s))
+      LDAP_GROUP_USER_DN: cn=test-user,ou=groups,dc=mlflow,dc=test
+      LDAP_GROUP_ADMIN_DN: cn=test-admin,ou=groups,dc=mlflow,dc=test
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - basic_auth_ldap_ssl_test_nw
+    volumes:
+      - ./test-containers/basic-auth/ldap/basic_auth.ini:/mlflow/basic_auth.ini:ro
+      - ./ca.crt:/cert/ca.crt:ro
+    depends_on:
+      minio:
+        condition: service_healthy
+      lldap:
+        condition: service_healthy
+      lldap-bootstrap:
+        condition: service_healthy
+
+networks:
+  basic_auth_ldap_ssl_test_nw:
+    driver: bridge

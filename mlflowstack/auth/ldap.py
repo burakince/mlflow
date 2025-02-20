@@ -1,15 +1,23 @@
 import os
 import ldap3
+import ssl
 from typing import Union
 from dataclasses import dataclass
 from flask import Response, make_response, request
 from mlflow.server.auth import store as auth_store
 from werkzeug.datastructures import Authorization
 
+import logging
+from ldap3.utils.log import set_library_log_activation_level
+logging.basicConfig(level=logging.ERROR)
+set_library_log_activation_level(logging.ERROR) 
+
+
 _auth_store = auth_store
 
 
 LDAP_URI                    = os.getenv("LDAP_URI", "")
+LDAP_CA                     = os.getenv("LDAP_CA", "")
 
 LDAP_LOOKUP_BIND            = os.getenv("LDAP_LOOKUP_BIND", "")
 
@@ -48,8 +56,10 @@ def resolve_user(username, password):
 
     port = 636 if uri["ssl"] else 389
     port = port if uri["port"] is None else uri["port"]
+    tls =  None if LDAP_CA == "" else ldap3.Tls(validate=ssl.CERT_REQUIREDD, ca_certs_file=LDAP_CA)
 
-    server = ldap3.Server(host=uri["host"], port=port, use_ssl=uri["ssl"])   
+
+    server = ldap3.Server(host=uri["host"], port=port, use_ssl=uri["ssl"], tls=tls)
     with ldap3.Connection(
         server=server, 
         user=LDAP_LOOKUP_BIND % ldap3.utils.dn.escape_rdn(username),
