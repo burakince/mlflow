@@ -7,10 +7,10 @@ from flask import Response, make_response, request
 from mlflow.server.auth import store as auth_store
 from werkzeug.datastructures import Authorization
 
-import logging
-from ldap3.utils.log import set_library_log_activation_level
-logging.basicConfig(level=logging.ERROR)
-set_library_log_activation_level(logging.ERROR) 
+#import logging
+#from ldap3.utils.log import set_library_log_activation_level
+#logging.basicConfig(level=logging.ERROR)
+#set_library_log_activation_level(logging.ERROR) 
 
 
 _auth_store = auth_store
@@ -57,6 +57,7 @@ def resolve_user(username, password):
     port = 636 if uri["ssl"] else 389
     port = port if uri["port"] is None else uri["port"]
     tls =  None if LDAP_CA == "" else ldap3.Tls(validate=ssl.CERT_REQUIREDD, ca_certs_file=LDAP_CA)
+    print(tls)
 
 
     server = ldap3.Server(host=uri["host"], port=port, use_ssl=uri["ssl"], tls=tls)

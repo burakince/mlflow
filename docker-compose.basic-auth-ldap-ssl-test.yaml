@@ -31,9 +31,12 @@ services:
       LLDAP_LDAP_USER_DN: admin
       LLDAP_LDAP_USER_PASS: admin123
       LLDAP_LDAP_BASE_DN: dc=mlflow,dc=test
-      LLDAP_LDAPS_OPTIONS_ENABLED: true
-      LLDAP_LDAPS_OPTIONS__CERT_FILE: ./ldap.crt
-      LLDAP_LDAPS_OPTIONS__KEY_FILE: ./ldap.key
+      LLDAP_LDAPS_OPTIONS__ENABLED: true
+      LLDAP_LDAPS_OPTIONS__CERT_FILE: /cert/ldap.crt
+      LLDAP_LDAPS_OPTIONS__KEY_FILE: /cert/ldap.key
+    volumes:
+      - ./ldap.crt:/cert/ldap.crt:ro
+      - ./ldap.key:/cert/ldap.key:ro
     networks:
       - basic_auth_ldap_ssl_test_nw
 
