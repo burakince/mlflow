@@ -33,7 +33,6 @@ testcontainers = "^4.9.0"
 requests = "^2.32.3"
 cloudpickle = "^3.1.0"
 pre-commit = "^4.0.1"
-pyOpenSSL = "^24.0.0"
 
 [tool.poetry.requires-plugins]
 poetry-plugin-shell = "^1"
