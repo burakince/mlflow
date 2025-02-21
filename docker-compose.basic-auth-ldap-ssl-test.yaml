@@ -64,45 +64,45 @@ services:
       timeout: 1s
       retries: 1
 
-  mlflow:
-    container_name: mlflow-basic-auth-ldap-ssl-test
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: "mlflow server --backend-store-uri sqlite:///db.sqlite --default-artifact-root=s3://mlflow/ --host=0.0.0.0 --port=8080 --workers 4 --gunicorn-opts='--timeout=120 --log-level=debug' --app-name basic-auth"
-    environment:
-      MLFLOW_FLASK_SERVER_SECRET_KEY: 0123456789
-      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
-      AWS_ACCESS_KEY_ID: minioadmin
-      AWS_SECRET_ACCESS_KEY: minioadmin
-      MLFLOW_AUTH_CONFIG_PATH: /mlflow/basic_auth.ini
-      ALEMBIC_LOG_LEVEL: DEBUG
-      FLASK_ENV: development
-      DEBUG: True
+  # mlflow:
+  #   container_name: mlflow-basic-auth-ldap-ssl-test
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   command: "mlflow server --backend-store-uri sqlite:///db.sqlite --default-artifact-root=s3://mlflow/ --host=0.0.0.0 --port=8080 --workers 4 --gunicorn-opts='--timeout=120 --log-level=debug' --app-name basic-auth"
+  #   environment:
+  #     MLFLOW_FLASK_SERVER_SECRET_KEY: 0123456789
+  #     MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+  #     AWS_ACCESS_KEY_ID: minioadmin
+  #     AWS_SECRET_ACCESS_KEY: minioadmin
+  #     MLFLOW_AUTH_CONFIG_PATH: /mlflow/basic_auth.ini
+  #     ALEMBIC_LOG_LEVEL: DEBUG
+  #     FLASK_ENV: development
+  #     DEBUG: True
 
-      LDAP_URI: ldaps://lldap:6360/dc=mlflow,dc=test
-      LDAP_CA: /cert/ca.crt
-      LDAP_LOOKUP_BIND: uid=%s,ou=people,dc=mlflow,dc=test
-      LDAP_GROUP_ATTRIBUTE: dn
-      LDAP_GROUP_SEARCH_BASE_DN: ou=groups,dc=mlflow,dc=test
-      LDAP_GROUP_SEARCH_FILTER: (&(objectclass=groupOfUniqueNames)(uniquemember=%s))
-      LDAP_GROUP_USER_DN: cn=test-user,ou=groups,dc=mlflow,dc=test
-      LDAP_GROUP_ADMIN_DN: cn=test-admin,ou=groups,dc=mlflow,dc=test
-    restart: always
-    ports:
-      - "8080:8080"
-    networks:
-      - basic_auth_ldap_ssl_test_nw
-    volumes:
-      - ./test-containers/basic-auth/ldap/basic_auth.ini:/mlflow/basic_auth.ini:ro
-      - ./ca.crt:/cert/ca.crt:ro
-    depends_on:
-      minio:
-        condition: service_healthy
-      lldap:
-        condition: service_healthy
-      lldap-bootstrap:
-        condition: service_healthy
+  #     LDAP_URI: ldaps://lldap:6360/dc=mlflow,dc=test
+  #     LDAP_CA: /cert/ca.crt
+  #     LDAP_LOOKUP_BIND: uid=%s,ou=people,dc=mlflow,dc=test
+  #     LDAP_GROUP_ATTRIBUTE: dn
+  #     LDAP_GROUP_SEARCH_BASE_DN: ou=groups,dc=mlflow,dc=test
+  #     LDAP_GROUP_SEARCH_FILTER: (&(objectclass=groupOfUniqueNames)(uniquemember=%s))
+  #     LDAP_GROUP_USER_DN: cn=test-user,ou=groups,dc=mlflow,dc=test
+  #     LDAP_GROUP_ADMIN_DN: cn=test-admin,ou=groups,dc=mlflow,dc=test
+  #   restart: always
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     - basic_auth_ldap_ssl_test_nw
+  #   volumes:
+  #     - ./test-containers/basic-auth/ldap/basic_auth.ini:/mlflow/basic_auth.ini:ro
+  #     - ./ca.crt:/cert/ca.crt:ro
+  #   depends_on:
+  #     minio:
+  #       condition: service_healthy
+  #     lldap:
+  #       condition: service_healthy
+  #     lldap-bootstrap:
+  #       condition: service_healthy
 
 networks:
   basic_auth_ldap_ssl_test_nw:
