@@ -1,6 +1,6 @@
 from cryptography import x509
 from cryptography.x509.oid import NameOID
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from pathlib import Path
@@ -21,22 +21,23 @@ class CertificateAuthority:
         self.key = None
 
     def generate(self) -> 'CertificateAuthority':
-        key = rsa.generate_private_key(key_size=self.key_size, public_exponent=65537)
+        self.key = rsa.generate_private_key(key_size=self.key_size, public_exponent=65537)
         
+        # Create name object once and reuse
         name = x509.Name([
             x509.NameAttribute(NameOID.COMMON_NAME, self.common_name),
             x509.NameAttribute(NameOID.ORGANIZATION_NAME, self.organization),
             x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, self.org_unit),
         ])
         
-        now = datetime.today()
+        now = datetime.now(UTC) - timedelta(minutes=5)
         builder = (x509.CertificateBuilder()
             .subject_name(name)
             .issuer_name(name)
             .not_valid_before(now)
             .not_valid_after(now + self.validity)
             .serial_number(int(uuid.uuid4()))
-            .public_key(key.public_key())
+            .public_key(self.key.public_key())
             .add_extension(x509.BasicConstraints(ca=True, path_length=None), critical=True)
             .add_extension(
                 x509.KeyUsage(
@@ -47,14 +48,13 @@ class CertificateAuthority:
                     decipher_only=False
                 ), critical=True)
             .add_extension(
-                x509.SubjectKeyIdentifier.from_public_key(key.public_key()),
+                x509.SubjectKeyIdentifier.from_public_key(self.key.public_key()),
                 critical=False)
             .add_extension(
-                x509.AuthorityKeyIdentifier.from_issuer_public_key(key.public_key()),
+                x509.AuthorityKeyIdentifier.from_issuer_public_key(self.key.public_key()),
                 critical=False))
 
-        self.cert = builder.sign(private_key=key, algorithm=hashes.SHA256())
-        self.key = key
+        self.cert = builder.sign(private_key=self.key, algorithm=hashes.SHA256())
         return self
 
     def store(self, path: Path) -> 'CertificateAuthority':
@@ -86,9 +86,9 @@ class ServerCertificate:
         self.key = None
 
     def generate_csr(self) -> 'ServerCertificate':
-        key = rsa.generate_private_key(key_size=self.key_size, public_exponent=65537)
+        self.key = rsa.generate_private_key(key_size=self.key_size, public_exponent=65537)
         
-        csr = (x509.CertificateSigningRequestBuilder()
+        self.csr = (x509.CertificateSigningRequestBuilder()
             .subject_name(x509.Name([
                 x509.NameAttribute(NameOID.COMMON_NAME, self.common_name),
                 x509.NameAttribute(NameOID.ORGANIZATION_NAME, self.organization),
@@ -97,7 +97,10 @@ class ServerCertificate:
             .add_extension(
                 x509.SubjectAlternativeName([
                     x509.DNSName(self.common_name),
-                    x509.IPAddress(ipaddress.IPv4Address('0.0.0.0'))  # Wildcard IP
+                    x509.DNSName('localhost'),
+                    x509.IPAddress(ipaddress.IPv4Address('127.0.0.1')),
+                    x509.IPAddress(ipaddress.IPv6Address('::1')),
+                    x509.IPAddress(ipaddress.IPv4Address('0.0.0.0'))
                 ]),
                 critical=False)
             .add_extension(
@@ -116,14 +119,11 @@ class ServerCertificate:
                     x509.oid.ExtendedKeyUsageOID.SERVER_AUTH,
                     x509.oid.ExtendedKeyUsageOID.CLIENT_AUTH
                 ]), critical=True)
-            .sign(key, hashes.SHA256()))
-        
-        self.csr = csr
-        self.key = key
+            .sign(self.key, hashes.SHA256()))
         return self
     
     def sign_with_ca(self, ca: CertificateAuthority) -> 'ServerCertificate':
-        now = datetime.today()
+        now = datetime.now(UTC) - timedelta(minutes=5)
         builder = (x509.CertificateBuilder()
             .issuer_name(ca.cert.issuer)
             .subject_name(self.csr.subject)
@@ -132,6 +132,7 @@ class ServerCertificate:
             .not_valid_after(now + self.validity)
             .serial_number(int(uuid.uuid4())))
         
+        # Add all extensions from CSR except Basic Constraints
         for extension in self.csr.extensions:
             if extension.oid != x509.oid.ExtensionOID.BASIC_CONSTRAINTS:
                 builder = builder.add_extension(extension.value, extension.critical)
@@ -140,7 +141,7 @@ class ServerCertificate:
             x509.AuthorityKeyIdentifier.from_issuer_public_key(ca.cert.public_key()),
             critical=False)
 
-        self.cert = builder.sign(private_key=ca.key, algorithm=hashes.SHA256())
+        self.cert = builder.sign(private_key=self.key, algorithm=hashes.SHA256())
         return self
     
     def store(self, path: Path) -> 'ServerCertificate':
@@ -161,8 +162,5 @@ class ServerCertificate:
 
 
 if __name__ == "__main__":
-    # Generate CA
     ca = CertificateAuthority("MLFlow LDAP-Test CA", "MLflow", "LDAP-Test").generate().store(Path("./ca"))
-    
-    # Generate Server Certificate
-    _ = ServerCertificate("lldap", "MLflow", "LDAP-Test").generate_csr().sign_with_ca(ca).store(Path("./ldap"))
+    server_cert = ServerCertificate("lldap", "MLflow", "LDAP-Test").generate_csr().sign_with_ca(ca).store(Path("./ldap"))

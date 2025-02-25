@@ -11,8 +11,8 @@ from werkzeug.datastructures import Authorization
 from mlflow.server.auth import store as auth_store
 
 
-logger = logging.getLogger('mlflow_ldap')
 _auth_store = auth_store
+logger = logging.getLogger(__name__)
 
 
 
