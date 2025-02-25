@@ -36,7 +36,7 @@ services:
 
   lldap-bootstrap:
     container_name: lldap-bootstrap-ldap-test
-    hostname: lldapboot
+    hostname: lldap-bootstrap
     image: lldap/lldap:${LLDAP_VERSION}
     entrypoint: sh -c './bootstrap.sh; tail -f /dev/null'
     environment:

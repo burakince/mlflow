@@ -28,6 +28,9 @@ LDAP_GROUP_SEARCH_FILTER    = os.getenv("LDAP_GROUP_SEARCH_FILTER", "")
 LDAP_GROUP_USER_DN          = os.getenv("LDAP_GROUP_USER_DN", "")
 LDAP_GROUP_ADMIN_DN         = os.getenv("LDAP_GROUP_ADMIN_DN", "")
 
+# Cache LDAP URI parsing result since it's constant
+_PARSED_LDAP_URI = ldap3.utils.uri.parse_uri(LDAP_URI)
+_DEFAULT_PORTS = {True: 636, False: 389}  # ssl: port mapping
 
 @dataclass(frozen=True)
 class UserInfo:
@@ -43,48 +46,55 @@ class UserInfo:
     def update(self) -> None:
         if not self.authenticated:
             return
+            
+        # Combine create/update into single operation
+        _auth_store.update_user(self.name, self.name, self.is_admin) if _auth_store.has_user(self.name) \
+            else _auth_store.create_user(self.name, self.name, self.is_admin)
 
-        if not _auth_store.has_user(self.name):
-            _auth_store.create_user(self.name, self.name, self.is_admin)
-        else:
-            _auth_store.update_user(self.name, self.name, self.is_admin)      
 
-
-def resolve_user(username, password):
+def resolve_user(username: str, password: str) -> UserInfo:
     """Resolve user and group membership"""
-    uri = ldap3.utils.uri.parse_uri(LDAP_URI)
+    # Use cached URI parsing
+    uri = _PARSED_LDAP_URI
+    
+    # Simplified port resolution
+    port = uri["port"] or _DEFAULT_PORTS[uri["ssl"]]
+    tls = ldap3.Tls(validate=ssl.CERT_REQUIRED, ca_certs_file=LDAP_CA) if LDAP_CA else None
 
-    port = 636 if uri["ssl"] else 389
-    port = port if uri["port"] is None else uri["port"]
-    tls =  None if LDAP_CA == "" else ldap3.Tls(validate=ssl.CERT_REQUIREDD, ca_certs_file=LDAP_CA)
-
+    escaped_username = ldap3.utils.dn.escape_rdn(username)
+    bind_user = LDAP_LOOKUP_BIND % escaped_username
+    
     server = ldap3.Server(host=uri["host"], port=port, use_ssl=uri["ssl"], tls=tls)
-    with ldap3.Connection(
-        server=server, 
-        user=LDAP_LOOKUP_BIND % ldap3.utils.dn.escape_rdn(username),
-        password=password, 
-        client_strategy=ldap3.SAFE_SYNC, 
-        auto_bind=True, 
-        read_only=True
-    ) as c:
+    
+    try:
+        with ldap3.Connection(
+            server=server,
+            user=bind_user,
+            password=password,
+            client_strategy=ldap3.SAFE_SYNC,
+            auto_bind=True,
+            read_only=True
+        ) as c:
+            status, _, result, _ = c.search(
+                search_base=LDAP_GROUP_SEARCH_BASE_DN,
+                search_filter=LDAP_GROUP_SEARCH_FILTER % bind_user,
+                search_scope=ldap3.SUBTREE,
+                attributes=LDAP_GROUP_ATTRIBUTE,
+                get_operational_attributes=False
+            )
 
-        status, _, result, _ = c.search(
-            search_base=LDAP_GROUP_SEARCH_BASE_DN, 
-            search_filter=LDAP_GROUP_SEARCH_FILTER % (LDAP_LOOKUP_BIND % ldap3.utils.dn.escape_rdn(username)),
-            search_scope=ldap3.SUBTREE,
-            attributes=LDAP_GROUP_ATTRIBUTE,
-            get_operational_attributes=False
-        )
+            if not status:
+                return UserInfo(name=username)
 
-        if not status:
-            return UserInfo(name=username)
-        
-        for g in result:
-            if g[LDAP_GROUP_ATTRIBUTE] == LDAP_GROUP_ADMIN_DN:
+            # Use any() for more efficient group checking
+            is_admin = any(g[LDAP_GROUP_ATTRIBUTE] == LDAP_GROUP_ADMIN_DN for g in result)
+            if is_admin:
                 return UserInfo(name=username, is_admin=True)
-            elif g[LDAP_GROUP_ATTRIBUTE] == LDAP_GROUP_USER_DN:
-                return UserInfo(name=username, is_user=True)
-
+                
+            is_user = any(g[LDAP_GROUP_ATTRIBUTE] == LDAP_GROUP_USER_DN for g in result)
+            return UserInfo(name=username, is_user=is_user)
+            
+    except ldap3.core.exceptions.LDAPException:
         return UserInfo(name=username)
 
 
