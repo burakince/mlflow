@@ -141,7 +141,7 @@ class ServerCertificate:
             x509.AuthorityKeyIdentifier.from_issuer_public_key(ca.cert.public_key()),
             critical=False)
 
-        self.cert = builder.sign(private_key=self.key, algorithm=hashes.SHA256())
+        self.cert = builder.sign(private_key=ca.key, algorithm=hashes.SHA256())
         return self
     
     def store(self, path: Path) -> 'ServerCertificate':
