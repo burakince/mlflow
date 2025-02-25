@@ -18,6 +18,7 @@ _auth_store = auth_store
 
 LDAP_URI                    = os.getenv("LDAP_URI", "")
 LDAP_CA                     = os.getenv("LDAP_CA", "")
+LDAP_TLS_VERIFY            = os.getenv("LDAP_TLS_VERIFY", "required")
 
 LDAP_LOOKUP_BIND            = os.getenv("LDAP_LOOKUP_BIND", "")
 
@@ -27,6 +28,13 @@ LDAP_GROUP_SEARCH_FILTER    = os.getenv("LDAP_GROUP_SEARCH_FILTER", "")
 
 LDAP_GROUP_USER_DN          = os.getenv("LDAP_GROUP_USER_DN", "")
 LDAP_GROUP_ADMIN_DN         = os.getenv("LDAP_GROUP_ADMIN_DN", "")
+
+# TLS verification mapping
+TLS_VERIFY_MAP = {
+    "none": ssl.CERT_NONE,
+    "optional": ssl.CERT_OPTIONAL,
+    "required": ssl.CERT_REQUIRED
+}
 
 # Cache LDAP URI parsing result since it's constant
 _PARSED_LDAP_URI = ldap3.utils.uri.parse_uri(LDAP_URI)
@@ -54,17 +62,29 @@ class UserInfo:
 
 def resolve_user(username: str, password: str) -> UserInfo:
     """Resolve user and group membership"""
-    # Use cached URI parsing
     uri = _PARSED_LDAP_URI
-    
-    # Simplified port resolution
     port = uri["port"] or _DEFAULT_PORTS[uri["ssl"]]
-    tls = ldap3.Tls(validate=ssl.CERT_REQUIRED, ca_certs_file=LDAP_CA) if LDAP_CA else None
+    
+    # Enhanced TLS configuration
+    tls = None
+    if uri["ssl"] or LDAP_CA:
+        tls = ldap3.Tls(
+            validate=TLS_VERIFY_MAP.get(LDAP_TLS_VERIFY, ssl.CERT_REQUIRED),
+            ca_certs_file=LDAP_CA if LDAP_CA else None,
+            validate_hostname=True,  # Keep hostname validation for TLS
+            check_names=True  # Keep certificate hostname matching
+        )
 
+    server = ldap3.Server(
+        host=uri["host"],
+        port=port,
+        use_ssl=uri["ssl"],
+        tls=tls,
+        get_info=ldap3.ALL if tls else ldap3.NONE
+    )
+    
     escaped_username = ldap3.utils.dn.escape_rdn(username)
     bind_user = LDAP_LOOKUP_BIND % escaped_username
-    
-    server = ldap3.Server(host=uri["host"], port=port, use_ssl=uri["ssl"], tls=tls)
     
     try:
         with ldap3.Connection(

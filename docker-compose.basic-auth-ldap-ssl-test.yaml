@@ -82,6 +82,7 @@ services:
 
       LDAP_URI: ldaps://lldap:6360/dc=mlflow,dc=test
       LDAP_CA: /cert/ca.crt
+      LDAP_TLS_VERIFY: required
       LDAP_LOOKUP_BIND: uid=%s,ou=people,dc=mlflow,dc=test
       LDAP_GROUP_ATTRIBUTE: dn
       LDAP_GROUP_SEARCH_BASE_DN: ou=groups,dc=mlflow,dc=test
