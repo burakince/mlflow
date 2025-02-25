@@ -8,18 +8,32 @@ from mlflow.server.auth import store as auth_store
 from werkzeug.datastructures import Authorization
 
 import logging
-from ldap3.utils.log import set_library_log_activation_level
-logging.basicConfig(level=logging.CRITICAL)
-set_library_log_activation_level(logging.CRITICAL) 
+from ldap3.utils.log import set_library_log_activation_level, get_library_log_detail_level, set_library_log_detail_level
 
+# Configure logging with more detailed format
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+# Create a specific logger for LDAP and SSL
+ldap_logger = logging.getLogger('ldap')
+ldap_logger.setLevel(logging.DEBUG)
+
+# Enable detailed LDAP library logging
+set_library_log_activation_level(logging.DEBUG)
+set_library_log_detail_level(get_library_log_detail_level() + 10)
+
+# Create SSL logger
+ssl_logger = logging.getLogger('ssl')
+ssl_logger.setLevel(logging.DEBUG)
 
 _auth_store = auth_store
 
 
 LDAP_URI                    = os.getenv("LDAP_URI", "")
 LDAP_CA                     = os.getenv("LDAP_CA", "")
-LDAP_TLS_VERIFY            = os.getenv("LDAP_TLS_VERIFY", "required")
-
+LDAP_TLS_VERIFY             = os.getenv("LDAP_TLS_VERIFY", "required")
 LDAP_LOOKUP_BIND            = os.getenv("LDAP_LOOKUP_BIND", "")
 
 LDAP_GROUP_ATTRIBUTE        = os.getenv("LDAP_GROUP_ATTRIBUTE", "")
@@ -71,8 +85,6 @@ def resolve_user(username: str, password: str) -> UserInfo:
         tls = ldap3.Tls(
             validate=TLS_VERIFY_MAP.get(LDAP_TLS_VERIFY, ssl.CERT_REQUIRED),
             ca_certs_file=LDAP_CA if LDAP_CA else None,
-            validate_hostname=True,  # Keep hostname validation for TLS
-            check_names=True  # Keep certificate hostname matching
         )
 
     server = ldap3.Server(
@@ -86,36 +98,33 @@ def resolve_user(username: str, password: str) -> UserInfo:
     escaped_username = ldap3.utils.dn.escape_rdn(username)
     bind_user = LDAP_LOOKUP_BIND % escaped_username
     
-    try:
-        with ldap3.Connection(
-            server=server,
-            user=bind_user,
-            password=password,
-            client_strategy=ldap3.SAFE_SYNC,
-            auto_bind=True,
-            read_only=True
-        ) as c:
-            status, _, result, _ = c.search(
-                search_base=LDAP_GROUP_SEARCH_BASE_DN,
-                search_filter=LDAP_GROUP_SEARCH_FILTER % bind_user,
-                search_scope=ldap3.SUBTREE,
-                attributes=LDAP_GROUP_ATTRIBUTE,
-                get_operational_attributes=False
-            )
+    with ldap3.Connection(
+        server=server,
+        user=bind_user,
+        password=password,
+        client_strategy=ldap3.SAFE_SYNC,
+        auto_bind=True,
+        read_only=True
+    ) as c:
+        status, _, result, _ = c.search(
+            search_base=LDAP_GROUP_SEARCH_BASE_DN,
+            search_filter=LDAP_GROUP_SEARCH_FILTER % bind_user,
+            search_scope=ldap3.SUBTREE,
+            attributes=LDAP_GROUP_ATTRIBUTE,
+            get_operational_attributes=False
+        )
 
-            if not status:
-                return UserInfo(name=username)
+        if not status:
+            return UserInfo(name=username)
 
-            # Use any() for more efficient group checking
-            is_admin = any(g[LDAP_GROUP_ATTRIBUTE] == LDAP_GROUP_ADMIN_DN for g in result)
-            if is_admin:
-                return UserInfo(name=username, is_admin=True)
-                
-            is_user = any(g[LDAP_GROUP_ATTRIBUTE] == LDAP_GROUP_USER_DN for g in result)
-            return UserInfo(name=username, is_user=is_user)
+        # Use any() for more efficient group checking
+        is_admin = any(g[LDAP_GROUP_ATTRIBUTE] == LDAP_GROUP_ADMIN_DN for g in result)
+        if is_admin:
+            return UserInfo(name=username, is_admin=True)
             
-    except ldap3.core.exceptions.LDAPException:
-        return UserInfo(name=username)
+        is_user = any(g[LDAP_GROUP_ATTRIBUTE] == LDAP_GROUP_USER_DN for g in result)
+        return UserInfo(name=username, is_user=is_user)
+
 
 
 def authenticate_request_basic_auth() -> Union[Authorization, Response]:
@@ -131,7 +140,8 @@ def authenticate_request_basic_auth() -> Union[Authorization, Response]:
             request.authorization.username,
             request.authorization.password
         )
-    except:
+    except Exception as e:
+        ldap_logger.error(f"Authentication failed for user {request.authorization.username}: {str(e)}", exc_info=True)
         return _unauthorized_response("Please ensure you are included in the group and input correct credentials!")
 
     if user.authenticated:
