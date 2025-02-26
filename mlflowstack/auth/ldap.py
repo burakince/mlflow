@@ -22,7 +22,7 @@ LDAP_URI = os.getenv("LDAP_URI", "")
 # Path to CA certificate file for LDAP TLS
 LDAP_CA = os.getenv("LDAP_CA", "")
 
-# TLS verification level
+# TLS verification level (values: none | optional | required)
 LDAP_TLS_VERIFY = os.getenv("LDAP_TLS_VERIFY", "required")
 
 
