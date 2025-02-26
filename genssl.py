@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Tuple
 import uuid
 import ipaddress
+import argparse
 
 
 class CertificateAuthority:
@@ -160,7 +161,27 @@ class ServerCertificate:
         return self
 
 
-
 if __name__ == "__main__":
-    ca = CertificateAuthority("MLFlow LDAP-Test CA", "MLflow", "LDAP-Test").generate().store(Path("./ca"))
-    server_cert = ServerCertificate("lldap", "MLflow", "LDAP-Test").generate_csr().sign_with_ca(ca).store(Path("./ldap"))
+    parser = argparse.ArgumentParser(description='Generate CA and Server certificates')
+    
+    # CA arguments
+    ca_group = parser.add_argument_group('CA certificate options')
+    ca_group.add_argument('--ca-cn', default="MLFlow Server-SSL-Test CA", help='CA Common Name (default: %(default)s)')
+    ca_group.add_argument('--ca-org', default="MLflow", help='CA Organization (default: %(default)s)')
+    ca_group.add_argument('--ca-ou', default="Server-SSL-Test", help='CA Organizational Unit (default: %(default)s)')
+    ca_group.add_argument('--ca-path', type=Path, default=Path("./ca"), help='CA output path (default: %(default)s)')
+    
+    # Server certificate arguments
+    server_group = parser.add_argument_group('Server certificate options')
+    server_group.add_argument('--srv-cn', default="server", help='Server Common Name (default: %(default)s)')
+    server_group.add_argument('--srv-org', default="MLflow", help='Server Organization (default: %(default)s)')
+    server_group.add_argument('--srv-ou', default="Server-SSL-Test", help='Server Organizational Unit (default: %(default)s)')
+    server_group.add_argument('--srv-path', type=Path, default=Path("./server"), help='Server certificate output path (default: %(default)s)')
+    
+    args = parser.parse_args()
+    
+    # Generate CA
+    ca = CertificateAuthority(args.ca_cn, args.ca_org, args.ca_ou).generate().store(args.ca_path)
+    
+    # Generate Server Certificate
+    server_cert = ServerCertificate(args.srv_cn, args.srv_org, args.srv_ou).generate_csr().sign_with_ca(ca).store(args.srv_path)
