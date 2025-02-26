@@ -1,3 +1,19 @@
+"""
+SSL Certificate Generator for Server Authentication
+
+This module provides functionality to generate:
+1. A self-signed Certificate Authority (CA) certificate
+2. A server certificate signed by the generated CA
+
+The certificates are suitable for SSL/TLS server authentication with support
+for multiple DNS names and IP addresses. All certificates are generated with
+a validity period and use SHA256 for signing.
+
+Usage:
+    python genssl.py [options]
+    Use --help to see all available options
+"""
+
 from cryptography import x509
 from cryptography.x509.oid import NameOID
 from datetime import datetime, timedelta, UTC
@@ -11,6 +27,20 @@ import argparse
 
 
 class CertificateAuthority:
+    """
+    Certificate Authority (CA) generator for creating and signing certificates.
+    
+    Creates a self-signed CA certificate that can be used to sign server certificates.
+    The CA certificate has the necessary extensions for certificate signing.
+    
+    Args:
+        common_name: The CA certificate's Common Name
+        organization: The organization name
+        org_unit: The organizational unit name
+        key_size: RSA key size in bits (default: 2048)
+        validity: Certificate validity period (default: 1 day)
+    """
+
     def __init__(self, common_name: str, organization: str, org_unit: str, 
                  key_size: int = 2048, validity: timedelta = timedelta(1, 0, 0)):
         self.common_name = common_name
@@ -22,6 +52,14 @@ class CertificateAuthority:
         self.key = None
 
     def generate(self) -> 'CertificateAuthority':
+        """
+        Generate the CA certificate and private key.
+        
+        Creates an RSA key pair and a self-signed certificate with CA extensions.
+        
+        Returns:
+            Self for method chaining
+        """
         self.key = rsa.generate_private_key(key_size=self.key_size, public_exponent=65537)
         
         # Create name object once and reuse
@@ -59,6 +97,18 @@ class CertificateAuthority:
         return self
 
     def store(self, path: Path) -> 'CertificateAuthority':
+        """
+        Store the CA certificate and private key to files.
+        
+        Args:
+            path: Base path for the certificate (.crt) and key (.key) files
+            
+        Returns:
+            Self for method chaining
+            
+        Raises:
+            ValueError: If certificate or key hasn't been generated
+        """
         if not self.cert or not self.key:
             raise ValueError("Certificate and key not generated yet")
         
@@ -75,6 +125,21 @@ class CertificateAuthority:
 
 
 class ServerCertificate:
+    """
+    Server certificate generator for SSL/TLS authentication.
+    
+    Creates a certificate signing request (CSR) and gets it signed by a CA.
+    The certificate includes server authentication extensions and multiple
+    DNS/IP alternatives.
+    
+    Args:
+        common_name: The server's Common Name (hostname)
+        organization: The organization name
+        org_unit: The organizational unit name
+        key_size: RSA key size in bits (default: 2048)
+        validity: Certificate validity period (default: 1 day)
+    """
+
     def __init__(self, common_name: str, organization: str, org_unit: str, 
                  key_size: int = 2048, validity: timedelta = timedelta(1, 0, 0)):
         self.common_name = common_name
@@ -87,6 +152,15 @@ class ServerCertificate:
         self.key = None
 
     def generate_csr(self) -> 'ServerCertificate':
+        """
+        Generate a Certificate Signing Request (CSR) for the server.
+        
+        Creates an RSA key pair and CSR with server authentication extensions
+        and multiple DNS names and IP addresses in the Subject Alternative Name.
+        
+        Returns:
+            Self for method chaining
+        """
         self.key = rsa.generate_private_key(key_size=self.key_size, public_exponent=65537)
         
         self.csr = (x509.CertificateSigningRequestBuilder()
@@ -124,6 +198,18 @@ class ServerCertificate:
         return self
     
     def sign_with_ca(self, ca: CertificateAuthority) -> 'ServerCertificate':
+        """
+        Sign the CSR with the provided Certificate Authority.
+        
+        Args:
+            ca: The Certificate Authority to sign with
+            
+        Returns:
+            Self for method chaining
+            
+        Note:
+            Transfers all extensions from the CSR except Basic Constraints
+        """
         now = datetime.now(UTC) - timedelta(minutes=5)
         builder = (x509.CertificateBuilder()
             .issuer_name(ca.cert.issuer)
@@ -146,6 +232,18 @@ class ServerCertificate:
         return self
     
     def store(self, path: Path) -> 'ServerCertificate':
+        """
+        Store the server certificate and private key to files.
+        
+        Args:
+            path: Base path for the certificate (.crt) and key (.key) files
+            
+        Returns:
+            Self for method chaining
+            
+        Raises:
+            ValueError: If certificate or key hasn't been generated
+        """
         if not self.cert or not self.key:
             raise ValueError("Certificate and key not generated yet")
         
@@ -162,7 +260,20 @@ class ServerCertificate:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Generate CA and Server certificates')
+    parser = argparse.ArgumentParser(
+        description='Generate CA and Server certificates for SSL/TLS authentication',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  Generate with defaults:
+    %(prog)s
+  
+  Custom server name:
+    %(prog)s --srv-cn myserver.example.com
+  
+  Custom paths:
+    %(prog)s --ca-path ./ssl/ca --srv-path ./ssl/server
+        """)
     
     # CA arguments
     ca_group = parser.add_argument_group('CA certificate options')
