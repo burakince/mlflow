@@ -4,34 +4,22 @@ import time
 
 import pytest
 import requests
+from pathlib import Path
 
 import mlflow
 from mlflow.server.auth.client import AuthServiceClient
 from mlflow.tracking.client import MlflowClient
 
 from .extended_docker_compose import ExtendedDockerCompose
+from .certificates import ServerCertificate, CertificateAuthority
 
 
 def test_ldap_backended_model_upload_and_access_with_basic_auth(
     test_model, training_params, conda_env
 ):
-    # https://stackoverflow.com/questions/45873832/how-do-i-create-and-sign-certificates-with-pythons-pyopenssl
-    # https://stackoverflow.com/questions/27164354/create-a-self-signed-x509-certificate-in-python
-    # https://gist.github.com/major/8ac9f98ae8b07f46b208
-    # https://gist.github.com/Zeerg/0b0313d22124d3e8b478
-    # https://nachtimwald.com/2019/11/14/python-self-signed-cert-gen/
-    # https://mikail-eliyah.medium.com/openssl-in-python-keys-and-certificates-e304df79ee0f
-    # https://cryptography.io/en/latest/x509/tutorial/
-    # https://arminreiter.com/2022/01/create-your-own-certificate-authority-ca-using-openssl/
-    # https://www.programcreek.com/python/example/102792/cryptography.x509.CertificateBuilder
 
-    # https://ldap3.readthedocs.io/en/latest/ssltls.html
-
-    # openssl x509 -noout -text -in <cert file>
-    # openssl rsa -noout -text -in <key file>
-    # openssl req -noout -text -in <csr file>
-
-
+    ca = CertificateAuthority("MLFlow LDAP-SSL-Test CA", "MLFlow", "LDAP-SSL-Test").generate().store(Path(__file__).parent.parent.joinpath("ca"))
+    _ = ServerCertificate("lldap", "MLFlow", "LDAP-SSL-Test").generate_csr().sign_with_ca(ca).store(Path(__file__).parent.parent.joinpath("ldap"))
 
     with ExtendedDockerCompose(
         context=".",

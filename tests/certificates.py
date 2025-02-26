@@ -273,6 +273,12 @@ Examples:
   
   Custom paths:
     %(prog)s --ca-path ./ssl/ca --srv-path ./ssl/server
+
+OpenSSL commands:
+  - certificate information:        openssl x509 -noout -text -in <cert file>
+  - private key information:        openssl rsa -noout -text -in <key file>
+  - certificate signing request:    openssl req -noout -text -in <csr file>
+  - verify certificate:             openssl verify -CAfile <ca cert> <server crt>
         """)
     
     # CA arguments
@@ -291,8 +297,6 @@ Examples:
     
     args = parser.parse_args()
     
-    # Generate CA
+    # Generate CA & Server Certificate
     ca = CertificateAuthority(args.ca_cn, args.ca_org, args.ca_ou).generate().store(args.ca_path)
-    
-    # Generate Server Certificate
-    server_cert = ServerCertificate(args.srv_cn, args.srv_org, args.srv_ou).generate_csr().sign_with_ca(ca).store(args.srv_path)
+    _ = ServerCertificate(args.srv_cn, args.srv_org, args.srv_ou).generate_csr().sign_with_ca(ca).store(args.srv_path)
