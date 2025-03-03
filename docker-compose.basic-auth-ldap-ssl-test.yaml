@@ -35,8 +35,8 @@ services:
       LLDAP_LDAPS_OPTIONS__CERT_FILE: /cert/ldap.crt
       LLDAP_LDAPS_OPTIONS__KEY_FILE: /cert/ldap.key
     volumes:
-      - ./ldap.crt:/cert/ldap.crt
-      - ./ldap.key:/cert/ldap.key
+      - ./test-containers/basic-auth/ldap/certificates/ldap.crt:/cert/ldap.crt
+      - ./test-containers/basic-auth/ldap/certificates/ldap.key:/cert/ldap.key
     networks:
       - basic_auth_ldap_ssl_test_nw
 
@@ -96,7 +96,7 @@ services:
       - basic_auth_ldap_ssl_test_nw
     volumes:
       - ./test-containers/basic-auth/ldap/basic_auth.ini:/mlflow/basic_auth.ini:ro
-      - ./ca.crt:/cert/ca.crt:ro
+      - ./test-containers/basic-auth/ldap/certificates/ca.crt:/cert/ca.crt:ro
     depends_on:
       minio:
         condition: service_healthy
