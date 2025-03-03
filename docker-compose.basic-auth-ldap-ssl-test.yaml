@@ -1,6 +1,6 @@
 services:
   minio:
-    container_name: minio-ldap-test
+    container_name: minio-ldap-ssl-test
     hostname: minio
     image: minio/minio:${MINIO_VERSION}
     entrypoint: sh
@@ -18,25 +18,31 @@ services:
       retries: 3
       start_period: 5s
     networks:
-      - basic_auth_ldap_test_nw
+      - basic_auth_ldap_ssl_test_nw
 
   lldap:
     image: lldap/lldap:${LLDAP_VERSION}
     hostname: lldap
-    container_name: lldap-ldap-test
+    container_name: lldap-ldap-ssl-test
     ports:
-      - "3890:3890"
+      - "6360:6360"
       - "17170:17170"
     environment:
       LLDAP_LDAP_USER_DN: admin
       LLDAP_LDAP_USER_PASS: admin123
       LLDAP_LDAP_BASE_DN: dc=mlflow,dc=test
+      LLDAP_LDAPS_OPTIONS__ENABLED: true
+      LLDAP_LDAPS_OPTIONS__CERT_FILE: /cert/ldap.crt
+      LLDAP_LDAPS_OPTIONS__KEY_FILE: /cert/ldap.key
+    volumes:
+      - ./test-containers/basic-auth/ldap/certificates/ldap.crt:/cert/ldap.crt
+      - ./test-containers/basic-auth/ldap/certificates/ldap.key:/cert/ldap.key
     networks:
-      - basic_auth_ldap_test_nw
+      - basic_auth_ldap_ssl_test_nw
 
   lldap-bootstrap:
-    container_name: lldap-bootstrap-ldap-test
-    hostname: lldap-bootstrap
+    container_name: lldap-bootstrap-ldap-ssl-test
+    hostname: lldap-boostrap
     image: lldap/lldap:${LLDAP_VERSION}
     entrypoint: sh -c './bootstrap.sh; tail -f /dev/null'
     environment:
@@ -48,7 +54,7 @@ services:
       - ./test-containers/basic-auth/ldap/group:/group-configs:ro
       - ./test-containers/basic-auth/ldap/user:/user-configs:ro
     networks:
-      - basic_auth_ldap_test_nw
+      - basic_auth_ldap_ssl_test_nw
     depends_on:
       lldap:
         condition: service_healthy
@@ -59,7 +65,7 @@ services:
       retries: 1
 
   mlflow:
-    container_name: mlflow-basic-auth-ldap-test
+    container_name: mlflow-basic-auth-ldap-ssl-test
     build:
       context: .
       dockerfile: Dockerfile
@@ -74,7 +80,9 @@ services:
       FLASK_ENV: development
       DEBUG: True
 
-      LDAP_URI: ldap://lldap:3890/dc=mlflow,dc=test
+      LDAP_URI: ldaps://lldap:6360/dc=mlflow,dc=test
+      LDAP_CA: /cert/ca.crt
+      LDAP_TLS_VERIFY: required
       LDAP_LOOKUP_BIND: uid=%s,ou=people,dc=mlflow,dc=test
       LDAP_GROUP_ATTRIBUTE: dn
       LDAP_GROUP_SEARCH_BASE_DN: ou=groups,dc=mlflow,dc=test
@@ -85,9 +93,10 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - basic_auth_ldap_test_nw
+      - basic_auth_ldap_ssl_test_nw
     volumes:
-      - ./test-containers/basic-auth/ldap/basic_auth.ini:/mlflow/basic_auth.ini
+      - ./test-containers/basic-auth/ldap/basic_auth.ini:/mlflow/basic_auth.ini:ro
+      - ./test-containers/basic-auth/ldap/certificates/ca.crt:/cert/ca.crt:ro
     depends_on:
       minio:
         condition: service_healthy
@@ -97,5 +106,5 @@ services:
         condition: service_healthy
 
 networks:
-  basic_auth_ldap_test_nw:
+  basic_auth_ldap_ssl_test_nw:
     driver: bridge

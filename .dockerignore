@@ -24,3 +24,7 @@ test-containers
 tests
 docs
 **/__pycache__
+
+*.db
+*.key
+*.crt
