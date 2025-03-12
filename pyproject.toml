@@ -14,10 +14,10 @@ dependencies = [
   "mlflow[auth,extras,pipelines] (>=2.20.3,<3.0.0)",
   "pymysql (>=1.1.1,<2.0.0)",
   "psycopg2-binary (>=2.9.10,<3.0.0)",
-  "boto3 (>=1.37.10,<2.0.0)",
-  "sqlalchemy (>=2.0.38,<3.0.0)",
+  "boto3 (>=1.37.11,<2.0.0)",
+  "sqlalchemy (>=2.0.39,<3.0.0)",
   "google-cloud-storage (>=3.1.0,<4.0.0)",
-  "azure-storage-blob (>=12.24.1,<13.0.0)",
+  "azure-storage-blob (>=12.25.0,<13.0.0)",
   "ldap3 (>=2.9.1,<3.0.0)"
 ]
 
