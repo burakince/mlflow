@@ -25,39 +25,47 @@ on:
   workflow_dispatch:
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Load .env and generate matrix
+        id: set-matrix
+        run: |
+          set -a
+          source .env
+          set +a
+
+          MATRIX=$(jq -n \
+            --arg pg1 "15" \
+            --arg pg2 "16" \
+            --arg pg3 "$POSTGRES_VERSION" \
+            --arg my1 "8.0" \
+            --arg my2 "8.4" \
+            --arg my3 "$MYSQL_VERSION" \
+            --arg minio "$MINIO_VERSION" \
+            --arg gcs "$FAKE_GCS_SERVER_VERSION" \
+            --arg azurite "$AZURITE_VERSION" \
+            --arg azure_blob "$AZURE_STORAGE_BLOB_VERSION" \
+            --arg lldap "$LLDAP_VERSION" \
+            '[
+              { "postgres": $pg1, "mysql": $my1, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap },
+              { "postgres": $pg2, "mysql": $my2, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap },
+              { "postgres": $pg3, "mysql": $my3, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap }
+            ]')
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+
   integrationtest:
+    needs: setup
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        database-combo:
-          - {
-              postgres: "15",
-              mysql: "8.0",
-              minio: "RELEASE.2024-11-07T00-52-20Z",
-              gcs: "1.50.2",
-              azurite: "3.33.0",
-              azure-storage-blob: "12.26.0",
-              lldap: "v0.6.1",
-            }
-          - {
-              postgres: "16",
-              mysql: "8.4",
-              minio: "RELEASE.2024-11-07T00-52-20Z",
-              gcs: "1.50.2",
-              azurite: "3.33.0",
-              azure-storage-blob: "12.26.0",
-              lldap: "v0.6.1",
-            }
-          - {
-              postgres: "17",
-              mysql: "9.1",
-              minio: "RELEASE.2024-11-07T00-52-20Z",
-              gcs: "1.50.2",
-              azurite: "3.33.0",
-              azure-storage-blob: "12.26.0",
-              lldap: "v0.6.1",
-            }
+        database-combo: ${{ fromJson(needs.setup.outputs.matrix) }}
 
     name: Test PostgreSQL ${{ matrix.database-combo.postgres }} & MySQL ${{ matrix.database-combo.mysql }}
 
@@ -138,25 +146,17 @@ jobs:
             lldap/lldap:${{ matrix.database-combo.lldap }}
 
       #----------------------------------------------
-      # Overwrite .env file to test different version of databases
-      #----------------------------------------------
-      - name: Set up .env file
-        run: |
-          echo "POSTGRES_VERSION=${{ matrix.database-combo.postgres }}" > .env
-          echo "MYSQL_VERSION=${{ matrix.database-combo.mysql }}" >> .env
-          echo "MINIO_VERSION=${{ matrix.database-combo.minio }}" >> .env
-          echo "FAKE_GCS_SERVER_VERSION=${{ matrix.database-combo.gcs }}" >> .env
-          echo "AZURITE_VERSION=${{ matrix.database-combo.azurite }}" >> .env
-          echo "AZURE_STORAGE_BLOB_VERSION=${{ matrix.database-combo.azure-storage-blob }}" >> .env
-          echo "LLDAP_VERSION=${{ matrix.database-combo.lldap }}" >> .env
-
-      #----------------------------------------------
       #              run test suite
       #----------------------------------------------
       - name: Run tests
         env:
           POSTGRES_VERSION: ${{ matrix.database-combo.postgres }}
           MYSQL_VERSION: ${{ matrix.database-combo.mysql }}
+          MINIO_VERSION: ${{ matrix.database-combo.minio }}
+          FAKE_GCS_SERVER_VERSION: ${{ matrix.database-combo.gcs }}
+          AZURITE_VERSION: ${{ matrix.database-combo.azurite }}
+          AZURE_STORAGE_BLOB_VERSION: ${{ matrix.database-combo.azure-storage-blob }}
+          LLDAP_VERSION: ${{ matrix.database-combo.lldap }}
         run: |
           source .venv/bin/activate
           poetry run pytest
