@@ -40,7 +40,7 @@ jobs:
           source .env
           set +a
 
-          MATRIX=$(jq -n \
+          MATRIX=$(jq -c -n \
             --arg pg1 "15" \
             --arg pg2 "16" \
             --arg pg3 "$POSTGRES_VERSION" \
@@ -58,6 +58,7 @@ jobs:
               { "postgres": $pg3, "mysql": $my3, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap }
             ]')
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+        shell: /usr/bin/bash -e {0}
 
   integrationtest:
     needs: setup
