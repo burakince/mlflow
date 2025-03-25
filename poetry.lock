@@ -431,18 +431,18 @@ files = [
 
 [[package]]
 name = "boto3"
-version = "1.37.19"
+version = "1.37.20"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "boto3-1.37.19-py3-none-any.whl", hash = "sha256:fbfc2c43ad686b63c8aa02aee634c269f856eed68941d8e570cc45950be52130"},
-    {file = "boto3-1.37.19.tar.gz", hash = "sha256:c69c90500f18fd72d782d1612170b7d3db9a98ed51a4da3bebe38e693497ebf8"},
+    {file = "boto3-1.37.20-py3-none-any.whl", hash = "sha256:225dbc75d79816cb9b28cc74a63c9fa0f2d70530d603dacd82634f362f6679c1"},
+    {file = "boto3-1.37.20.tar.gz", hash = "sha256:87d9bd6ad49be754d4ae2724cfb892eb3f9f17bcafd781fb3ce0d98cc539bdd6"},
 ]
 
 [package.dependencies]
-botocore = ">=1.37.19,<1.38.0"
+botocore = ">=1.37.20,<1.38.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.11.0,<0.12.0"
 
@@ -451,14 +451,14 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.37.19"
+version = "1.37.20"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "botocore-1.37.19-py3-none-any.whl", hash = "sha256:6e1337e73a6b8146c1ec20a6a72d67e2809bd4c0af076431fe6e1561e0c89415"},
-    {file = "botocore-1.37.19.tar.gz", hash = "sha256:eadcdc37de09df25cf1e62e8106660c61f60a68e984acfc1a8d43fb6267e53b8"},
+    {file = "botocore-1.37.20-py3-none-any.whl", hash = "sha256:c34f4f25fda7c4f726adf5a948590bd6bd7892c05278d31e344b5908e7b43301"},
+    {file = "botocore-1.37.20.tar.gz", hash = "sha256:9295385740f9d30f9b679f76ee51f49b80ae73183d84d499c1c3f1d54d820f54"},
 ]
 
 [package.dependencies]
@@ -2016,14 +2016,14 @@ dev = ["meson-python (>=0.13.1,<0.17.0)", "pybind11 (>=2.13.2,!=2.13.3)", "setup
 
 [[package]]
 name = "mlflow"
-version = "2.21.0"
+version = "2.21.1"
 description = "MLflow is an open source platform for the complete machine learning lifecycle"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "mlflow-2.21.0-py3-none-any.whl", hash = "sha256:92b6335420256d10ad0c3d60a7bc5a3c8ba80e56d78759229c53c2252ed61a14"},
-    {file = "mlflow-2.21.0.tar.gz", hash = "sha256:015f2527367986322ef9fac1a329f6a9040c281077b284badb66261d4adf99d1"},
+    {file = "mlflow-2.21.1-py3-none-any.whl", hash = "sha256:bdb825501fd8c8bab49cacb7ab6ca2bfebce678f57701924c345606c4f9e0d92"},
+    {file = "mlflow-2.21.1.tar.gz", hash = "sha256:ca023226df67c9ead60778c10ed67c207b9f9b581aa1c826a81d4ed3f61f5b41"},
 ]
 
 [package.dependencies]
@@ -2044,7 +2044,7 @@ Jinja2 = [
 kubernetes = {version = "*", optional = true, markers = "extra == \"extras\""}
 markdown = ">=3.3,<4"
 matplotlib = "<4"
-mlflow-skinny = "2.21.0"
+mlflow-skinny = "2.21.1"
 numpy = "<3"
 pandas = "<3"
 prometheus-flask-exporter = {version = "*", optional = true, markers = "extra == \"extras\""}
@@ -2075,14 +2075,14 @@ xethub = ["mlflow-xethub"]
 
 [[package]]
 name = "mlflow-skinny"
-version = "2.21.0"
+version = "2.21.1"
 description = "MLflow is an open source platform for the complete machine learning lifecycle"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "mlflow_skinny-2.21.0-py3-none-any.whl", hash = "sha256:af238c6e3fd7ffa98753c7d4920cf19bca76175c31e614a7b3235d876ab4eafe"},
-    {file = "mlflow_skinny-2.21.0.tar.gz", hash = "sha256:9369bebba734570e7376787bcc08aece5ae4b7ccd03d5333e34417f5029477ac"},
+    {file = "mlflow_skinny-2.21.1-py3-none-any.whl", hash = "sha256:d3523b180f0af639b7e5346a9a9cbae55b75da595786456a767cf65907bdf08d"},
+    {file = "mlflow_skinny-2.21.1.tar.gz", hash = "sha256:e0f88aed198d1d8c5a3e40dc8d3c6b59162e547576371f25b4381f827a9d22fd"},
 ]
 
 [package.dependencies]
@@ -3115,14 +3115,14 @@ test = ["pretend", "pytest (>=3.0.1)", "pytest-rerunfailures"]
 
 [[package]]
 name = "pyparsing"
-version = "3.2.2"
+version = "3.2.3"
 description = "pyparsing module - Classes and methods to define and execute parsing grammars"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "pyparsing-3.2.2-py3-none-any.whl", hash = "sha256:6ab05e1cb111cc72acc8ed811a3ca4c2be2af8d7b6df324347f04fd057d8d793"},
-    {file = "pyparsing-3.2.2.tar.gz", hash = "sha256:2a857aee851f113c2de9d4bfd9061baea478cb0f1c7ca6cbf594942d6d111575"},
+    {file = "pyparsing-3.2.3-py3-none-any.whl", hash = "sha256:a749938e02d6fd0b59b356ca504a24982314bb090c383e3cf201c95ef7e2bfcf"},
+    {file = "pyparsing-3.2.3.tar.gz", hash = "sha256:b9c13f1ab8b3b542f72e28f634bad4de758ab3ce4546e4301970ad6fa77c38be"},
 ]
 
 [package.extras]
@@ -3209,14 +3209,14 @@ six = ">=1.5"
 
 [[package]]
 name = "python-dotenv"
-version = "1.0.1"
+version = "1.1.0"
 description = "Read key-value pairs from a .env file and set them as environment variables"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "python-dotenv-1.0.1.tar.gz", hash = "sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca"},
-    {file = "python_dotenv-1.0.1-py3-none-any.whl", hash = "sha256:f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a"},
+    {file = "python_dotenv-1.1.0-py3-none-any.whl", hash = "sha256:d7c01d9e2293916c18baf562d95698754b0dbbb5e74d457c45d4f6561fb9d55d"},
+    {file = "python_dotenv-1.1.0.tar.gz", hash = "sha256:41f90bc6f5f177fb41f53e87666db362025010eb28f60a01c9143bfa33a2b2d5"},
 ]
 
 [package.extras]
@@ -3224,14 +3224,14 @@ cli = ["click (>=5.0)"]
 
 [[package]]
 name = "pytz"
-version = "2025.1"
+version = "2025.2"
 description = "World timezone definitions, modern and historical"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "pytz-2025.1-py2.py3-none-any.whl", hash = "sha256:89dd22dca55b46eac6eda23b2d72721bf1bdfef212645d81513ef5d03038de57"},
-    {file = "pytz-2025.1.tar.gz", hash = "sha256:c2db42be2a2518b28e65f9207c4d05e6ff547d1efa4086469ef855e4ab70178e"},
+    {file = "pytz-2025.2-py2.py3-none-any.whl", hash = "sha256:5ddf76296dd8c44c26eb8f4b6f35488f3ccbf6fbbd7adee0b7262d43f0ec2f00"},
+    {file = "pytz-2025.2.tar.gz", hash = "sha256:360b9e3dbb49a209c21ad61809c7fb453643e048b38924c765813546746e81c3"},
 ]
 
 [[package]]
@@ -4060,4 +4060,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<4.0"
-content-hash = "eab80b32b1f693dfca58a336e6c594055bb655b3a76e1c0a8021750908eac739"
+content-hash = "0e859c666c295c9625abe1aeeb9e8f54aca2ff47669274d5b5ff5f6b502eaee6"
