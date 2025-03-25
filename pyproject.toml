@@ -11,10 +11,10 @@ authors = [
     { name = "Burak Ince", email = "burak.ince@linux.org.tr" },
 ]
 dependencies = [
-  "mlflow[auth,extras,pipelines] (>=2.21.0,<3.0.0)",
+  "mlflow[auth,extras,pipelines] (>=2.21.1,<3.0.0)",
   "pymysql (>=1.1.1,<2.0.0)",
   "psycopg2-binary (>=2.9.10,<3.0.0)",
-  "boto3 (>=1.37.19,<2.0.0)",
+  "boto3 (>=1.37.20,<2.0.0)",
   "sqlalchemy (>=2.0.39,<3.0.0)",
   "google-cloud-storage (>=3.1.0,<4.0.0)",
   "azure-storage-blob (>=12.25.0,<13.0.0)",
