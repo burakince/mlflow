@@ -27,10 +27,10 @@ def test_ldap_backended_model_upload_and_access_with_basic_auth(
         minio_port = compose.get_service_port("minio", 9000)
 
         mlflow_admin_username = "admin1"
-        mlflow_admin_password = "admin1-1234"
+        mlflow_admin_password = "admin1-123456"
 
         mlflow_user_username = "user1"
-        mlflow_user_password = "user1-1234"
+        mlflow_user_password = "user1-123456"
 
         base_url = f"http://{mlflow_host}:{mlflow_port}"
 
