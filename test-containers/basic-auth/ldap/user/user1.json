@@ -1,7 +1,7 @@
 {
     "id": "user1",
     "email": "user1@test-exmaple.noreply",
-    "password": "user1-1234",
+    "password": "user1-123456",
     "displayName": "User 1",
     "firstName": "1st",
     "lastName": "User",

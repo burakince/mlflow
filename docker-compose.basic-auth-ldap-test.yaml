@@ -29,7 +29,7 @@ services:
       - "17170:17170"
     environment:
       LLDAP_LDAP_USER_DN: admin
-      LLDAP_LDAP_USER_PASS: admin123
+      LLDAP_LDAP_USER_PASS: admin123456
       LLDAP_LDAP_BASE_DN: dc=mlflow,dc=test
     networks:
       - basic_auth_ldap_test_nw
@@ -42,7 +42,7 @@ services:
     environment:
       LLDAP_URL: http://lldap:17170
       LLDAP_ADMIN_USERNAME: admin
-      LLDAP_ADMIN_PASSWORD: admin123
+      LLDAP_ADMIN_PASSWORD: admin123456
       DO_CLEANUP: true
     volumes:
       - ./test-containers/basic-auth/ldap/group:/group-configs:ro
