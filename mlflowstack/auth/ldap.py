@@ -78,8 +78,8 @@ class UserInfo:
             return
             
         # Combine create/update into single operation
-        _auth_store.update_user(self.name, self.name, self.is_admin) if _auth_store.has_user(self.name) \
-            else _auth_store.create_user(self.name, self.name, self.is_admin)
+        _auth_store.update_user(self.name, str(abs(hash(self.name))), self.is_admin) if _auth_store.has_user(self.name) \
+            else _auth_store.create_user(self.name, str(abs(hash(self.name))), self.is_admin)
 
 
 def resolve_user(username: str, password: str) -> UserInfo:
