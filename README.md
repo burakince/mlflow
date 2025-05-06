@@ -24,6 +24,13 @@ Run following command
 docker run -d -p 5000:5000 burakince/mlflow
 ```
 
+## Security Context
+
+The Docker image runs as a non-root user (`mlflow`) with the following default settings:
+
+- **User ID (UID)**: 1001
+- **Group ID (GID)**: 1001
+
 ## Development
 
 Enabling Colima for testcontainers.

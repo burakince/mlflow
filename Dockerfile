@@ -55,10 +55,16 @@ FROM python:3.12.10-slim
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
+# Create a non-root mlflow user and group
+RUN groupadd -r -g 1001 mlflow && useradd -r -u 1001 -g mlflow -m -d /home/mlflow mlflow
+
 WORKDIR /mlflow/
 
-# Copy the virtual environment from the foundation stage
-COPY --from=foundation /mlflow/.venv /mlflow/.venv
+# Set ownership of the mlflow directory to the mlflow user
+RUN chown -R mlflow:mlflow /mlflow
+
+# Copy the virtual environment from the foundation stage and set ownership
+COPY --from=foundation --chown=mlflow:mlflow /mlflow/.venv /mlflow/.venv
 
 # Set PATH to include the virtual environment
 ENV PATH=/mlflow/.venv/bin:$PATH
@@ -66,5 +72,8 @@ ENV PATH=/mlflow/.venv/bin:$PATH
 # Prevent Python from buffering stdout/stderr
 ENV PYTHONUNBUFFERED=1
 
+# Switch to non-root user
+USER mlflow
+
 # Default command to run MLflow server
-CMD ["mlflow", "server", "--backend-store-uri", "sqlite:///:memory", "--default-artifact-root", "./mlruns", "--host=0.0.0.0", "--port=5000"]
+CMD ["mlflow", "server", "--backend-store-uri", "sqlite:///mlflow.sqlite", "--default-artifact-root", "./mlruns", "--host=0.0.0.0", "--port=5000"]
