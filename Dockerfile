@@ -56,7 +56,7 @@ FROM python:3.12.10-slim
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
 # Create a non-root mlflow user and group
-RUN groupadd -r mlflow && useradd -r -g mlflow -m -d /home/mlflow mlflow
+RUN groupadd -r -g 1001 mlflow && useradd -r -u 1001 -g mlflow -m -d /home/mlflow mlflow
 
 WORKDIR /mlflow/
 
