@@ -13,8 +13,6 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    reviewers:
-      - "burakince"
     groups:
       actions-deps:
         patterns:
@@ -27,8 +25,6 @@ updates:
     ignore:
       - dependency-name: "cryptography"
         update-types: ["version-update:semver-major"]
-    reviewers:
-      - "burakince"
     groups:
       pip-deps:
         patterns:
@@ -41,5 +37,3 @@ updates:
     ignore:
       - dependency-name: "python"
         update-types: ["version-update:semver-minor"]
-    reviewers:
-      - "burakince"
