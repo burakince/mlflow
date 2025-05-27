@@ -156,20 +156,21 @@ isodate = ">=0.6.1,<1.0.0"
 
 [[package]]
 name = "azure-mgmt-containerregistry"
-version = "10.3.0"
+version = "13.0.0"
 description = "Microsoft Azure Container Registry Client Library for Python"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "azure-mgmt-containerregistry-10.3.0.tar.gz", hash = "sha256:ae21651855dfb19c42d91d6b3a965c6c611e23f8bc4bf7138835e652d2f918e3"},
-    {file = "azure_mgmt_containerregistry-10.3.0-py3-none-any.whl", hash = "sha256:851e1c57f9bc4a3589c6b21fb627c11fd6cbb57a0388b7dfccd530ba3160805f"},
+    {file = "azure_mgmt_containerregistry-13.0.0-py3-none-any.whl", hash = "sha256:52f7c854f3ebb6c5c1748c1e81f25bae56729277098801a219ca6aba2d03b3e7"},
+    {file = "azure_mgmt_containerregistry-13.0.0.tar.gz", hash = "sha256:af723f37a536919bd67b6772024c469cc2a017be7f31949bf41caae16f0e8dce"},
 ]
 
 [package.dependencies]
-azure-common = ">=1.1,<2.0"
-azure-mgmt-core = ">=1.3.2,<2.0.0"
-isodate = ">=0.6.1,<1.0.0"
+azure-common = ">=1.1"
+azure-mgmt-core = ">=1.3.2"
+isodate = ">=0.6.1"
+typing-extensions = ">=4.6.0"
 
 [[package]]
 name = "azure-mgmt-core"
@@ -188,14 +189,14 @@ azure-core = ">=1.31.0"
 
 [[package]]
 name = "azure-mgmt-keyvault"
-version = "10.3.1"
+version = "11.0.0"
 description = "Microsoft Azure Key Vault Management Client Library for Python"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "azure-mgmt-keyvault-10.3.1.tar.gz", hash = "sha256:34b92956aefbdd571cae5a03f7078e037d8087b2c00cfa6748835dc73abb5a30"},
-    {file = "azure_mgmt_keyvault-10.3.1-py3-none-any.whl", hash = "sha256:a18a27a06551482d31f92bc43ac8b0846af02cd69511f80090865b4c5caa3c21"},
+    {file = "azure_mgmt_keyvault-11.0.0-py3-none-any.whl", hash = "sha256:abff0023a1c1b8033f3d4800cac996bf2b5470bd9c5ab71470c3184d7e8f0654"},
+    {file = "azure_mgmt_keyvault-11.0.0.tar.gz", hash = "sha256:fcfb1366852926f2a311e1bc6e6a786eb8a8a1fd46e6025d4c114ede2cb4642e"},
 ]
 
 [package.dependencies]
@@ -281,13 +282,13 @@ aio = ["azure-core[aio] (>=1.30.0)"]
 
 [[package]]
 name = "azureml-core"
-version = "1.60.0"
+version = "1.60.0.post1"
 description = "Azure Machine Learning core packages, modules, and classes"
 optional = false
 python-versions = "<4.0,>=3.8"
 groups = ["main"]
 files = [
-    {file = "azureml_core-1.60.0-py3-none-any.whl", hash = "sha256:e53f41442f33b30c856eb524b2ebecfa2b3aba6e13726f18ff6e8b3cdeb72eba"},
+    {file = "azureml_core-1.60.0.post1-py3-none-any.whl", hash = "sha256:c82c5b59a5457ffeea96b39ade735f7544ecffc618768813571274863b4c393c"},
 ]
 
 [package.dependencies]
@@ -297,8 +298,8 @@ azure-common = ">=1.1.12,<2.0.0"
 azure-core = "<2.0.0"
 azure-graphrbac = ">=0.40.0,<1.0.0"
 azure-mgmt-authorization = ">=0.40.0,<5"
-azure-mgmt-containerregistry = ">=8.2.0,<11"
-azure-mgmt-keyvault = ">=0.40.0,<11.0.0"
+azure-mgmt-containerregistry = ">=8.2.0,<14"
+azure-mgmt-keyvault = ">=0.40.0,<12.0.0"
 azure-mgmt-network = "<=29.0.0"
 azure-mgmt-resource = ">=15.0.0,<=24.0.0"
 azure-mgmt-storage = ">=16.0.0,<=23.0.0"
@@ -314,7 +315,7 @@ msal-extensions = ">=0.3.0,<=2.0.0"
 msrest = ">=0.5.1,<=0.7.1"
 msrestazure = ">=0.4.33,<=0.7"
 ndg-httpsclient = "<=0.5.1"
-packaging = ">=20.0,<=25.0"
+packaging = ">=20.0,<26.0"
 paramiko = ">=2.0.8,<4.0.0"
 pathspec = "<1.0.0"
 pkginfo = "*"
@@ -432,18 +433,18 @@ files = [
 
 [[package]]
 name = "boto3"
-version = "1.38.23"
+version = "1.38.24"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "boto3-1.38.23-py3-none-any.whl", hash = "sha256:70ab8364f1f6f0a7e0eaf97f62fbdacf9c1e4cc1de330faf1c146ef9ab01e7d0"},
-    {file = "boto3-1.38.23.tar.gz", hash = "sha256:bcf73aca469add09e165b8793be18e7578db8d2604d82505ab13dc2495bad982"},
+    {file = "boto3-1.38.24-py3-none-any.whl", hash = "sha256:1f95ec3ac88ae6381fa0409e4c2ad0a41f0caf5fd6d8ef45a9525406a3f58b18"},
+    {file = "boto3-1.38.24.tar.gz", hash = "sha256:abdb8c760543e9c22026320e62e2934762b0c4ac4f42e8ea2a756f2d489b3135"},
 ]
 
 [package.dependencies]
-botocore = ">=1.38.23,<1.39.0"
+botocore = ">=1.38.24,<1.39.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.13.0,<0.14.0"
 
@@ -452,14 +453,14 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.38.23"
+version = "1.38.24"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "botocore-1.38.23-py3-none-any.whl", hash = "sha256:a7f818672f10d7a080c2c4558428011c3e0abc1039a047d27ac76ec846158457"},
-    {file = "botocore-1.38.23.tar.gz", hash = "sha256:29685c91050a870c3809238dc5da1ac65a48a3a20b4bca46b6057dcb6b39c72a"},
+    {file = "botocore-1.38.24-py3-none-any.whl", hash = "sha256:5901667b96d3a8603479879ab097560216cdc4c2918d433fc6509555d0ada29c"},
+    {file = "botocore-1.38.24.tar.gz", hash = "sha256:43563d5c2dfd56ebbcd9e25f482fc45000bfaec5966b26c77b331bd340c46376"},
 ]
 
 [package.dependencies]
@@ -895,14 +896,14 @@ tests = ["pytest", "pytest-cov", "pytest-xdist"]
 
 [[package]]
 name = "databricks-sdk"
-version = "0.54.0"
+version = "0.55.0"
 description = "Databricks SDK for Python (Beta)"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "databricks_sdk-0.54.0-py3-none-any.whl", hash = "sha256:992b45ba0af1cf628a5863fda594c10f6128cc885847a604c0a90b19151f0110"},
-    {file = "databricks_sdk-0.54.0.tar.gz", hash = "sha256:54d50c2ff4753db3bbeb3a71c7e0afbb9cf73ac3521b566bf01ce8e2e9b01129"},
+    {file = "databricks_sdk-0.55.0-py3-none-any.whl", hash = "sha256:77bb3e6ebfbe2e804f32bc71f06e7c99f0ec8f5a2eaa9fa848eac214106bcb8b"},
+    {file = "databricks_sdk-0.55.0.tar.gz", hash = "sha256:087b3acd139857013bdd9762425e04db47ebda85a8f9845719b6d97845e588b3"},
 ]
 
 [package.dependencies]
@@ -4068,4 +4069,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<4.0"
-content-hash = "bd1975286b5e127a0daf139621caacab6045b82eaf96d78338b4791ffb2483ab"
+content-hash = "f1dce01d0f1818e45578bd5a00fd9defcb1d4b5f713c33e19e6fc1ef17a25fc6"
