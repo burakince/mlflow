@@ -264,7 +264,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/arm64/v8,linux/amd64
+          platforms: linux/amd64
           push: false
           load: true
           tags: docker.io/${{ env.IMAGE_NAME }}:latest
