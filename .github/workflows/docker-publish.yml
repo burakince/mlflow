@@ -259,16 +259,15 @@ jobs:
             io.artifacthub.package.license=MIT
             io.artifacthub.package.alternative-locations=docker.io/${{ env.IMAGE_NAME }}
 
-      # Build Docker image with Buildx and don't push it
-      - name: Build Docker image
+      - name: Build image for local analysis
         id: build-docker-image
         uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/arm64/v8,linux/amd64
           push: false
-          # load: true
-          tags: ${{ steps.meta.outputs.tags }}
+          load: true
+          tags: docker.io/${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -296,12 +295,76 @@ jobs:
 
       - name: Install Dive
         run: |
-          DIVE_VERSION=$(curl -sL "https://api.github.com/repos/wagoodman/dive/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
-          curl -OL https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.deb
-          sudo apt install ./dive_${DIVE_VERSION}_linux_amd64.deb
+          set -e
+          retries=3
+          delay=5
+          for ((i=1; i<=retries; i++)); do
+            echo "Attempt $i of $retries"
+            # Fetch the latest dive version
+            DIVE_VERSION=$(curl -sL -H "Accept: application/vnd.github+json" "https://api.github.com/repos/wagoodman/dive/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+            if [ -z "$DIVE_VERSION" ]; then
+              echo "Failed to fetch DIVE_VERSION"
+              if [ $i -eq $retries ]; then
+                echo "All attempts to fetch DIVE_VERSION failed"
+                exit 1
+              fi
+              sleep $delay
+              continue
+            fi
+            echo "DIVE_VERSION: $DIVE_VERSION"
+            # Download the .deb file
+            curl -OL --fail --retry 3 --retry-delay 5 "https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.deb"
+            if [ $? -ne 0 ]; then
+              echo "Failed to download dive_${DIVE_VERSION}_linux_amd64.deb"
+              if [ $i -eq $retries ]; then
+                echo "All attempts to download .deb file failed"
+                exit 1
+              fi
+              sleep $delay
+              continue
+            fi
+            # Verify the .deb file
+            file dive_${DIVE_VERSION}_linux_amd64.deb | grep "Debian binary package" || {
+              echo "Downloaded file is not a valid .deb package"
+              if [ $i -eq $retries ]; then
+                echo "All attempts to download a valid .deb file failed"
+                exit 1
+              fi
+              rm -f dive_${DIVE_VERSION}_linux_amd64.deb
+              sleep $delay
+              continue
+            }
+            # Install the .deb file
+            sudo apt install -y ./dive_${DIVE_VERSION}_linux_amd64.deb
+            if [ $? -eq 0 ]; then
+              echo "Dive installed successfully"
+              exit 0
+            else
+              echo "Failed to install dive_${DIVE_VERSION}_linux_amd64.deb"
+              if [ $i -eq $retries ]; then
+                echo "All attempts to install dive failed"
+                exit 1
+              fi
+              rm -f dive_${DIVE_VERSION}_linux_amd64.deb
+              sleep $delay
+            fi
+          done
 
       - name: Analyse Efficiency and Wastes on Image
         run: dive docker.io/${{ env.IMAGE_NAME }}:latest
+
+      - name: Ensure the image can be cross-compiled
+        if: github.event_name == 'pull_request'
+        id: cross-compile-check
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/arm64/v8,linux/amd64
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       # Build again and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
