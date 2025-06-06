@@ -8,6 +8,7 @@ Please find mlflow docker files from [github repository](https://github.com/bura
 
 # Simple Tags
 
+- [2.22.1](https://github.com/burakince/mlflow/blob/2.22.1/Dockerfile)
 - [2.22.0](https://github.com/burakince/mlflow/blob/2.22.0/Dockerfile)
 - [2.21.3](https://github.com/burakince/mlflow/blob/2.21.3/Dockerfile)
 - [2.21.2](https://github.com/burakince/mlflow/blob/2.21.2/Dockerfile)
