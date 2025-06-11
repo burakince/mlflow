@@ -42,7 +42,7 @@ def test_mysql_backended_aws_simulation_model_upload_and_access_via_api(
             model_uri = f"runs:/{run.info.run_id}/model"
             model_details = mlflow.register_model(model_uri, model_name)
 
-            client = MlflowClient(tracking_uri=base_url)
+            client = MlflowClient()
             client.set_registered_model_alias(
                 name=model_details.name,
                 alias=stage_name,

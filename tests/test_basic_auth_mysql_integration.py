@@ -66,7 +66,7 @@ def test_mysql_backended_model_upload_and_access_with_basic_auth(
             model_uri = f"runs:/{run.info.run_id}/model"
             model_details = mlflow.register_model(model_uri, model_name)
 
-            mlflow_client = MlflowClient(tracking_uri=base_url)
+            mlflow_client = MlflowClient()
             mlflow_client.set_registered_model_alias(
                 name=model_details.name,
                 alias=stage_name,
