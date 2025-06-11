@@ -4,7 +4,7 @@ import requests
 from testcontainers.compose import DockerCompose
 
 import mlflow
-from mlflow.tracking.client import MlflowClient
+from mlflow import MlflowClient
 
 
 def test_postgres_backended_aws_simulation_model_upload_and_access_via_api(
@@ -53,5 +53,7 @@ def test_postgres_backended_aws_simulation_model_upload_and_access_via_api(
         latest_version_url = f"{base_url}/api/2.0/mlflow/registered-models/alias"
         r = requests.get(url=latest_version_url, params=params, timeout=300)
 
+        assert model_name == r.json()["model_version"]["name"]
         assert "1" == r.json()["model_version"]["version"]
         assert "READY" == r.json()["model_version"]["status"]
+        assert "Staging" == r.json()["model_version"]["aliases"][0]

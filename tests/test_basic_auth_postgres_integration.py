@@ -2,22 +2,15 @@ import os
 import re
 import time
 
-# import pytest
 import requests
 
 import mlflow
 from mlflow.server.auth.client import AuthServiceClient
-from mlflow.tracking.client import MlflowClient
+from mlflow import MlflowClient
 
 from .extended_docker_compose import ExtendedDockerCompose
 
 
-# @pytest.mark.skip(
-#     reason="""
-# auth alembic migrations getting duplicate key value violates unique constraint
-#  `pg_type_typname_nsp_index` error and craches the gunicorn server
-# """
-# )
 def test_postgres_backended_model_upload_and_access_with_basic_auth(
     test_model, training_params, conda_env
 ):
@@ -52,15 +45,21 @@ def test_postgres_backended_model_upload_and_access_with_basic_auth(
         os.environ["MLFLOW_TRACKING_PASSWORD"] = mlflow_admin_password
 
         mlflow_auth_client = AuthServiceClient(base_url)
-        mlflow_auth_client.create_user(mlflow_user_username, mlflow_user_password)
-
-        os.environ["MLFLOW_TRACKING_USERNAME"] = mlflow_user_username
-        os.environ["MLFLOW_TRACKING_PASSWORD"] = mlflow_user_password
+        # mlflow_auth_client.create_user(mlflow_user_username, mlflow_user_password)
 
         mlflow.set_tracking_uri(base_url)
         mlflow.set_experiment(experiment_name)
         experiment = mlflow.get_experiment_by_name(experiment_name)
 
+        # mlflow_auth_client.create_experiment_permission(
+        #     experiment_id=experiment.experiment_id, username=mlflow_user_username, permission="MANAGE"
+        # )
+        # mlflow_auth_client.create_registered_model_permission(
+        #     name=model_name, username=mlflow_user_username, permission="MANAGE"
+        # )
+
+        # os.environ["MLFLOW_TRACKING_USERNAME"] = mlflow_user_username
+        # os.environ["MLFLOW_TRACKING_PASSWORD"] = mlflow_user_password
         os.environ["MLFLOW_S3_ENDPOINT_URL"] = f"http://{minio_host}:{minio_port}"
         os.environ["AWS_ACCESS_KEY_ID"] = "minioadmin"
         os.environ["AWS_SECRET_ACCESS_KEY"] = "minioadmin"
@@ -83,11 +82,14 @@ def test_postgres_backended_model_upload_and_access_with_basic_auth(
         r = requests.get(
             url=latest_version_url,
             params=params,
-            auth=(mlflow_user_username, mlflow_user_password),
+            # auth=(mlflow_user_username, mlflow_user_password),
+            auth=(mlflow_admin_username, mlflow_admin_password),
             timeout=300,
         )
 
+        assert model_name == r.json()["model_version"]["name"]
         assert "1" == r.json()["model_version"]["version"]
         assert "READY" == r.json()["model_version"]["status"]
+        assert "Staging" == r.json()["model_version"]["aliases"][0]
 
         compose.stop()
