@@ -4,7 +4,7 @@ import requests
 from testcontainers.compose import DockerCompose
 
 import mlflow
-from mlflow.tracking.client import MlflowClient
+from mlflow import MlflowClient
 
 
 def test_postgres_backended_gcp_simulation_model_upload_and_access_via_api(
@@ -41,7 +41,7 @@ def test_postgres_backended_gcp_simulation_model_upload_and_access_via_api(
             model_uri = f"runs:/{run.info.run_id}/model"
             model_details = mlflow.register_model(model_uri, model_name)
 
-            client = MlflowClient()
+            client = MlflowClient(tracking_uri=base_url)
             client.set_registered_model_alias(
                 name=model_details.name,
                 alias=stage_name,
@@ -52,5 +52,7 @@ def test_postgres_backended_gcp_simulation_model_upload_and_access_via_api(
         latest_version_url = f"{base_url}/api/2.0/mlflow/registered-models/alias"
         r = requests.get(url=latest_version_url, params=params, timeout=300)
 
+        assert model_name == r.json()["model_version"]["name"]
         assert "1" == r.json()["model_version"]["version"]
         assert "READY" == r.json()["model_version"]["status"]
+        assert "Staging" == r.json()["model_version"]["aliases"][0]

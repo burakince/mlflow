@@ -7,7 +7,7 @@ import requests
 
 import mlflow
 from mlflow.server.auth.client import AuthServiceClient
-from mlflow.tracking.client import MlflowClient
+from mlflow import MlflowClient
 
 from .extended_docker_compose import ExtendedDockerCompose
 
@@ -66,7 +66,7 @@ def test_mysql_backended_model_upload_and_access_with_basic_auth(
             model_uri = f"runs:/{run.info.run_id}/model"
             model_details = mlflow.register_model(model_uri, model_name)
 
-            mlflow_client = MlflowClient()
+            mlflow_client = MlflowClient(tracking_uri=base_url)
             mlflow_client.set_registered_model_alias(
                 name=model_details.name,
                 alias=stage_name,
@@ -82,7 +82,9 @@ def test_mysql_backended_model_upload_and_access_with_basic_auth(
             timeout=300,
         )
 
+        assert model_name == r.json()["model_version"]["name"]
         assert "1" == r.json()["model_version"]["version"]
         assert "READY" == r.json()["model_version"]["status"]
+        assert "Staging" == r.json()["model_version"]["aliases"][0]
 
         compose.stop()
