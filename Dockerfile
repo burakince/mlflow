@@ -1,5 +1,5 @@
 # Stage 1: Build and dependencies
-FROM python:3.13.4 AS foundation
+FROM python:3.13.5 AS foundation
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
@@ -51,7 +51,7 @@ RUN python -m venv .venv && \
     pip install /mlflow-build/dist/mlflowstack-1.0-py3-none-any.whl
 
 # Stage 2: Final slim image
-FROM python:3.13.4-slim
+FROM python:3.13.5-slim
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
