@@ -4,26 +4,21 @@ import time
 
 import pytest
 import requests
-from pathlib import Path
 
 import mlflow
 from mlflow.server.auth.client import AuthServiceClient
 from mlflow import MlflowClient
 
-from .extended_docker_compose import ExtendedDockerCompose
-from .certificates import ServerCertificate, CertificateAuthority
+from ..helpers.extended_docker_compose import ExtendedDockerCompose
 
 
-def test_ldap_backended_model_upload_and_access_with_basic_auth(
+@pytest.mark.skip(reason="alembic auth migrations doesn't work for mysql")
+def test_mysql_backended_model_upload_and_access_with_basic_auth(
     test_model, training_params, conda_env
 ):
-
-    ca = CertificateAuthority("MLFlow LDAP-SSL-Test CA", "MLFlow", "LDAP-SSL-Test").generate().store(Path(__file__).parent.parent.joinpath("test-containers/basic-auth/ldap/certificates/ca"))
-    _ = ServerCertificate("lldap", "MLFlow", "LDAP-SSL-Test").generate_csr().sign_with_ca(ca).store(Path(__file__).parent.parent.joinpath("test-containers/basic-auth/ldap/certificates/ldap"))
-
     with ExtendedDockerCompose(
         context=".",
-        compose_file_name=["docker-compose.basic-auth-ldap-ssl-test.yaml"],
+        compose_file_name=["docker-compose.basic-auth-mysql-test.yaml"],
         # pull=True,
         build=True,
     ) as compose:
@@ -32,11 +27,11 @@ def test_ldap_backended_model_upload_and_access_with_basic_auth(
         minio_host = compose.get_service_host("minio", 9000)
         minio_port = compose.get_service_port("minio", 9000)
 
-        mlflow_admin_username = "admin1"
-        mlflow_admin_password = "admin1-123456"
+        mlflow_admin_username = "testuser"
+        mlflow_admin_password = "simpletestpassword"
 
-        mlflow_user_username = "user1"
-        mlflow_user_password = "user1-123456"
+        mlflow_user_username = "basicuser"
+        mlflow_user_password = "userpassword1"
 
         base_url = f"http://{mlflow_host}:{mlflow_port}"
 
@@ -45,13 +40,17 @@ def test_ldap_backended_model_upload_and_access_with_basic_auth(
         compose.wait_for_logs("mlflow", ".*8606fa83a998, initial_migration")
         time.sleep(5)  # Wait 5 seconds more the get flask ready
 
-        experiment_name = "basic-auth-ldap-experiment"
-        model_name = "test-basic-auth-ldap-model"
+        experiment_name = "basic-auth-mysql-experiment"
+        model_name = "test-basic-auth-mysql-model"
         stage_name = "Staging"
         os.environ["MLFLOW_TRACKING_USERNAME"] = mlflow_admin_username
         os.environ["MLFLOW_TRACKING_PASSWORD"] = mlflow_admin_password
 
         mlflow_auth_client = AuthServiceClient(base_url)
+        mlflow_auth_client.create_user(mlflow_user_username, mlflow_user_password)
+
+        os.environ["MLFLOW_TRACKING_USERNAME"] = mlflow_user_username
+        os.environ["MLFLOW_TRACKING_PASSWORD"] = mlflow_user_password
 
         mlflow.set_tracking_uri(base_url)
         mlflow.set_experiment(experiment_name)

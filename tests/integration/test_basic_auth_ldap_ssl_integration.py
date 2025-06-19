@@ -3,20 +3,26 @@ import re
 import time
 
 import requests
+from pathlib import Path
 
 import mlflow
 from mlflow.server.auth.client import AuthServiceClient
 from mlflow import MlflowClient
 
-from .extended_docker_compose import ExtendedDockerCompose
+from ..helpers.extended_docker_compose import ExtendedDockerCompose
+from ..helpers.certificates import ServerCertificate, CertificateAuthority
 
 
-def test_postgres_backended_model_upload_and_access_with_basic_auth(
+def test_ldap_backended_model_upload_and_access_with_basic_auth(
     test_model, training_params, conda_env
 ):
+
+    ca = CertificateAuthority("MLFlow LDAP-SSL-Test CA", "MLFlow", "LDAP-SSL-Test").generate().store(Path(__file__).parent.parent.joinpath("test-containers/basic-auth/ldap/certificates/ca"))
+    _ = ServerCertificate("lldap", "MLFlow", "LDAP-SSL-Test").generate_csr().sign_with_ca(ca).store(Path(__file__).parent.parent.joinpath("test-containers/basic-auth/ldap/certificates/ldap"))
+
     with ExtendedDockerCompose(
         context=".",
-        compose_file_name=["docker-compose.basic-auth-postgres-test.yaml"],
+        compose_file_name=["docker-compose.basic-auth-ldap-ssl-test.yaml"],
         # pull=True,
         build=True,
     ) as compose:
@@ -25,11 +31,11 @@ def test_postgres_backended_model_upload_and_access_with_basic_auth(
         minio_host = compose.get_service_host("minio", 9000)
         minio_port = compose.get_service_port("minio", 9000)
 
-        mlflow_admin_username = "testuser"
-        mlflow_admin_password = "simpletestpassword"
+        mlflow_admin_username = "admin1"
+        mlflow_admin_password = "admin1-123456"
 
-        mlflow_user_username = "basicuser"
-        mlflow_user_password = "userpassword1"
+        mlflow_user_username = "user1"
+        mlflow_user_password = "user1-123456"
 
         base_url = f"http://{mlflow_host}:{mlflow_port}"
 
@@ -38,28 +44,18 @@ def test_postgres_backended_model_upload_and_access_with_basic_auth(
         compose.wait_for_logs("mlflow", ".*8606fa83a998, initial_migration")
         time.sleep(5)  # Wait 5 seconds more the get flask ready
 
-        experiment_name = "basic-auth-postgres-experiment"
-        model_name = "test-basic-auth-pg-model"
+        experiment_name = "basic-auth-ldap-experiment"
+        model_name = "test-basic-auth-ldap-model"
         stage_name = "Staging"
         os.environ["MLFLOW_TRACKING_USERNAME"] = mlflow_admin_username
         os.environ["MLFLOW_TRACKING_PASSWORD"] = mlflow_admin_password
 
         mlflow_auth_client = AuthServiceClient(base_url)
-        # mlflow_auth_client.create_user(mlflow_user_username, mlflow_user_password)
 
         mlflow.set_tracking_uri(base_url)
         mlflow.set_experiment(experiment_name)
         experiment = mlflow.get_experiment_by_name(experiment_name)
 
-        # mlflow_auth_client.create_experiment_permission(
-        #     experiment_id=experiment.experiment_id, username=mlflow_user_username, permission="MANAGE"
-        # )
-        # mlflow_auth_client.create_registered_model_permission(
-        #     name=model_name, username=mlflow_user_username, permission="MANAGE"
-        # )
-
-        # os.environ["MLFLOW_TRACKING_USERNAME"] = mlflow_user_username
-        # os.environ["MLFLOW_TRACKING_PASSWORD"] = mlflow_user_password
         os.environ["MLFLOW_S3_ENDPOINT_URL"] = f"http://{minio_host}:{minio_port}"
         os.environ["AWS_ACCESS_KEY_ID"] = "minioadmin"
         os.environ["AWS_SECRET_ACCESS_KEY"] = "minioadmin"
@@ -82,8 +78,7 @@ def test_postgres_backended_model_upload_and_access_with_basic_auth(
         r = requests.get(
             url=latest_version_url,
             params=params,
-            # auth=(mlflow_user_username, mlflow_user_password),
-            auth=(mlflow_admin_username, mlflow_admin_password),
+            auth=(mlflow_user_username, mlflow_user_password),
             timeout=300,
         )
 
