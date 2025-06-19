@@ -15,7 +15,6 @@ _auth_store = auth_store
 logger = logging.getLogger(__name__)
 
 
-
 # LDAP server URI (e.g., ldaps://ldap.example.com)
 LDAP_URI = os.getenv("LDAP_URI", "")
 
@@ -32,6 +31,9 @@ LDAP_LOOKUP_BIND = os.getenv("LDAP_LOOKUP_BIND", "")
 
 # Attribute containing group DN
 LDAP_GROUP_ATTRIBUTE = os.getenv("LDAP_GROUP_ATTRIBUTE", "")
+
+# Attribute key for group DN
+LDAP_GROUP_ATTRIBUTE_KEY = os.getenv("LDAP_GROUP_ATTRIBUTE_KEY", "")
 
 # Base DN for group search
 LDAP_GROUP_SEARCH_BASE_DN = os.getenv("LDAP_GROUP_SEARCH_BASE_DN", "")
@@ -51,20 +53,17 @@ LDAP_GROUP_ADMIN_DN = os.getenv("LDAP_GROUP_ADMIN_DN", "")
 TLS_VERIFY_MAP = {
     "none": ssl.CERT_NONE,
     "optional": ssl.CERT_OPTIONAL,
-    "required": ssl.CERT_REQUIRED
+    "required": ssl.CERT_REQUIRED,
 }
-
-# Cache LDAP URI parsing result since it's constant
-_PARSED_LDAP_URI = ldap3.utils.uri.parse_uri(LDAP_URI)
 
 # Default ports mapping for SSL and non-SSL connections
 _DEFAULT_PORTS = {True: 636, False: 389}  # ssl: port mapping
 
 
-
 @dataclass(frozen=True)
 class UserInfo:
     """user information obect, to keep user data information and group membersip inclusive auth-store update"""
+
     name: str
     is_user: bool = False
     is_admin: bool = False
@@ -76,19 +75,32 @@ class UserInfo:
     def update(self) -> None:
         if not self.authenticated:
             return
-            
+
         # Combine create/update into single operation
-        _auth_store.update_user(self.name, str(abs(hash(self.name))), self.is_admin) if _auth_store.has_user(self.name) \
-            else _auth_store.create_user(self.name, str(abs(hash(self.name))), self.is_admin)
+        (
+            _auth_store.update_user(self.name, str(abs(hash(self.name))), self.is_admin)
+            if _auth_store.has_user(self.name)
+            else _auth_store.create_user(
+                self.name, str(abs(hash(self.name))), self.is_admin
+            )
+        )
+
+
+def get_parsed_ldap_uri(force_refresh=False):
+    if not hasattr(get_parsed_ldap_uri, "_cache") or force_refresh:
+        get_parsed_ldap_uri._cache = ldap3.utils.uri.parse_uri(
+            os.getenv("LDAP_URI", "")
+        )
+    return get_parsed_ldap_uri._cache
 
 
 def resolve_user(username: str, password: str) -> UserInfo:
     """Authenticate user against LDAP and resolve group membership."""
     try:
-        uri = _PARSED_LDAP_URI
+        uri = get_parsed_ldap_uri()
         # Get port from URI or use default based on SSL status
         port = uri["port"] or _DEFAULT_PORTS[uri["ssl"]]
-        
+
         # Configure TLS if SSL is enabled or CA certificate is provided
         tls = None
         if uri["ssl"] or LDAP_CA:
@@ -103,21 +115,21 @@ def resolve_user(username: str, password: str) -> UserInfo:
             port=port,
             use_ssl=uri["ssl"],
             tls=tls,
-            get_info=ldap3.ALL if tls else ldap3.NONE
+            get_info=ldap3.ALL if tls else ldap3.NONE,
         )
-        
+
         # Escape special characters in username
         escaped_username = ldap3.utils.dn.escape_rdn(username)
         # Format bind user string with escaped username
         bind_user = LDAP_LOOKUP_BIND % escaped_username
-        
+
         with ldap3.Connection(
             server=server,
             user=bind_user,
             password=password,
             client_strategy=ldap3.SAFE_SYNC,
             auto_bind=True,
-            read_only=True
+            read_only=True,
         ) as c:
             # Search for user's group memberships
             status, _, result, _ = c.search(
@@ -125,7 +137,7 @@ def resolve_user(username: str, password: str) -> UserInfo:
                 search_filter=LDAP_GROUP_SEARCH_FILTER % bind_user,
                 search_scope=ldap3.SUBTREE,
                 attributes=LDAP_GROUP_ATTRIBUTE,
-                get_operational_attributes=False
+                get_operational_attributes=False,
             )
 
             if not status:
@@ -133,13 +145,37 @@ def resolve_user(username: str, password: str) -> UserInfo:
                 return UserInfo(name=username)
 
             # Check for admin group membership
-            is_admin = any(g[LDAP_GROUP_ATTRIBUTE] == LDAP_GROUP_ADMIN_DN for g in result)
+            is_admin = any(
+                (
+                    check_group_dn(
+                        g,
+                        LDAP_GROUP_ADMIN_DN,
+                        LDAP_GROUP_ATTRIBUTE_KEY,
+                        LDAP_GROUP_ATTRIBUTE,
+                    )
+                    if LDAP_GROUP_ATTRIBUTE_KEY
+                    else (g.get(LDAP_GROUP_ATTRIBUTE, None) == LDAP_GROUP_ADMIN_DN)
+                )
+                for g in result
+            )
             if is_admin:
                 logger.info(f"User {username} authenticated as admin")
                 return UserInfo(name=username, is_admin=True)
-                
+
             # Check for regular user group membership
-            is_user = any(g[LDAP_GROUP_ATTRIBUTE] == LDAP_GROUP_USER_DN for g in result)
+            is_user = any(
+                (
+                    check_group_dn(
+                        g,
+                        LDAP_GROUP_USER_DN,
+                        LDAP_GROUP_ATTRIBUTE_KEY,
+                        LDAP_GROUP_ATTRIBUTE,
+                    )
+                    if LDAP_GROUP_ATTRIBUTE_KEY
+                    else g.get(LDAP_GROUP_ATTRIBUTE, None) == LDAP_GROUP_USER_DN
+                )
+                for g in result
+            )
             if is_user:
                 logger.info(f"User {username} authenticated as regular user")
             else:
@@ -150,34 +186,56 @@ def resolve_user(username: str, password: str) -> UserInfo:
         raise
 
 
+def check_group_dn(
+    group: object, group_dn: str, group_attribute_key: str, group_attribute: str
+):
+    group_attribute_value = group.get(group_attribute_key, {})
+    group_value = group_attribute_value.get(group_attribute, None)
+
+    if isinstance(group_value, list):
+        return group_dn in group_value
+    else:
+        return group_dn == group_value
+
+
 def authenticate_request_basic_auth() -> Union[Authorization, Response]:
     """Using for the basic.ini as auth function, authenticate the incoming request, grant the admin role if the user is in the admin group; otherwise, grant normal user access"""
     if request.authorization is None:
         logger.warning("Authentication cancelled by user")
         return _unauthorized_response("Your login has been cancelled")
-      
+
     if not request.authorization.username or not request.authorization.password:
         logger.warning("Empty username or password provided")
         return _unauthorized_response("Username or password cannot be empty.")
-    
+
     try:
         user = resolve_user(
-            request.authorization.username,
-            request.authorization.password
+            request.authorization.username, request.authorization.password
         )
     except Exception as e:
-        logger.error(f"Authentication failed for user {request.authorization.username}: {str(e)}", exc_info=True)
-        return _unauthorized_response("Please ensure you are included in the group and input correct credentials!")
+        logger.error(
+            f"Authentication failed for user {request.authorization.username}: {str(e)}",
+            exc_info=True,
+        )
+        return _unauthorized_response(
+            "Please ensure you are included in the group and input correct credentials!"
+        )
 
     if user.authenticated:
         user.update()
         return request.authorization
-    
-    logger.warning(f"Authentication failed for user {request.authorization.username}: not in authorized groups")
-    return _unauthorized_response("Please ensure you are included in the group and input correct credentials!")
+
+    logger.warning(
+        f"Authentication failed for user {request.authorization.username}: not in authorized groups"
+    )
+    return _unauthorized_response(
+        "Please ensure you are included in the group and input correct credentials!"
+    )
 
 
-def _unauthorized_response(message: str = "You are not authenticated. Please enter your username and password."):
+def _unauthorized_response(
+    message: str = "You are not authenticated. Please enter your username and password.",
+):
     """Return an unauthorized response with a custom message."""
     res = make_response(message)
     res.status_code = 401

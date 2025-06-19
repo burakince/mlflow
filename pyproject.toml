@@ -34,6 +34,7 @@ testcontainers = "^4.9.0"
 requests = "^2.32.3"
 cloudpickle = "^3.1.0"
 pre-commit = "^4.0.1"
+pytest-mock = "^3.14.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
