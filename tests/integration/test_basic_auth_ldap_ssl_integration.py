@@ -17,8 +17,8 @@ def test_ldap_backended_model_upload_and_access_with_basic_auth(
     test_model, training_params, conda_env
 ):
 
-    ca = CertificateAuthority("MLFlow LDAP-SSL-Test CA", "MLFlow", "LDAP-SSL-Test").generate().store(Path(__file__).parent.parent.joinpath("test-containers/basic-auth/ldap/certificates/ca"))
-    _ = ServerCertificate("lldap", "MLFlow", "LDAP-SSL-Test").generate_csr().sign_with_ca(ca).store(Path(__file__).parent.parent.joinpath("test-containers/basic-auth/ldap/certificates/ldap"))
+    ca = CertificateAuthority("MLFlow LDAP-SSL-Test CA", "MLFlow", "LDAP-SSL-Test").generate().store(Path(__file__).parent.parent.joinpath("../test-containers/basic-auth/ldap/certificates/ca"))
+    _ = ServerCertificate("lldap", "MLFlow", "LDAP-SSL-Test").generate_csr().sign_with_ca(ca).store(Path(__file__).parent.parent.joinpath("../test-containers/basic-auth/ldap/certificates/ldap"))
 
     with ExtendedDockerCompose(
         context=".",
