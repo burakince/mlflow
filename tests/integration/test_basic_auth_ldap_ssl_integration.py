@@ -2,22 +2,27 @@ import os
 import re
 import time
 
-import pytest
 import requests
+from pathlib import Path
 
 import mlflow
 from mlflow.server.auth.client import AuthServiceClient
 from mlflow import MlflowClient
 
-from .extended_docker_compose import ExtendedDockerCompose
+from ..helpers.extended_docker_compose import ExtendedDockerCompose
+from ..helpers.certificates import ServerCertificate, CertificateAuthority
 
 
 def test_ldap_backended_model_upload_and_access_with_basic_auth(
     test_model, training_params, conda_env
 ):
+
+    ca = CertificateAuthority("MLFlow LDAP-SSL-Test CA", "MLFlow", "LDAP-SSL-Test").generate().store(Path(__file__).parent.parent.joinpath("../test-containers/basic-auth/ldap/certificates/ca"))
+    _ = ServerCertificate("lldap", "MLFlow", "LDAP-SSL-Test").generate_csr().sign_with_ca(ca).store(Path(__file__).parent.parent.joinpath("../test-containers/basic-auth/ldap/certificates/ldap"))
+
     with ExtendedDockerCompose(
         context=".",
-        compose_file_name=["docker-compose.basic-auth-ldap-test.yaml"],
+        compose_file_name=["docker-compose.basic-auth-ldap-ssl-test.yaml"],
         # pull=True,
         build=True,
     ) as compose:
