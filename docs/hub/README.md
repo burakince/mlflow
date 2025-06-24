@@ -4,7 +4,7 @@
 
 # Mlflow Docker Image
 
-Please find mlflow docker files from [github repository](https://github.com/burakince/mlflow).
+Welcome to our MLflow Docker repository! You can find all our Docker files in our [GitHub repository](https://github.com/burakince/mlflow). For Kubernetes users, we provide seamless deployment through the [community-charts/mlflow](https://community-charts.github.io/docs/charts/mlflow/usage) Helm chart.
 
 # Simple Tags
 
