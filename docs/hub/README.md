@@ -8,6 +8,7 @@ Welcome to our MLflow Docker repository! You can find all our Docker files in ou
 
 # Simple Tags
 
+- [3.1.1](https://github.com/burakince/mlflow/blob/3.1.1/Dockerfile)
 - [3.1.0](https://github.com/burakince/mlflow/blob/3.1.0/Dockerfile)
 - [2.22.1](https://github.com/burakince/mlflow/blob/2.22.1/Dockerfile)
 - [2.22.0](https://github.com/burakince/mlflow/blob/2.22.0/Dockerfile)
