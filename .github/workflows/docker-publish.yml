@@ -189,7 +189,7 @@ jobs:
 
       - name: Install Cosign
         id: install_cosign
-        uses: sigstore/cosign-installer@v3.9.1
+        uses: sigstore/cosign-installer@v3.9.2
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3.6.0
