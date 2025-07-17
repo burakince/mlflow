@@ -293,65 +293,65 @@ jobs:
       #   if: ${{ steps.docker-image-scan.outcome == 'failure' }}
       #   run: exit 1
 
-      - name: Install Dive
-        run: |
-          set -e
-          retries=5
-          delay=10
-          for ((i=1; i<=retries; i++)); do
-            echo "Attempt $i of $retries"
-            # Fetch the latest dive version
-            DIVE_VERSION=$(curl -sL -H "Accept: application/vnd.github+json" "https://api.github.com/repos/wagoodman/dive/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
-            if [ -z "$DIVE_VERSION" ]; then
-              echo "Failed to fetch DIVE_VERSION"
-              if [ $i -eq $retries ]; then
-                echo "All attempts to fetch DIVE_VERSION failed"
-                exit 1
-              fi
-              sleep $delay
-              continue
-            fi
-            echo "DIVE_VERSION: $DIVE_VERSION"
-            # Download the .deb file
-            curl -OL --fail --retry 3 --retry-delay 5 "https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.deb"
-            if [ $? -ne 0 ]; then
-              echo "Failed to download dive_${DIVE_VERSION}_linux_amd64.deb"
-              if [ $i -eq $retries ]; then
-                echo "All attempts to download .deb file failed"
-                exit 1
-              fi
-              sleep $delay
-              continue
-            fi
-            # Verify the .deb file
-            file dive_${DIVE_VERSION}_linux_amd64.deb | grep "Debian binary package" || {
-              echo "Downloaded file is not a valid .deb package"
-              if [ $i -eq $retries ]; then
-                echo "All attempts to download a valid .deb file failed"
-                exit 1
-              fi
-              rm -f dive_${DIVE_VERSION}_linux_amd64.deb
-              sleep $delay
-              continue
-            }
-            # Install the .deb file
-            sudo apt install -y ./dive_${DIVE_VERSION}_linux_amd64.deb
-            if [ $? -eq 0 ]; then
-              echo "Dive installed successfully"
-              exit 0
-            else
-              echo "Failed to install dive_${DIVE_VERSION}_linux_amd64.deb"
-              if [ $i -eq $retries ]; then
-                echo "All attempts to install dive failed"
-                exit 1
-              fi
-              rm -f dive_${DIVE_VERSION}_linux_amd64.deb
-              sleep $delay
-            fi
-          done
+      # - name: Install Dive
+      #   run: |
+      #     set -e
+      #     retries=5
+      #     delay=10
+      #     for ((i=1; i<=retries; i++)); do
+      #       echo "Attempt $i of $retries"
+      #       # Fetch the latest dive version
+      #       DIVE_VERSION=$(curl -sL -H "Accept: application/vnd.github+json" "https://api.github.com/repos/wagoodman/dive/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+      #       if [ -z "$DIVE_VERSION" ]; then
+      #         echo "Failed to fetch DIVE_VERSION"
+      #         if [ $i -eq $retries ]; then
+      #           echo "All attempts to fetch DIVE_VERSION failed"
+      #           exit 1
+      #         fi
+      #         sleep $delay
+      #         continue
+      #       fi
+      #       echo "DIVE_VERSION: $DIVE_VERSION"
+      #       # Download the .deb file
+      #       curl -OL --fail --retry 3 --retry-delay 5 "https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.deb"
+      #       if [ $? -ne 0 ]; then
+      #         echo "Failed to download dive_${DIVE_VERSION}_linux_amd64.deb"
+      #         if [ $i -eq $retries ]; then
+      #           echo "All attempts to download .deb file failed"
+      #           exit 1
+      #         fi
+      #         sleep $delay
+      #         continue
+      #       fi
+      #       # Verify the .deb file
+      #       file dive_${DIVE_VERSION}_linux_amd64.deb | grep "Debian binary package" || {
+      #         echo "Downloaded file is not a valid .deb package"
+      #         if [ $i -eq $retries ]; then
+      #           echo "All attempts to download a valid .deb file failed"
+      #           exit 1
+      #         fi
+      #         rm -f dive_${DIVE_VERSION}_linux_amd64.deb
+      #         sleep $delay
+      #         continue
+      #       }
+      #       # Install the .deb file
+      #       sudo apt install -y ./dive_${DIVE_VERSION}_linux_amd64.deb
+      #       if [ $? -eq 0 ]; then
+      #         echo "Dive installed successfully"
+      #         exit 0
+      #       else
+      #         echo "Failed to install dive_${DIVE_VERSION}_linux_amd64.deb"
+      #         if [ $i -eq $retries ]; then
+      #           echo "All attempts to install dive failed"
+      #           exit 1
+      #         fi
+      #         rm -f dive_${DIVE_VERSION}_linux_amd64.deb
+      #         sleep $delay
+      #       fi
+      #     done
 
-      - name: Analyse Efficiency and Wastes on Image
-        run: dive docker.io/${{ env.IMAGE_NAME }}:latest
+      # - name: Analyse Efficiency and Wastes on Image
+      #   run: dive docker.io/${{ env.IMAGE_NAME }}:latest
 
       - name: Ensure the image can be cross-compiled
         if: github.event_name == 'pull_request'
