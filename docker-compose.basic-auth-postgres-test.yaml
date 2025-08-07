@@ -65,6 +65,8 @@ services:
     environment:
       MLFLOW_FLASK_SERVER_SECRET_KEY: 0123456789
       MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      MLFLOW_DISABLE_TELEMETRY: "true"
+      DO_NOT_TRACK: "true"
       AWS_ACCESS_KEY_ID: minioadmin
       AWS_SECRET_ACCESS_KEY: minioadmin
       PGHOST: postgres
