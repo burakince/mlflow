@@ -430,18 +430,18 @@ files = [
 
 [[package]]
 name = "boto3"
-version = "1.40.8"
+version = "1.40.9"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "boto3-1.40.8-py3-none-any.whl", hash = "sha256:9f55edd8e2eb5cd86e1c972b5250f9ab0a9555f84632506a2ed131e4a82ea23a"},
-    {file = "boto3-1.40.8.tar.gz", hash = "sha256:62959010dfd3d24157f73a8183fca7619ec97fb42ac400477006f7ecb9548d06"},
+    {file = "boto3-1.40.9-py3-none-any.whl", hash = "sha256:516f5e3f7552b2a7ca4d2c89b338fb4684998c676b11b906e2ab694c91716ba6"},
+    {file = "boto3-1.40.9.tar.gz", hash = "sha256:af3f77a548b3dd7db5046609598a28a9ad5d062437b1783da9b526cc67c38b79"},
 ]
 
 [package.dependencies]
-botocore = ">=1.40.8,<1.41.0"
+botocore = ">=1.40.9,<1.41.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.13.0,<0.14.0"
 
@@ -450,14 +450,14 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.40.8"
+version = "1.40.9"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "botocore-1.40.8-py3-none-any.whl", hash = "sha256:7f0327e08d7c061aaa03e32459e56bcf6daa29cd946e95b1c06be14d61a9a94d"},
-    {file = "botocore-1.40.8.tar.gz", hash = "sha256:954fa6e36020ebf58898de80a8f864ba13b74dc26994cf20ccfff2966724b0b9"},
+    {file = "botocore-1.40.9-py3-none-any.whl", hash = "sha256:d4960a39aab9658bcd0272490003001cb4a8d12b89bb297ccef994ee023fb638"},
+    {file = "botocore-1.40.9.tar.gz", hash = "sha256:f4a9c6ed08e8637138e1b5534f89d38c02650974b6458a07690493130e295f68"},
 ]
 
 [package.dependencies]
@@ -895,14 +895,14 @@ tests = ["pytest", "pytest-cov", "pytest-xdist"]
 
 [[package]]
 name = "databricks-sdk"
-version = "0.62.0"
+version = "0.63.0"
 description = "Databricks SDK for Python (Beta)"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "databricks_sdk-0.62.0-py3-none-any.whl", hash = "sha256:79d4abe60306239985a5b718583923e13316c5417204017b0dadf74bccfcc6e1"},
-    {file = "databricks_sdk-0.62.0.tar.gz", hash = "sha256:12f8da735f74cba5265dcb0620c30941628f63787e6ea7e57cc5ed22d9e1b987"},
+    {file = "databricks_sdk-0.63.0-py3-none-any.whl", hash = "sha256:3ea569dcd0a4395c17221a5da39db4da85c6fc91b5fc14546514e329451d5eb3"},
+    {file = "databricks_sdk-0.63.0.tar.gz", hash = "sha256:f141bc810b4145e93e628a0e159ea41806440aed0cd17adddd252d65d1968465"},
 ]
 
 [package.dependencies]
@@ -3973,14 +3973,14 @@ standard = ["colorama (>=0.4) ; sys_platform == \"win32\"", "httptools (>=0.6.3)
 
 [[package]]
 name = "virtualenv"
-version = "20.33.1"
+version = "20.34.0"
 description = "Virtual Python Environment builder"
 optional = false
 python-versions = ">=3.8"
 groups = ["main", "dev"]
 files = [
-    {file = "virtualenv-20.33.1-py3-none-any.whl", hash = "sha256:07c19bc66c11acab6a5958b815cbcee30891cd1c2ccf53785a28651a0d8d8a67"},
-    {file = "virtualenv-20.33.1.tar.gz", hash = "sha256:1b44478d9e261b3fb8baa5e74a0ca3bc0e05f21aa36167bf9cbf850e542765b8"},
+    {file = "virtualenv-20.34.0-py3-none-any.whl", hash = "sha256:341f5afa7eee943e4984a9207c025feedd768baff6753cd660c857ceb3e36026"},
+    {file = "virtualenv-20.34.0.tar.gz", hash = "sha256:44815b2c9dee7ed86e387b842a84f20b93f7f417f95886ca1996a72a4138eb1a"},
 ]
 
 [package.dependencies]
@@ -4176,4 +4176,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<4.0"
-content-hash = "8212f01694b3ccc07bba13d4e9e74f5dd83ed0c180e9c72e95c3991b79172563"
+content-hash = "e66dd0b4a863a90fc85c2e116feae48cb68f38be009313144c2c5f7bb84ca541"
