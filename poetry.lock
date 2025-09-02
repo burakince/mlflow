@@ -430,18 +430,18 @@ files = [
 
 [[package]]
 name = "boto3"
-version = "1.40.21"
+version = "1.40.22"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "boto3-1.40.21-py3-none-any.whl", hash = "sha256:3772fb828864d3b7046c8bdf2f4860aaca4a79f25b7b060206c6a5f4944ea7f9"},
-    {file = "boto3-1.40.21.tar.gz", hash = "sha256:876ccc0b25517b992bd27976282510773a11ebc771aa5b836a238ea426c82187"},
+    {file = "boto3-1.40.22-py3-none-any.whl", hash = "sha256:ecc468266a018f77869fd9cc3564500c3c1b658eb6d8e20351ec88cc06258dbf"},
+    {file = "boto3-1.40.22.tar.gz", hash = "sha256:9972752b50fd376576a6e04a7d6afc69762a368f29b85314598edb62c1894663"},
 ]
 
 [package.dependencies]
-botocore = ">=1.40.21,<1.41.0"
+botocore = ">=1.40.22,<1.41.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.13.0,<0.14.0"
 
@@ -450,14 +450,14 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.40.21"
+version = "1.40.22"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "botocore-1.40.21-py3-none-any.whl", hash = "sha256:574ecf9b68c1721650024a27e00e0080b6f141c281ebfce49e0d302969270ef4"},
-    {file = "botocore-1.40.21.tar.gz", hash = "sha256:f77e9c199df0252b14ea739a9ac99723940f6bde90f4c2e7802701553a62827b"},
+    {file = "botocore-1.40.22-py3-none-any.whl", hash = "sha256:df50788fc71250dd884a4e2b60931103416bfba5baa85d2e150b8434ded7e61e"},
+    {file = "botocore-1.40.22.tar.gz", hash = "sha256:eb800ece2cd67777ebb09a67a0d1628db3aea4f2ccbf1d8bf7dbf8504d1f3b71"},
 ]
 
 [package.dependencies]
@@ -895,14 +895,14 @@ tests = ["pytest", "pytest-cov", "pytest-xdist"]
 
 [[package]]
 name = "databricks-sdk"
-version = "0.64.0"
+version = "0.65.0"
 description = "Databricks SDK for Python (Beta)"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "databricks_sdk-0.64.0-py3-none-any.whl", hash = "sha256:3efb2a739deda3186d0380ad6ced7d4811ced7adcaf61cbf0f897eab52974a17"},
-    {file = "databricks_sdk-0.64.0.tar.gz", hash = "sha256:e21cce45bb4f1254ad5d22ea77fc30484378beb54b5b42db098d1f975c813e81"},
+    {file = "databricks_sdk-0.65.0-py3-none-any.whl", hash = "sha256:594e61138071d7ae830412cfd3fbc5bd16aba9b67a423f44f4c13ca70c493a9f"},
+    {file = "databricks_sdk-0.65.0.tar.gz", hash = "sha256:be744c844d1e1e9bf1a4ad2982ef2c8b88f2ef8ad36b6ea8b77591fd3b1f1bbb"},
 ]
 
 [package.dependencies]
@@ -910,7 +910,7 @@ google-auth = ">=2.0,<3.0"
 requests = ">=2.28.1,<3"
 
 [package.extras]
-dev = ["autoflake", "black", "build", "databricks-connect", "httpx", "ipython", "ipywidgets", "isort", "langchain-openai ; python_version > \"3.7\"", "openai", "pycodestyle", "pyfakefs", "pytest", "pytest-cov", "pytest-mock", "pytest-rerunfailures", "pytest-xdist", "requests-mock", "wheel"]
+dev = ["autoflake", "black", "build", "databricks-connect", "httpx", "ipython", "ipywidgets", "isort", "langchain-openai ; python_version > \"3.7\"", "openai", "pycodestyle", "pyfakefs", "pytest", "pytest-cov", "pytest-mock", "pytest-rerunfailures", "pytest-xdist (>=3.6.1,<4.0)", "requests-mock", "wheel"]
 notebook = ["ipython (>=8,<10)", "ipywidgets (>=8,<9)"]
 openai = ["httpx", "langchain-openai ; python_version > \"3.7\"", "openai"]
 
@@ -4186,4 +4186,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<4.0"
-content-hash = "858719b43f0fe508ccbcf324a380a4f06de763fe5cb203cc3b886ed158fe9727"
+content-hash = "74ee4f9e70a4ba0bf8f92c8a31397afe6eddbc14d0a6f39f0cac13afc51f8bf4"
