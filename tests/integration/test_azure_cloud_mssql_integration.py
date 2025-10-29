@@ -1,6 +1,7 @@
 import os
 
 import requests
+import pytest
 from azure.storage.blob import BlobServiceClient
 from testcontainers.compose import DockerCompose
 
@@ -8,6 +9,7 @@ import mlflow
 from mlflow import MlflowClient
 
 
+@pytest.mark.amd64_only
 def test_mssql_backended_azure_simulation_model_upload_and_access_via_api(
     test_model, training_params, conda_env
 ):
