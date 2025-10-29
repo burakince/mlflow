@@ -80,7 +80,7 @@ jobs:
         id: setup-python
         uses: actions/setup-python@v6
         with:
-          python-version: 3.13
+          python-version: '3.13'
 
       #----------------------------------------------
       #  -----  install & configure poetry  -----
@@ -169,6 +169,10 @@ jobs:
 
   buildtestpush:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        variant: [alpine, debian]
 
     needs: integrationtest
 
@@ -269,7 +273,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: Dockerfile.debian
+          file: Dockerfile.${{ matrix.variant }}
           platforms: linux/amd64
           push: false
           load: true
@@ -286,7 +290,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: docker.io/${{ env.IMAGE_NAME }}:latest
-          args: --file=Dockerfile.debian --severity-threshold=medium --sarif-file-output=snyk.sarif
+          args: --file=Dockerfile.${{ matrix.variant }} --severity-threshold=medium --sarif-file-output=snyk.sarif
 
       - name: Upload result to GitHub Code Scanning
         if: hashFiles('snyk.sarif') != ''
@@ -300,7 +304,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: Dockerfile.debian
+          file: Dockerfile.${{ matrix.variant }}
           platforms: linux/arm64/v8,linux/amd64
           push: false
           tags: ${{ steps.meta.outputs.tags }}
@@ -316,7 +320,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: Dockerfile.debian
+          file: Dockerfile.${{ matrix.variant }}
           platforms: linux/arm64/v8,linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
