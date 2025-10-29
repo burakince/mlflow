@@ -41,7 +41,7 @@ services:
     container_name: mlflow-aws-pg-test
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.debian
     command: "mlflow server --backend-store-uri=postgresql:// --default-artifact-root=s3://mlflow/ --host=0.0.0.0 --port=8080"
     environment:
       MLFLOW_FLASK_SERVER_SECRET_KEY: 0123456789
