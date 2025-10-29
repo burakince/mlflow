@@ -38,8 +38,6 @@ repos:
   - repo: https://github.com/PyCQA/bandit
     rev: 1.8.0
     hooks:
-      # - id: bandit
-      #   args: [-x, "*/.venv/*, */tests/*"]
       - id: bandit
         language_version: python3
         exclude: ^tests/
