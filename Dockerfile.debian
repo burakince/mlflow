@@ -46,9 +46,8 @@ RUN poetry build
 
 WORKDIR /mlflow/
 
-RUN python -m venv .venv && \
-    . .venv/bin/activate && \
-    pip install /mlflow-build/dist/mlflowstack-1.0-py3-none-any.whl
+RUN python -m venv /opt/venv && \
+    /opt/venv/bin/pip install --no-cache-dir /mlflow-build/dist/mlflowstack-*.whl
 
 # Stage 2: Final slim image
 FROM python:3.13.9-slim
@@ -64,16 +63,16 @@ WORKDIR /mlflow/
 RUN chown -R mlflow:mlflow /mlflow
 
 # Copy the virtual environment from the foundation stage and set ownership
-COPY --from=foundation --chown=mlflow:mlflow /mlflow/.venv /mlflow/.venv
+COPY --from=foundation --chown=mlflow:mlflow /opt/venv /opt/venv
 
-# Set PATH to include the virtual environment
-ENV PATH=/mlflow/.venv/bin:$PATH
-
-# Prevent Python from buffering stdout/stderr
-ENV PYTHONUNBUFFERED=1
+# Activate venv
+ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1
 
 # Switch to non-root user
 USER mlflow
+
+EXPOSE 5000
 
 # Default command to run MLflow server
 CMD ["mlflow", "server", "--backend-store-uri", "sqlite:///mlflow.sqlite", "--default-artifact-root", "./mlruns", "--host=0.0.0.0", "--port=5000"]
