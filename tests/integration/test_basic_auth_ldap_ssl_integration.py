@@ -3,6 +3,7 @@ import re
 import time
 
 import requests
+import pytest
 from pathlib import Path
 
 import mlflow
@@ -13,9 +14,11 @@ from ..helpers.extended_docker_compose import ExtendedDockerCompose
 from ..helpers.certificates import ServerCertificate, CertificateAuthority
 
 
+@pytest.mark.parametrize("distro", ["debian", "alpine"])
 def test_ldap_backended_model_upload_and_access_with_basic_auth(
-    test_model, training_params, conda_env
+    distro, test_model, training_params, conda_env
 ):
+    os.environ["DISTRO"] = distro
 
     ca = CertificateAuthority("MLFlow LDAP-SSL-Test CA", "MLFlow", "LDAP-SSL-Test").generate().store(Path(__file__).parent.parent.joinpath("../test-containers/basic-auth/ldap/certificates/ca"))
     _ = ServerCertificate("lldap", "MLFlow", "LDAP-SSL-Test").generate_csr().sign_with_ca(ca).store(Path(__file__).parent.parent.joinpath("../test-containers/basic-auth/ldap/certificates/ldap"))
@@ -23,7 +26,6 @@ def test_ldap_backended_model_upload_and_access_with_basic_auth(
     with ExtendedDockerCompose(
         context=".",
         compose_file_name=["docker-compose.basic-auth-ldap-ssl-test.yaml"],
-        # pull=True,
         build=True,
     ) as compose:
         mlflow_host = compose.get_service_host("mlflow", 8080)

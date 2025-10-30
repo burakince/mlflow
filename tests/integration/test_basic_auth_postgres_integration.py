@@ -3,6 +3,7 @@ import re
 import time
 
 import requests
+import pytest
 
 import mlflow
 from mlflow.server.auth.client import AuthServiceClient
@@ -11,13 +12,15 @@ from mlflow import MlflowClient
 from ..helpers.extended_docker_compose import ExtendedDockerCompose
 
 
+@pytest.mark.parametrize("distro", ["debian", "alpine"])
 def test_postgres_backended_model_upload_and_access_with_basic_auth(
-    test_model, training_params, conda_env
+    distro, test_model, training_params, conda_env
 ):
+    os.environ["DISTRO"] = distro
+
     with ExtendedDockerCompose(
         context=".",
         compose_file_name=["docker-compose.basic-auth-postgres-test.yaml"],
-        # pull=True,
         build=True,
     ) as compose:
         mlflow_host = compose.get_service_host("mlflow", 8080)

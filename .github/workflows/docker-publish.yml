@@ -244,8 +244,8 @@ jobs:
           fi
 
           for tag in $(echo $TAGS | tr ',' ' '); do
-            DOCKER_TAGS="$DOCKER_TAGS\ndocker.io/${{ env.IMAGE_NAME }}:$tag"
-            GHCR_TAGS="$GHCR_TAGS\nghcr.io/${{ env.IMAGE_NAME }}:$tag"
+            DOCKER_TAGS="$DOCKER_TAGS docker.io/${{ env.IMAGE_NAME }}:$tag"
+            GHCR_TAGS="$GHCR_TAGS ghcr.io/${{ env.IMAGE_NAME }}:$tag"
           done
 
           echo "docker_tags<<EOF" >> $GITHUB_OUTPUT
