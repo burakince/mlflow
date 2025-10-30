@@ -2,6 +2,7 @@
 .venv
 .git
 .github
+.docker-cache
 .pytest_cache
 .vscode
 
@@ -23,8 +24,14 @@ docker-compose.*.yaml
 test-containers
 tests
 docs
+dist
+build
 **/__pycache__
 
 *.db
 *.key
 *.crt
+
+# Exclude unnecessary files
+*.pyc
+*.egg-info

@@ -1,6 +1,7 @@
 from sys import version_info
 
 import cloudpickle
+import platform
 import pytest
 
 import mlflow
@@ -38,3 +39,9 @@ def conda_env():
         ],
         "name": "mlflow-env",
     }
+
+@pytest.fixture(autouse=True)
+def skip_amd64_only(request):
+    if request.node.get_closest_marker("amd64_only"):
+        if platform.machine() != "x86_64":
+            pytest.skip("This test only runs on amd64 (x86_64)")

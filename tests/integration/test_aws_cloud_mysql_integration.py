@@ -1,19 +1,22 @@
 import os
 
 import requests
+import pytest
 from testcontainers.compose import DockerCompose
 
 import mlflow
 from mlflow import MlflowClient
 
 
+@pytest.mark.parametrize("distro", ["debian", "alpine"])
 def test_mysql_backended_aws_simulation_model_upload_and_access_via_api(
-    test_model, training_params, conda_env
+    distro, test_model, training_params, conda_env
 ):
+    os.environ["DISTRO"] = distro
+
     with DockerCompose(
         context=".",
         compose_file_name=["docker-compose.aws-mysql-test.yaml"],
-        # pull=True,
         build=True,
     ) as compose:
         mlflow_host = compose.get_service_host("mlflow", 8080)

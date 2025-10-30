@@ -13,7 +13,8 @@ on:
       - "poetry.lock"
       - "poetry.toml"
       - "pyproject.toml"
-      - "Dockerfile"
+      - "Dockerfile.debian"
+      - "Dockerfile.alpine"
       - "mlflowstack/**"
       - "docker-compose.*.yaml"
       - "tests/**"
@@ -79,7 +80,7 @@ jobs:
         id: setup-python
         uses: actions/setup-python@v6
         with:
-          python-version: 3.13
+          python-version: '3.13'
 
       #----------------------------------------------
       #  -----  install & configure poetry  -----
@@ -169,6 +170,10 @@ jobs:
   buildtestpush:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        variant: [alpine, debian]
+
     needs: integrationtest
 
     env:
@@ -177,15 +182,81 @@ jobs:
     permissions:
       contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
       id-token: write
-      # To upload sarif files
       security-events: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+
+      - name: Set version and tag
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            TAG="pr-${{ github.event.pull_request.number }}"
+            MODE="pr"
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            TAG="edge"
+            SHA=$(git rev-parse --short HEAD)
+            TAG="$TAG-$SHA"
+            MODE="edge"
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+            MODE="release"
+          fi
+
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
+          echo "MODE=$MODE" >> $GITHUB_OUTPUT
+
+          # For release: parse semver
+          if [[ "$MODE" == "release" ]]; then
+            MAJOR=$(echo $TAG | cut -d. -f1)
+            MINOR=$(echo $TAG | cut -d. -f1-2)
+            echo "MAJOR=$MAJOR" >> $GITHUB_OUTPUT
+            echo "MINOR=$MINOR" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate tags for ${{ matrix.variant }}
+        id: tags
+        run: |
+          BASE_TAG="${{ steps.version.outputs.TAG }}"
+          MODE="${{ steps.version.outputs.MODE }}"
+          VARIANT="${{ matrix.variant }}"
+          SUFFIX=""
+          [ "$VARIANT" = "alpine" ] && SUFFIX="-alpine"
+
+          DOCKER_TAGS=""
+          GHCR_TAGS=""
+
+          if [[ "$MODE" == "release" ]]; then
+            FULL="${{ steps.version.outputs.FULL_TAG }}"
+            MINOR="${{ steps.version.outputs.MINOR }}"
+            MAJOR="${{ steps.version.outputs.MAJOR }}"
+
+            if [[ "$VARIANT" == "debian" ]]; then
+              TAGS="latest,$FULL,$MINOR,$MAJOR"
+            else
+              TAGS="$FULL$SUFFIX,$MINOR$SUFFIX,$MAJOR$SUFFIX"
+            fi
+          else
+            # PR or edge: only one tag
+            TAGS="$BASE_TAG$SUFFIX"
+          fi
+
+          for tag in $(echo $TAGS | tr ',' ' '); do
+            DOCKER_TAGS="$DOCKER_TAGS docker.io/${{ env.IMAGE_NAME }}:$tag"
+            GHCR_TAGS="$GHCR_TAGS ghcr.io/${{ env.IMAGE_NAME }}:$tag"
+          done
+
+          echo "docker_tags<<EOF" >> $GITHUB_OUTPUT
+          echo "$DOCKER_TAGS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          echo "ghcr_tags<<EOF" >> $GITHUB_OUTPUT
+          echo "$GHCR_TAGS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          echo "push=${{ steps.version.outputs.MODE == 'release' && 'true' || 'false' }}" >> $GITHUB_OUTPUT
 
       - name: Install ORAS
         id: install_oras
@@ -200,26 +271,21 @@ jobs:
         with:
           platforms: all
 
-      # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
 
-      # Login against a Docker Hub registry except on PR
-      # https://github.com/docker/login-action
       - name: Login to Docker Hub
         id: docker_hub_login
-        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
+        if: steps.tags.outputs.push == 'true'
         uses: docker/login-action@v3
         with:
           registry: docker.io
           username: ${{ github.actor }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      # Login against a Docker registry except on PR
-      # https://github.com/docker/login-action
-      - name: Login to GitHub Container Registry
+      - name: Login to GHCR
         id: ghcr_login
-        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
+        if: steps.tags.outputs.push == 'true'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -228,23 +294,21 @@ jobs:
 
       - name: Login to GitHub Container Registry (ORAS)
         id: oras_ghcr_login
-        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
+        if: steps.tags.outputs.push == 'true'
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | oras login ghcr.io --username ${{ github.actor }} --password-stdin
 
       - name: Publish Artifact Hub Manifest
         id: publish_ah_manifest
-        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
+        if: steps.tags.outputs.push == 'true'
         run: |
           oras push \
             ghcr.io/${{ env.IMAGE_NAME }}:artifacthub.io \
             --config /dev/null:application/vnd.cncf.artifacthub.config.v1+yaml \
             artifacthub-repo.yml:application/vnd.cncf.artifacthub.repository-metadata.layer.v1.yaml
 
-      # Extract metadata (tags, labels) for Docker
-      # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
-        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
+        if: steps.tags.outputs.push == 'true'
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -252,9 +316,9 @@ jobs:
             docker.io/${{ env.IMAGE_NAME }}
             ghcr.io/${{ env.IMAGE_NAME }}
           flavor: |
-            latest=true
+            latest=false
           tags: |
-            type=ref,event=tag
+            type=raw,value=placeholder
           labels: |
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/burakince/mlflow/refs/heads/main/README.md
             io.artifacthub.package.maintainers=[{"name":"burakince","email":"burak.ince@linux.org.tr"}]
@@ -268,6 +332,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          file: Dockerfile.${{ matrix.variant }}
           platforms: linux/amd64
           push: false
           load: true
@@ -284,7 +349,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: docker.io/${{ env.IMAGE_NAME }}:latest
-          args: --file=Dockerfile --severity-threshold=medium --sarif-file-output=snyk.sarif
+          args: --file=Dockerfile.${{ matrix.variant }} --severity-threshold=medium --sarif-file-output=snyk.sarif
 
       - name: Upload result to GitHub Code Scanning
         if: hashFiles('snyk.sarif') != ''
@@ -292,105 +357,43 @@ jobs:
         with:
           sarif_file: snyk.sarif
 
-      # Break the pipeline with failure status if security scan failed
-      # - name: Check docker image scan status
-      #   if: ${{ steps.docker-image-scan.outcome == 'failure' }}
-      #   run: exit 1
-
-      # - name: Install Dive
-      #   run: |
-      #     set -e
-      #     retries=5
-      #     delay=10
-      #     for ((i=1; i<=retries; i++)); do
-      #       echo "Attempt $i of $retries"
-      #       # Fetch the latest dive version
-      #       DIVE_VERSION=$(curl -sL -H "Accept: application/vnd.github+json" "https://api.github.com/repos/wagoodman/dive/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
-      #       if [ -z "$DIVE_VERSION" ]; then
-      #         echo "Failed to fetch DIVE_VERSION"
-      #         if [ $i -eq $retries ]; then
-      #           echo "All attempts to fetch DIVE_VERSION failed"
-      #           exit 1
-      #         fi
-      #         sleep $delay
-      #         continue
-      #       fi
-      #       echo "DIVE_VERSION: $DIVE_VERSION"
-      #       # Download the .deb file
-      #       curl -OL --fail --retry 3 --retry-delay 5 "https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.deb"
-      #       if [ $? -ne 0 ]; then
-      #         echo "Failed to download dive_${DIVE_VERSION}_linux_amd64.deb"
-      #         if [ $i -eq $retries ]; then
-      #           echo "All attempts to download .deb file failed"
-      #           exit 1
-      #         fi
-      #         sleep $delay
-      #         continue
-      #       fi
-      #       # Verify the .deb file
-      #       file dive_${DIVE_VERSION}_linux_amd64.deb | grep "Debian binary package" || {
-      #         echo "Downloaded file is not a valid .deb package"
-      #         if [ $i -eq $retries ]; then
-      #           echo "All attempts to download a valid .deb file failed"
-      #           exit 1
-      #         fi
-      #         rm -f dive_${DIVE_VERSION}_linux_amd64.deb
-      #         sleep $delay
-      #         continue
-      #       }
-      #       # Install the .deb file
-      #       sudo apt install -y ./dive_${DIVE_VERSION}_linux_amd64.deb
-      #       if [ $? -eq 0 ]; then
-      #         echo "Dive installed successfully"
-      #         exit 0
-      #       else
-      #         echo "Failed to install dive_${DIVE_VERSION}_linux_amd64.deb"
-      #         if [ $i -eq $retries ]; then
-      #           echo "All attempts to install dive failed"
-      #           exit 1
-      #         fi
-      #         rm -f dive_${DIVE_VERSION}_linux_amd64.deb
-      #         sleep $delay
-      #       fi
-      #     done
-
-      # - name: Analyse Efficiency and Wastes on Image
-      #   run: dive docker.io/${{ env.IMAGE_NAME }}:latest
-
       - name: Ensure the image can be cross-compiled
         if: github.event_name == 'pull_request'
         id: cross-compile-check
         uses: docker/build-push-action@v6
         with:
           context: .
+          file: Dockerfile.${{ matrix.variant }}
           platforms: linux/arm64/v8,linux/amd64
           push: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            ${{ steps.tags.outputs.docker_tags }}
+            ${{ steps.tags.outputs.ghcr_tags }}
+          labels: |
+            org.opencontainers.image.version=${{ steps.version.outputs.TAG }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # Build again and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
       - name: Build and push Docker image
-        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
+        if: steps.tags.outputs.push == 'true'
         id: build-and-push
         uses: docker/build-push-action@v6
         with:
           context: .
+          file: Dockerfile.${{ matrix.variant }}
           platforms: linux/arm64/v8,linux/amd64
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ${{ steps.tags.outputs.docker_tags }}
+            ${{ steps.tags.outputs.ghcr_tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # Sign the resulting Docker image digest except on PRs.
-      # This will only write to the public Rekor transparency log when the Docker
-      # repository is public to avoid leaking data.  If you would like to publish
-      # transparency data even for private images, pass --force to cosign below.
-      # https://github.com/sigstore/cosign
       - name: Sign the published Docker images
-        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
+        if: steps.tags.outputs.push == 'true'
         run: |
-          echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign -y {}@${{ steps.build-and-push.outputs.digest }}
+          echo "${{ steps.tags.outputs.docker_tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
+          echo "${{ steps.tags.outputs.ghcr_tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}

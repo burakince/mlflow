@@ -1,0 +1,69 @@
+# ==============================
+# Stage 1: Build + Install
+# ==============================
+FROM python:3.13.9-alpine AS builder
+
+# Install build deps
+RUN apk add --no-cache \
+    gcc \
+    g++ \
+    musl-dev \
+    python3-dev \
+    libffi-dev \
+    postgresql-dev \
+    freetds-dev \
+    openblas-dev \
+    lapack-dev \
+    pkgconfig
+
+WORKDIR /mlflow-build/
+
+# Copy only necessary files for dependency installation
+COPY pyproject.toml poetry.toml poetry.lock LICENSE README.md ./
+COPY mlflowstack ./mlflowstack
+
+# Install Poetry
+RUN pip install --no-cache-dir poetry
+
+# Build wheel
+RUN poetry build --format wheel --no-interaction
+
+# Create venv and install wheel
+RUN python -m venv /opt/venv && \
+    /opt/venv/bin/pip install --no-cache-dir /mlflow-build/dist/mlflowstack-*.whl
+
+# ==============================
+# Stage 2: Final Runtime
+# ==============================
+FROM python:3.13.9-alpine
+
+# Runtime deps
+RUN apk add --no-cache \
+    libstdc++ \
+    libgomp \
+    openblas \
+    ca-certificates \
+    libpq \
+    freetds
+
+# Create non-root user
+RUN mkdir -p /mlflow/mlruns && \
+    addgroup -g 1001 -S mlflow && \
+    adduser -S -u 1001 -G mlflow mlflow && \
+    chown -R mlflow:mlflow /mlflow
+
+WORKDIR /mlflow
+
+# Copy venv
+COPY --from=builder --chown=mlflow:mlflow /opt/venv /opt/venv
+
+# Activate venv
+ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1
+
+USER mlflow
+
+EXPOSE 5000
+
+# Default command to run MLflow server
+CMD ["mlflow", "server", "--backend-store-uri", "sqlite:///mlflow.sqlite", "--default-artifact-root", "./mlruns", "--host=0.0.0.0", "--port=5000"]
