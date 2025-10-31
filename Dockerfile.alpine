@@ -1,7 +1,5 @@
-# ==============================
-# Stage 1: Build + Install
-# ==============================
-FROM python:3.13.9-alpine AS builder
+# Stage 1: Build and dependencies
+FROM python:3.13.9-alpine AS foundation
 
 # Install build deps
 RUN apk add --no-cache \
@@ -23,7 +21,8 @@ COPY pyproject.toml poetry.toml poetry.lock LICENSE README.md ./
 COPY mlflowstack ./mlflowstack
 
 # Install Poetry
-RUN pip install --no-cache-dir poetry
+RUN python -m pip install --upgrade pip --no-cache-dir && \
+    pip install --no-cache-dir poetry
 
 # Build wheel
 RUN poetry build --format wheel --no-interaction
@@ -32,10 +31,10 @@ RUN poetry build --format wheel --no-interaction
 RUN python -m venv /opt/venv && \
     /opt/venv/bin/pip install --no-cache-dir /mlflow-build/dist/mlflowstack-*.whl
 
-# ==============================
 # Stage 2: Final Runtime
-# ==============================
 FROM python:3.13.9-alpine
+
+LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
 # Runtime deps
 RUN apk add --no-cache \
@@ -54,13 +53,14 @@ RUN mkdir -p /mlflow/mlruns && \
 
 WORKDIR /mlflow
 
-# Copy venv
-COPY --from=builder --chown=mlflow:mlflow /opt/venv /opt/venv
+# Copy the virtual environment from the foundation stage and set ownership
+COPY --from=foundation --chown=mlflow:mlflow /opt/venv /opt/venv
 
 # Activate venv
 ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONUNBUFFERED=1
 
+# Switch to non-root user
 USER mlflow
 
 EXPOSE 5000

@@ -6,7 +6,6 @@ on:
     # Publish semver tags as releases.
     tags:
       - "*.*.*"
-      - "*.*.*.*"
     paths:
       - ".github/workflows/docker-publish.yml"
       - ".env"
@@ -189,75 +188,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Set version and tag
-        id: version
-        run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            TAG="pr-${{ github.event.pull_request.number }}"
-            MODE="pr"
-          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            TAG="edge"
-            SHA=$(git rev-parse --short HEAD)
-            TAG="$TAG-$SHA"
-            MODE="edge"
-          else
-            TAG="${GITHUB_REF#refs/tags/}"
-            MODE="release"
-          fi
-
-          echo "TAG=$TAG" >> $GITHUB_OUTPUT
-          echo "MODE=$MODE" >> $GITHUB_OUTPUT
-
-          # For release: parse semver
-          if [[ "$MODE" == "release" ]]; then
-            MAJOR=$(echo $TAG | cut -d. -f1)
-            MINOR=$(echo $TAG | cut -d. -f1-2)
-            echo "MAJOR=$MAJOR" >> $GITHUB_OUTPUT
-            echo "MINOR=$MINOR" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Generate tags for ${{ matrix.variant }}
-        id: tags
-        run: |
-          BASE_TAG="${{ steps.version.outputs.TAG }}"
-          MODE="${{ steps.version.outputs.MODE }}"
-          VARIANT="${{ matrix.variant }}"
-          SUFFIX=""
-          [ "$VARIANT" = "alpine" ] && SUFFIX="-alpine"
-
-          DOCKER_TAGS=""
-          GHCR_TAGS=""
-
-          if [[ "$MODE" == "release" ]]; then
-            FULL="${{ steps.version.outputs.FULL_TAG }}"
-            MINOR="${{ steps.version.outputs.MINOR }}"
-            MAJOR="${{ steps.version.outputs.MAJOR }}"
-
-            if [[ "$VARIANT" == "debian" ]]; then
-              TAGS="latest,$FULL,$MINOR,$MAJOR"
-            else
-              TAGS="$FULL$SUFFIX,$MINOR$SUFFIX,$MAJOR$SUFFIX"
-            fi
-          else
-            # PR or edge: only one tag
-            TAGS="$BASE_TAG$SUFFIX"
-          fi
-
-          for tag in $(echo $TAGS | tr ',' ' '); do
-            DOCKER_TAGS="$DOCKER_TAGS docker.io/${{ env.IMAGE_NAME }}:$tag"
-            GHCR_TAGS="$GHCR_TAGS ghcr.io/${{ env.IMAGE_NAME }}:$tag"
-          done
-
-          echo "docker_tags<<EOF" >> $GITHUB_OUTPUT
-          echo "$DOCKER_TAGS" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-          echo "ghcr_tags<<EOF" >> $GITHUB_OUTPUT
-          echo "$GHCR_TAGS" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-          echo "push=${{ steps.version.outputs.MODE == 'release' && 'true' || 'false' }}" >> $GITHUB_OUTPUT
-
       - name: Install ORAS
         id: install_oras
         uses: oras-project/setup-oras@main
@@ -274,18 +204,33 @@ jobs:
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Set version and mode
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "mode=pr" >> $GITHUB_OUTPUT
+            echo "tag=pr-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            SHA=$(git rev-parse --short HEAD)
+            echo "mode=edge" >> $GITHUB_OUTPUT
+            echo "tag=edge-$SHA" >> $GITHUB_OUTPUT
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+            echo "mode=release" >> $GITHUB_OUTPUT
+            echo "tag=$TAG" >> $GITHUB_OUTPUT
+          fi
+
       - name: Login to Docker Hub
         id: docker_hub_login
-        if: steps.tags.outputs.push == 'true'
+        if: steps.version.outputs.mode == 'release'
         uses: docker/login-action@v3
         with:
-          registry: docker.io
           username: ${{ github.actor }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Login to GHCR
         id: ghcr_login
-        if: steps.tags.outputs.push == 'true'
+        if: steps.version.outputs.mode == 'release'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -294,38 +239,41 @@ jobs:
 
       - name: Login to GitHub Container Registry (ORAS)
         id: oras_ghcr_login
-        if: steps.tags.outputs.push == 'true'
+        if: steps.version.outputs.mode == 'release'
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | oras login ghcr.io --username ${{ github.actor }} --password-stdin
 
       - name: Publish Artifact Hub Manifest
         id: publish_ah_manifest
-        if: steps.tags.outputs.push == 'true'
+        if: steps.version.outputs.mode == 'release'
         run: |
           oras push \
             ghcr.io/${{ env.IMAGE_NAME }}:artifacthub.io \
             --config /dev/null:application/vnd.cncf.artifacthub.config.v1+yaml \
             artifacthub-repo.yml:application/vnd.cncf.artifacthub.repository-metadata.layer.v1.yaml
 
-      - name: Extract Docker metadata
-        if: steps.tags.outputs.push == 'true'
+      - name: Extract Docker metadata (release only)
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: |
-            docker.io/${{ env.IMAGE_NAME }}
+            ${{ env.IMAGE_NAME }}
             ghcr.io/${{ env.IMAGE_NAME }}
           flavor: |
             latest=false
+            suffix=${{ matrix.variant == 'alpine' && '-alpine' || '' }}
           tags: |
-            type=raw,value=placeholder
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest,enable=${{ matrix.variant == 'debian' }}
           labels: |
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/burakince/mlflow/refs/heads/main/README.md
             io.artifacthub.package.maintainers=[{"name":"burakince","email":"burak.ince@linux.org.tr"}]
             io.artifacthub.package.logo-url=https://raw.githubusercontent.com/mlflow/mlflow/master/assets/logo.svg
             io.artifacthub.package.keywords=machine-learning,ai,ml,model-management,mlflow,mlflow-tracking-server,mlflow-docker,mlflow-tracking,mlflow-kube
             io.artifacthub.package.license=MIT
-            io.artifacthub.package.alternative-locations=docker.io/${{ env.IMAGE_NAME }}
+            io.artifacthub.package.alternative-locations=${{ env.IMAGE_NAME }}
 
       - name: Build image for local analysis
         id: build-docker-image
@@ -336,7 +284,7 @@ jobs:
           platforms: linux/amd64
           push: false
           load: true
-          tags: docker.io/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -348,7 +296,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: docker.io/${{ env.IMAGE_NAME }}:latest
+          image: ${{ env.IMAGE_NAME }}:latest
           args: --file=Dockerfile.${{ matrix.variant }} --severity-threshold=medium --sarif-file-output=snyk.sarif
 
       - name: Upload result to GitHub Code Scanning
@@ -357,43 +305,21 @@ jobs:
         with:
           sarif_file: snyk.sarif
 
-      - name: Ensure the image can be cross-compiled
-        if: github.event_name == 'pull_request'
-        id: cross-compile-check
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: Dockerfile.${{ matrix.variant }}
-          platforms: linux/arm64/v8,linux/amd64
-          push: false
-          tags: |
-            ${{ steps.tags.outputs.docker_tags }}
-            ${{ steps.tags.outputs.ghcr_tags }}
-          labels: |
-            org.opencontainers.image.version=${{ steps.version.outputs.TAG }}
-            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-            org.opencontainers.image.revision=${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
       - name: Build and push Docker image
-        if: steps.tags.outputs.push == 'true'
+        if: github.event_name != 'pull_request' || steps.version.outputs.mode == 'release'
         id: build-and-push
         uses: docker/build-push-action@v6
         with:
           context: .
           file: Dockerfile.${{ matrix.variant }}
           platforms: linux/arm64/v8,linux/amd64
-          push: true
-          tags: |
-            ${{ steps.tags.outputs.docker_tags }}
-            ${{ steps.tags.outputs.ghcr_tags }}
+          push: ${{ steps.version.outputs.mode == 'release' }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Sign the published Docker images
-        if: steps.tags.outputs.push == 'true'
+        if: steps.version.outputs.mode == 'release'
         run: |
-          echo "${{ steps.tags.outputs.docker_tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
-          echo "${{ steps.tags.outputs.ghcr_tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
+          echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign -y {}@${{ steps.build-and-push.outputs.digest }}

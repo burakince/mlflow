@@ -1,14 +1,6 @@
 # Stage 1: Build and dependencies
 FROM python:3.13.9 AS foundation
 
-LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
-
-WORKDIR /mlflow-build/
-
-# Copy only necessary files for dependency installation
-COPY pyproject.toml poetry.toml poetry.lock LICENSE README.md ./
-COPY mlflowstack ./mlflowstack
-
 # Create necessary symlinks
 RUN ln -s /usr/bin/dpkg-split /usr/sbin/dpkg-split \
     && ln -s /usr/bin/dpkg-deb /usr/sbin/dpkg-deb \
@@ -36,6 +28,12 @@ RUN apt-get update && \
       liblzma-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /var/cache/* /var/log/* /tmp/* /var/tmp/*
+
+WORKDIR /mlflow-build/
+
+# Copy only necessary files for dependency installation
+COPY pyproject.toml poetry.toml poetry.lock LICENSE README.md ./
+COPY mlflowstack ./mlflowstack
 
 # Upgrade pip and install Poetry with no cache
 RUN python -m pip install --upgrade pip --no-cache-dir && \
