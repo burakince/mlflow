@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.4
+
 # Stage 1: Build and dependencies
 FROM python:3.13.9-alpine AS foundation
 
@@ -24,8 +26,9 @@ COPY mlflowstack ./mlflowstack
 RUN python -m pip install --upgrade pip --no-cache-dir && \
     pip install --no-cache-dir poetry
 
-# Build wheel
-RUN poetry build --format wheel --no-interaction
+RUN --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=cache,target=/root/.cache/pypoetry \
+    poetry build --format wheel --no-interaction
 
 # Create venv and install wheel
 RUN python -m venv /opt/venv && \

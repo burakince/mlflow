@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.4
+
 # Stage 1: Build and dependencies
 FROM python:3.13.9 AS foundation
 
@@ -39,10 +41,9 @@ COPY mlflowstack ./mlflowstack
 RUN python -m pip install --upgrade pip --no-cache-dir && \
     pip install poetry wheel --no-cache-dir
 
-# Install project dependencies without development tools
-RUN poetry build
-
-WORKDIR /mlflow/
+RUN --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=cache,target=/root/.cache/pypoetry \
+    poetry build --no-interaction
 
 RUN python -m venv /opt/venv && \
     /opt/venv/bin/pip install --no-cache-dir /mlflow-build/dist/mlflowstack-*.whl
