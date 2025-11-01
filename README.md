@@ -9,10 +9,13 @@ Please find mlflow docker images from [mlflow docker hub repository](https://hub
 
 # Database Requirements
 
-The following database versions have been tested for compatibility:
+The following databases have been tested for compatibility:
 
-- PostgreSQL: 15, 16, 17
-- MySQL: 8.0, 8.4, 9.1
+- PostgreSQL
+- MySQL
+- Microsoft SQL Server
+
+Please find tested database versions from [this](./.env) file.
 
 It is recommended to use at least the minimum tested major version of the database to ensure proper functionality and compatibility.
 
@@ -30,6 +33,8 @@ The Docker image runs as a non-root user (`mlflow`) with the following default s
 
 - **User ID (UID)**: 1001
 - **Group ID (GID)**: 1001
+
+The python virtual environment located under `/opt` folder for both debian and alpine based images. You can more details from `/opt/venv/` directory.
 
 ## Development
 

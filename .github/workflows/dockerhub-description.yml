@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'docs/**/README.md'
+      - 'docs/hub/README.md'
       - .github/workflows/dockerhub-description.yml
 
 jobs:
