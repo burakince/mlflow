@@ -22,9 +22,9 @@ WORKDIR /mlflow-build/
 COPY pyproject.toml poetry.toml poetry.lock LICENSE README.md ./
 COPY mlflowstack ./mlflowstack
 
-# Install Poetry
+# Upgrade pip and install Poetry with no cache
 RUN python -m pip install --upgrade pip --no-cache-dir && \
-    pip install --no-cache-dir poetry
+    pip install poetry wheel --no-cache-dir
 
 RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=cache,target=/root/.cache/pypoetry \
