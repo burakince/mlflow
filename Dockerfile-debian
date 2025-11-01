@@ -45,8 +45,9 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=cache,target=/root/.cache/pypoetry \
     poetry build --no-interaction
 
-RUN python -m venv /opt/venv && \
-    --mount=type=cache,target=/root/.cache/pip \
+# Create venv and install wheel
+RUN python -m venv /opt/venv
+RUN --mount=type=cache,target=/root/.cache/pip \
     /opt/venv/bin/pip install --prefer-binary /mlflow-build/dist/mlflowstack-*.whl
 
 # Stage 2: Final slim image
