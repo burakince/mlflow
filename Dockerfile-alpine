@@ -32,7 +32,8 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 # Create venv and install wheel
 RUN python -m venv /opt/venv && \
-    /opt/venv/bin/pip install --no-cache-dir /mlflow-build/dist/mlflowstack-*.whl
+    --mount=type=cache,target=/root/.cache/pip \
+    /opt/venv/bin/pip install --prefer-binary /mlflow-build/dist/mlflowstack-*.whl
 
 # Stage 2: Final Runtime
 FROM python:3.13.9-alpine

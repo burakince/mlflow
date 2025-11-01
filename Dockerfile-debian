@@ -46,7 +46,8 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     poetry build --no-interaction
 
 RUN python -m venv /opt/venv && \
-    /opt/venv/bin/pip install --no-cache-dir /mlflow-build/dist/mlflowstack-*.whl
+    --mount=type=cache,target=/root/.cache/pip \
+    /opt/venv/bin/pip install --prefer-binary /mlflow-build/dist/mlflowstack-*.whl
 
 # Stage 2: Final slim image
 FROM python:3.13.9-slim
