@@ -22,8 +22,6 @@ on:
   pull_request:
     branches: [main]
 
-  workflow_dispatch:
-
 jobs:
   setup:
     runs-on: ubuntu-latest
@@ -204,25 +202,9 @@ jobs:
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Set version and mode
-        id: version
-        run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "mode=pr" >> $GITHUB_OUTPUT
-            echo "tag=pr-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            SHA=$(git rev-parse --short HEAD)
-            echo "mode=edge" >> $GITHUB_OUTPUT
-            echo "tag=edge-$SHA" >> $GITHUB_OUTPUT
-          else
-            TAG="${GITHUB_REF#refs/tags/}"
-            echo "mode=release" >> $GITHUB_OUTPUT
-            echo "tag=$TAG" >> $GITHUB_OUTPUT
-          fi
-
       - name: Login to Docker Hub
         id: docker_hub_login
-        if: steps.version.outputs.mode == 'release'
+        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
         uses: docker/login-action@v3
         with:
           username: ${{ github.actor }}
@@ -230,7 +212,7 @@ jobs:
 
       - name: Login to GHCR
         id: ghcr_login
-        if: steps.version.outputs.mode == 'release'
+        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -239,20 +221,20 @@ jobs:
 
       - name: Login to GitHub Container Registry (ORAS)
         id: oras_ghcr_login
-        if: steps.version.outputs.mode == 'release'
+        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | oras login ghcr.io --username ${{ github.actor }} --password-stdin
 
       - name: Publish Artifact Hub Manifest
         id: publish_ah_manifest
-        if: steps.version.outputs.mode == 'release'
+        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
         run: |
           oras push \
             ghcr.io/${{ env.IMAGE_NAME }}:artifacthub.io \
             --config /dev/null:application/vnd.cncf.artifacthub.config.v1+yaml \
             artifacthub-repo.yml:application/vnd.cncf.artifacthub.repository-metadata.layer.v1.yaml
 
-      - name: Extract Docker metadata (release only)
+      - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -263,10 +245,12 @@ jobs:
             latest=false
             suffix=${{ matrix.variant == 'alpine' && '-alpine' || '' }}
           tags: |
+            type=ref,event=pr
+            type=edge,branch=main,suffix={{sha}}
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
-            type=raw,value=latest,enable=${{ matrix.variant == 'debian' }}
+            type=raw,value=latest,enable=${{ contains(github.ref, 'refs/tags/') && matrix.variant == 'debian' }}
           labels: |
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/burakince/mlflow/refs/heads/main/README.md
             io.artifacthub.package.maintainers=[{"name":"burakince","email":"burak.ince@linux.org.tr"}]
@@ -284,7 +268,7 @@ jobs:
           platforms: linux/amd64
           push: false
           load: true
-          tags: ${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.IMAGE_NAME }}:scan-${{ matrix.variant }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -296,7 +280,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: ${{ env.IMAGE_NAME }}:latest
+          image: ${{ env.IMAGE_NAME }}:scan-${{ matrix.variant }}
           args: --file=Dockerfile.${{ matrix.variant }} --severity-threshold=medium --sarif-file-output=snyk.sarif
 
       - name: Upload result to GitHub Code Scanning
@@ -306,20 +290,21 @@ jobs:
           sarif_file: snyk.sarif
 
       - name: Build and push Docker image
-        if: github.event_name != 'pull_request' || steps.version.outputs.mode == 'release'
         id: build-and-push
         uses: docker/build-push-action@v6
         with:
           context: .
           file: Dockerfile.${{ matrix.variant }}
           platforms: linux/arm64/v8,linux/amd64
-          push: ${{ steps.version.outputs.mode == 'release' }}
+          push: ${{ github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/') }}
+          provenance: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Sign the published Docker images
-        if: steps.version.outputs.mode == 'release'
+        if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
         run: |
-          echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign -y {}@${{ steps.build-and-push.outputs.digest }}
+          cosign sign --yes \
+            "${{ steps.build-and-push.outputs.imageid }}@${{ steps.build-and-push.outputs.digest }}"
