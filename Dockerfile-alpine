@@ -1,7 +1,7 @@
-# ==============================
-# Stage 1: Build + Install
-# ==============================
-FROM python:3.13.9-alpine AS builder
+# syntax=docker/dockerfile:1.4
+
+# Stage 1: Build and dependencies
+FROM python:3.13.9-alpine AS foundation
 
 # Install build deps
 RUN apk add --no-cache \
@@ -22,20 +22,23 @@ WORKDIR /mlflow-build/
 COPY pyproject.toml poetry.toml poetry.lock LICENSE README.md ./
 COPY mlflowstack ./mlflowstack
 
-# Install Poetry
-RUN pip install --no-cache-dir poetry
+# Upgrade pip and install Poetry with no cache
+RUN python -m pip install --upgrade pip --no-cache-dir && \
+    pip install poetry wheel --no-cache-dir
 
-# Build wheel
-RUN poetry build --format wheel --no-interaction
+RUN --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=cache,target=/root/.cache/pypoetry \
+    poetry build --format wheel --no-interaction
 
 # Create venv and install wheel
-RUN python -m venv /opt/venv && \
-    /opt/venv/bin/pip install --no-cache-dir /mlflow-build/dist/mlflowstack-*.whl
+RUN python -m venv /opt/venv
+RUN --mount=type=cache,target=/root/.cache/pip \
+    /opt/venv/bin/pip install --prefer-binary /mlflow-build/dist/mlflowstack-*.whl
 
-# ==============================
 # Stage 2: Final Runtime
-# ==============================
 FROM python:3.13.9-alpine
+
+LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
 # Runtime deps
 RUN apk add --no-cache \
@@ -54,13 +57,14 @@ RUN mkdir -p /mlflow/mlruns && \
 
 WORKDIR /mlflow
 
-# Copy venv
-COPY --from=builder --chown=mlflow:mlflow /opt/venv /opt/venv
+# Copy the virtual environment from the foundation stage and set ownership
+COPY --from=foundation --chown=mlflow:mlflow /opt/venv /opt/venv
 
 # Activate venv
 ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONUNBUFFERED=1
 
+# Switch to non-root user
 USER mlflow
 
 EXPOSE 5000
