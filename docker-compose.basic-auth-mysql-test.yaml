@@ -64,7 +64,7 @@ services:
     container_name: mlflow-basic-auth-mysql-test
     build:
       context: .
-      dockerfile: "Dockerfile.${DISTRO:-debian}"
+      dockerfile: "Dockerfile-${DISTRO:-debian}"
     command: "mlflow server --backend-store-uri=mysql+pymysql://mlflow:password@mysql:3306/mlflow --default-artifact-root=s3://mlflow/ --host=0.0.0.0 --port=8080  --workers 4 --gunicorn-opts='--timeout=120 --log-level=debug' --app-name basic-auth"
     environment:
       MLFLOW_FLASK_SERVER_SECRET_KEY: 0123456789
