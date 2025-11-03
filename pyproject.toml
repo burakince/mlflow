@@ -2,7 +2,6 @@
 name = "mlflowstack"
 description = "Mlflow with AWS, Azure Cloud, and GCP support."
 dynamic = [ "version" ]
-license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.13"
 package-mode = true

@@ -246,7 +246,7 @@ jobs:
             suffix=${{ matrix.variant == 'alpine' && '-alpine' || '' }}
           tags: |
             type=ref,event=pr
-            type=edge,branch=main,suffix={{sha}}
+            type=edge,branch=main,suffix=${{ matrix.variant == 'alpine' && '-{{sha}}-alpine' || '-{{sha}}' }}
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
