@@ -306,8 +306,7 @@ jobs:
       - name: Sign the published Docker images
         if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
         run: |
-          cosign sign --yes \
-            "${{ steps.build-and-push.outputs.imageid }}@${{ steps.build-and-push.outputs.digest }}"
+          echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign --yes {}@${{ steps.build-and-push.outputs.digest }}
 
   deprecationandcleaning:
     runs-on: ubuntu-latest
