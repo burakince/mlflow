@@ -37,6 +37,11 @@ cloudpickle = "^3.1.2"
 pre-commit = "^4.0.1"
 pytest-mock = "^3.14.1"
 
+[tool.pytest.ini_options]
+markers = [
+  "amd64_only: mark test to run only on amd64 architecture",
+]
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
