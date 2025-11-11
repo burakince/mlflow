@@ -30,7 +30,7 @@ version = "1.0"
 python = ">=3.13,<4.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.3.4"
+pytest = "^9.0.0"
 testcontainers = "^4.9.0"
 requests = "^2.32.3"
 cloudpickle = "^3.1.2"
