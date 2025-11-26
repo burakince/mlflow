@@ -19,7 +19,8 @@ dependencies = [
   "azure-storage-blob (>=12.27.1,<13.0.0)",
   "ldap3 (>=2.9.1,<3.0.0)",
   "pymssql (>=2.3.7,<3.0.0)",
-  "urllib3 (>=2.5.0,<3.0.0)"
+  "urllib3 (>=2.5.0,<3.0.0)",
+  "mlflow-oidc-auth (>=5.7.0,<6.0.0)"
 ]
 
 [tool.poetry]
