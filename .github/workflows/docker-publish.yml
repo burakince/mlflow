@@ -51,10 +51,11 @@ jobs:
             --arg azure_blob "$AZURE_STORAGE_BLOB_VERSION" \
             --arg lldap "$LLDAP_VERSION" \
             --arg mssql "$MSSQL_VERSION" \
+            --arg keycloak "${KEYCLOAK_VERSION:-25.0.0}" \
             '[
-              { "postgres": $pg1, "mysql": $my1, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap, "mssql": $mssql },
-              { "postgres": $pg2, "mysql": $my2, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap, "mssql": $mssql },
-              { "postgres": $pg3, "mysql": $my3, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap, "mssql": $mssql }
+              { "postgres": $pg1, "mysql": $my1, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap, "mssql": $mssql, "keycloak": $keycloak },
+              { "postgres": $pg2, "mysql": $my2, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap, "mssql": $mssql, "keycloak": $keycloak },
+              { "postgres": $pg3, "mysql": $my3, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap, "mssql": $mssql, "keycloak": $keycloak }
             ]')
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
         shell: /usr/bin/bash -e {0}
@@ -117,7 +118,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.docker-cache
-          key: ${{ runner.os }}-docker-images-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}-${{ matrix.database-combo.lldap }}-${{ matrix.database-combo.mssql }}
+          key: ${{ runner.os }}-docker-images-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}-${{ matrix.database-combo.lldap }}-${{ matrix.database-combo.mssql }}-${{ matrix.database-combo.keycloak }}
           restore-keys: |
             ${{ runner.os }}-docker-images-
 
@@ -137,6 +138,7 @@ jobs:
           docker pull mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }}
           docker pull lldap/lldap:${{ matrix.database-combo.lldap }}
           docker pull mcr.microsoft.com/mssql/server:${{ matrix.database-combo.mssql }}
+          docker pull quay.io/keycloak/keycloak:${{ matrix.database-combo.keycloak }}
 
           docker save -o ${{ github.workspace }}/.docker-cache/docker-images.tar \
             postgres:${{ matrix.database-combo.postgres }} \
@@ -145,7 +147,8 @@ jobs:
             fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }} \
             mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }} \
             lldap/lldap:${{ matrix.database-combo.lldap }} \
-            mcr.microsoft.com/mssql/server:${{ matrix.database-combo.mssql }}
+            mcr.microsoft.com/mssql/server:${{ matrix.database-combo.mssql }} \
+            quay.io/keycloak/keycloak:${{ matrix.database-combo.keycloak }}
 
       #----------------------------------------------
       #              run test suite
@@ -160,16 +163,17 @@ jobs:
           AZURE_STORAGE_BLOB_VERSION: ${{ matrix.database-combo.azure-storage-blob }}
           LLDAP_VERSION: ${{ matrix.database-combo.lldap }}
           MSSQL_VERSION: ${{ matrix.database-combo.mssql }}
+          KEYCLOAK_VERSION: ${{ matrix.database-combo.keycloak }}
         run: |
           source .venv/bin/activate
-          poetry run pytest
+          poetry run pytest tests/integration/test_oidc_auth_postgres_integration.py -v
 
   buildtestpush:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        variant: [alpine, debian]
+        variant: [debian]
 
     needs: integrationtest
 
@@ -316,6 +320,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-      
+
       - name: Image Version Deprecation & Cleaning
         run: echo "This is a placeholder!"

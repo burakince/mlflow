@@ -2324,6 +2324,7 @@ flask = "<4"
 flask-caching = "<3"
 flask-session = ">=0.7.0"
 gunicorn = {version = "<24", markers = "platform_system != \"Windows\""}
+mlflow = {version = ">=3.3.1,<4", optional = true, markers = "extra == \"full\""}
 mlflow-skinny = ">=3.3.1,<4"
 python-dotenv = "<2"
 requests = ">=2.31.0,<3"
@@ -4692,4 +4693,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<4.0"
-content-hash = "9c478b0d2d0b08ad1886648c1ebdf7075d2c34202fdc43b4a5e5240ce823533e"
+content-hash = "f459abbf38fb8fe8ab7d23f31b787a9092170c8697f8610204e8d9dfd9ee1c78"
