@@ -164,19 +164,19 @@ isodate = ">=0.6.1,<1.0.0"
 
 [[package]]
 name = "azure-mgmt-containerregistry"
-version = "13.0.0"
+version = "14.0.0"
 description = "Microsoft Azure Container Registry Client Library for Python"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "azure_mgmt_containerregistry-13.0.0-py3-none-any.whl", hash = "sha256:52f7c854f3ebb6c5c1748c1e81f25bae56729277098801a219ca6aba2d03b3e7"},
-    {file = "azure_mgmt_containerregistry-13.0.0.tar.gz", hash = "sha256:af723f37a536919bd67b6772024c469cc2a017be7f31949bf41caae16f0e8dce"},
+    {file = "azure_mgmt_containerregistry-14.0.0-py3-none-any.whl", hash = "sha256:224e823beffe317c59ca4b482df5ee0b2977c3f44cdae59b165513fb47b32b8e"},
+    {file = "azure_mgmt_containerregistry-14.0.0.tar.gz", hash = "sha256:7383f1c5547bcffe76e411edd8250d55c34cddf5ef6804d5875c163cca66c4b5"},
 ]
 
 [package.dependencies]
 azure-common = ">=1.1"
-azure-mgmt-core = ">=1.3.2"
+azure-mgmt-core = ">=1.5.0"
 isodate = ">=0.6.1"
 typing-extensions = ">=4.6.0"
 
@@ -215,20 +215,19 @@ typing-extensions = ">=4.6.0"
 
 [[package]]
 name = "azure-mgmt-network"
-version = "29.0.0"
+version = "30.0.0"
 description = "Microsoft Azure Network Management Client Library for Python"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "azure_mgmt_network-29.0.0-py3-none-any.whl", hash = "sha256:c04dc0d9f6b936abe4ec7c5fa9cee1514795b1f84d2742dead2115dcde33476c"},
-    {file = "azure_mgmt_network-29.0.0.tar.gz", hash = "sha256:577fbc76a195f744b97bac4275e11279f7f3e63c659d98773f3b4a9a6e0943b9"},
+    {file = "azure_mgmt_network-30.0.0-py3-none-any.whl", hash = "sha256:df93640f9782a734a1c217bd79817eb025bf8e3b6dea5ac5ef508ed08a8dc8e1"},
+    {file = "azure_mgmt_network-30.0.0.tar.gz", hash = "sha256:117ee4ea18668c1318c869eff2445bbad06f0f4094f83c533e0191b41dc6dd1f"},
 ]
 
 [package.dependencies]
-azure-common = ">=1.1"
-azure-mgmt-core = ">=1.5.0"
-isodate = ">=0.6.1"
+azure-mgmt-core = ">=1.6.0"
+msrest = ">=0.7.1"
 typing-extensions = ">=4.6.0"
 
 [[package]]
@@ -251,20 +250,19 @@ typing-extensions = ">=4.6.0"
 
 [[package]]
 name = "azure-mgmt-storage"
-version = "23.0.0"
+version = "24.0.0"
 description = "Microsoft Azure Storage Management Client Library for Python"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "azure_mgmt_storage-23.0.0-py3-none-any.whl", hash = "sha256:2775e98bf84ebe4af193154accd789855bf5f2169b64b6966a2da585badc6470"},
-    {file = "azure_mgmt_storage-23.0.0.tar.gz", hash = "sha256:1c5954d59bddcb979d05bc49e431716a6e2b2f756909b96ba7c43261072afcbf"},
+    {file = "azure_mgmt_storage-24.0.0-py3-none-any.whl", hash = "sha256:d1e35c07e8e3a70c3ba56b1adb21cfd87c25143876446697eaf61efa5b029978"},
+    {file = "azure_mgmt_storage-24.0.0.tar.gz", hash = "sha256:b1ae225ef87ada85f29c02e406140ab5895285ca64de2bcfe50b631c4818a337"},
 ]
 
 [package.dependencies]
-azure-common = ">=1.1"
-azure-mgmt-core = ">=1.5.0"
-isodate = ">=0.6.1"
+azure-mgmt-core = ">=1.6.0"
+msrest = ">=0.7.1"
 typing-extensions = ">=4.6.0"
 
 [[package]]
@@ -290,13 +288,13 @@ aio = ["azure-core[aio] (>=1.30.0)"]
 
 [[package]]
 name = "azureml-core"
-version = "1.60.0.post1"
+version = "1.61.0"
 description = "Azure Machine Learning core packages, modules, and classes"
 optional = false
 python-versions = "<4.0,>=3.8"
 groups = ["main"]
 files = [
-    {file = "azureml_core-1.60.0.post1-py3-none-any.whl", hash = "sha256:c82c5b59a5457ffeea96b39ade735f7544ecffc618768813571274863b4c393c"},
+    {file = "azureml_core-1.61.0-py3-none-any.whl", hash = "sha256:1bd0863a2b0f37f271428056b9a6bae3840a332ad70c12d6a95d47b41181dcc9"},
 ]
 
 [package.dependencies]
@@ -306,11 +304,11 @@ azure-common = ">=1.1.12,<2.0.0"
 azure-core = "<2.0.0"
 azure-graphrbac = ">=0.40.0,<1.0.0"
 azure-mgmt-authorization = ">=0.40.0,<5"
-azure-mgmt-containerregistry = ">=8.2.0,<14"
+azure-mgmt-containerregistry = ">=8.2.0,<15"
 azure-mgmt-keyvault = ">=0.40.0,<12.0.0"
-azure-mgmt-network = "<=29.0.0"
+azure-mgmt-network = "<=30.0.0"
 azure-mgmt-resource = ">=15.0.0,<=24.0.0"
-azure-mgmt-storage = ">=16.0.0,<=23.0.0"
+azure-mgmt-storage = ">=16.0.0,<=24.0.0"
 "backports.tempfile" = "*"
 contextlib2 = "<22.0.0"
 docker = "<8.0.0"
@@ -3141,14 +3139,14 @@ files = [
 
 [[package]]
 name = "pydantic"
-version = "2.12.4"
+version = "2.12.5"
 description = "Data validation using Python type hints"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "pydantic-2.12.4-py3-none-any.whl", hash = "sha256:92d3d202a745d46f9be6df459ac5a064fdaa3c1c4cd8adcfa332ccf3c05f871e"},
-    {file = "pydantic-2.12.4.tar.gz", hash = "sha256:0f8cb9555000a4b5b617f66bfd2566264c4984b27589d3b845685983e8ea85ac"},
+    {file = "pydantic-2.12.5-py3-none-any.whl", hash = "sha256:e561593fccf61e8a20fc46dfc2dfe075b8be7d0188df33f221ad1f0139180f9d"},
+    {file = "pydantic-2.12.5.tar.gz", hash = "sha256:4d351024c75c0f085a9febbb665ce8c0c6ec5d30e903bdb6394b7ede26aebb49"},
 ]
 
 [package.dependencies]
@@ -4521,4 +4519,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<4.0"
-content-hash = "fee1198f0c62ca09b794552705cccd5a7290b36752538db3d52a1535d6f83e8d"
+content-hash = "4e020d18c338157ad6842aeaa39f39535457325b6ed438448727598ba9b4b868"
