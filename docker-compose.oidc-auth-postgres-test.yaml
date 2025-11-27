@@ -15,8 +15,8 @@ services:
       test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live || exit 1"]
       interval: 5s
       timeout: 10s
-      retries: 5
-      start_period: 10s
+      retries: 3
+      start_period: 5s
     networks:
       - oidc_auth_pg_test_nw
 
@@ -134,8 +134,6 @@ services:
       OIDC_GROUP_NAME: mlflow-users
       OIDC_ADMIN_GROUP_NAME: mlflow-admin
       DEFAULT_MLFLOW_PERMISSION: MANAGE
-      ALEMBIC_LOG_LEVEL: DEBUG
-      LOG_LEVEL: DEBUG
     restart: always
     ports:
       - "8080:8080"
