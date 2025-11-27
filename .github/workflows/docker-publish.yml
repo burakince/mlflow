@@ -166,14 +166,14 @@ jobs:
           KEYCLOAK_VERSION: ${{ matrix.database-combo.keycloak }}
         run: |
           source .venv/bin/activate
-          poetry run pytest tests/integration/test_oidc_auth_postgres_integration.py -v
+          poetry run pytest
 
   buildtestpush:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        variant: [debian]
+        variant: [alpine, debian]
 
     needs: integrationtest
 

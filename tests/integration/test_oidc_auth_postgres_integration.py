@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash
 from ..helpers.extended_docker_compose import ExtendedDockerCompose
 
 
-@pytest.mark.parametrize("distro", ["debian"])
+@pytest.mark.parametrize("distro", ["debian", "alpine"])
 def test_postgres_backended_model_upload_and_access_with_oidc_auth(
     distro, test_model, training_params, conda_env
 ):
