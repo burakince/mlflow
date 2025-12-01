@@ -450,34 +450,34 @@ files = [
 
 [[package]]
 name = "boto3"
-version = "1.41.5"
+version = "1.42.0"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "boto3-1.41.5-py3-none-any.whl", hash = "sha256:bb278111bfb4c33dca8342bda49c9db7685e43debbfa00cc2a5eb854dd54b745"},
-    {file = "boto3-1.41.5.tar.gz", hash = "sha256:bc7806bee681dfdff2fe2b74967b107a56274f1e66ebe4d20dc8eee1ea408d17"},
+    {file = "boto3-1.42.0-py3-none-any.whl", hash = "sha256:af32b7f61dd6293cad728ec205bcb3611ab1bf7b7dbccfd0f2bd7b9c9af96039"},
+    {file = "boto3-1.42.0.tar.gz", hash = "sha256:9c67729a6112b7dced521ea70b0369fba138e89852b029a7876041cd1460c084"},
 ]
 
 [package.dependencies]
-botocore = ">=1.41.5,<1.42.0"
+botocore = ">=1.41.6,<1.42.0"
 jmespath = ">=0.7.1,<2.0.0"
-s3transfer = ">=0.15.0,<0.16.0"
+s3transfer = ">=0.16.0,<0.17.0"
 
 [package.extras]
 crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.41.5"
+version = "1.41.6"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "botocore-1.41.5-py3-none-any.whl", hash = "sha256:3fef7fcda30c82c27202d232cfdbd6782cb27f20f8e7e21b20606483e66ee73a"},
-    {file = "botocore-1.41.5.tar.gz", hash = "sha256:0367622b811597d183bfcaab4a350f0d3ede712031ce792ef183cabdee80d3bf"},
+    {file = "botocore-1.41.6-py3-none-any.whl", hash = "sha256:963cc946e885acb941c96e7d343cb6507b479812ca22566ceb3e9410d0588de0"},
+    {file = "botocore-1.41.6.tar.gz", hash = "sha256:08fe47e9b306f4436f5eaf6a02cb6d55c7745d13d2d093ce5d917d3ef3d3df75"},
 ]
 
 [package.dependencies]
@@ -486,7 +486,7 @@ python-dateutil = ">=2.1,<3.0.0"
 urllib3 = {version = ">=1.25.4,<2.2.0 || >2.2.0,<3", markers = "python_version >= \"3.10\""}
 
 [package.extras]
-crt = ["awscrt (==0.29.0)"]
+crt = ["awscrt (==0.29.1)"]
 
 [[package]]
 name = "cachetools"
@@ -3322,61 +3322,61 @@ tests = ["coverage[toml] (==5.0.4)", "pytest (>=6.0.0,<7.0.0)"]
 
 [[package]]
 name = "pymssql"
-version = "2.3.9"
+version = "2.3.10"
 description = "DB-API interface to Microsoft SQL Server for Python. (new Cython-based version)"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "pymssql-2.3.9-cp310-cp310-macosx_13_0_x86_64.whl", hash = "sha256:a4a17e4fd9da54b27a787dfcd84dbb837d16bf0a4bcfe75dbd2d1e735a51d5f1"},
-    {file = "pymssql-2.3.9-cp310-cp310-macosx_14_0_arm64.whl", hash = "sha256:69be0fc0bb8ca1f511545ce84129af16768aad93e7f64dcf59ce70458a3b49c2"},
-    {file = "pymssql-2.3.9-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:d7ec37008d8e224950587ca6128815232cb8998b00e6fcf0b4ea71794cd8ecf4"},
-    {file = "pymssql-2.3.9-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:a792a0813f5510ffa42073179b93769f12f2cbcf80d31ce959c9e35d87882acb"},
-    {file = "pymssql-2.3.9-cp310-cp310-musllinux_1_2_aarch64.whl", hash = "sha256:9eb7ae5273dbc41ad106b5470e5a00f730662ac43e6392ac0724ba7727e8bd41"},
-    {file = "pymssql-2.3.9-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:9f81faafb80e5240f36a2e5789cb19d88a0a767f81a78e9812c0531d478ded17"},
-    {file = "pymssql-2.3.9-cp310-cp310-win32.whl", hash = "sha256:d25d17cb6360f82f63374ae9df4f2db42dccc1e149b44fd04b11812277b00645"},
-    {file = "pymssql-2.3.9-cp310-cp310-win_amd64.whl", hash = "sha256:21678c726c31c9d5956ec4f5f3eb14f71be04ebaea00ba33b84316df9d9504e9"},
-    {file = "pymssql-2.3.9-cp311-cp311-macosx_13_0_x86_64.whl", hash = "sha256:8bd78052f94d2a519bfc3922831144b79f8c35f96347b2d76c8030670549e7e9"},
-    {file = "pymssql-2.3.9-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:7c302c204ea7b64bbb6aa8870a48aeda430b2518d9c9ed4f680b4556ffc66800"},
-    {file = "pymssql-2.3.9-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:18b8d0495649d36499fc47bdd748b30ef7d522ad02dbaa0c99a595b7aff70808"},
-    {file = "pymssql-2.3.9-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:2d67cf85bbbe9de5c42e0cd6b5cc439b3e4537f85cfc9216ffb81a61b22c9878"},
-    {file = "pymssql-2.3.9-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:843e7cf4df2dcda0e91993fc29388a7f0cf208aa8e6ebab63c9a73c679ef530a"},
-    {file = "pymssql-2.3.9-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:4814affb16ec73666f890c3830dfb49d17f50914d3811f232208b01a60af7b5e"},
-    {file = "pymssql-2.3.9-cp311-cp311-win32.whl", hash = "sha256:279f66421f5e6c332112cf99432b2a40e9d55a674f962f704b1abfcc4df556ba"},
-    {file = "pymssql-2.3.9-cp311-cp311-win_amd64.whl", hash = "sha256:0ce5aed7f3eb07186ac45264f835e62295995ec10d8557be6f0e12734bf80e20"},
-    {file = "pymssql-2.3.9-cp312-cp312-macosx_13_0_x86_64.whl", hash = "sha256:acb53b1cdc8858c4c65c928ea38bc11fe2dbae87b244d64175233d57ff0da1f4"},
-    {file = "pymssql-2.3.9-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:2dc890adf9fe07184967e0ae88bcb2599ba520dd21ef9a335a582a4bb710b90a"},
-    {file = "pymssql-2.3.9-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:4cf09a60226db8e12d0eb8c52e0f4d710664b49b244b80b5a2534a602d826f17"},
-    {file = "pymssql-2.3.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:f93b4e0d465b1340a373573e8166f568329d4bc95daccdd4a616e5dfe5cabc1b"},
-    {file = "pymssql-2.3.9-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:d2169f3f55d0abcbcb1b9b6a611ee85a8a61b5f11df66f16700e90dd8aa7ccd5"},
-    {file = "pymssql-2.3.9-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:bc678a80519a63a86fef0dda1e264b4ffc60c382a4ba8d50b9656bde71ba8e25"},
-    {file = "pymssql-2.3.9-cp312-cp312-win32.whl", hash = "sha256:7ea58ea59f781d2519c6bcb9f3faea4ba861baea4cb1c2537fa2ee3a3f98a103"},
-    {file = "pymssql-2.3.9-cp312-cp312-win_amd64.whl", hash = "sha256:1836de4b42ea563dba77e3ba9e18f44157580eaa1c60e5e4c054cf229e8aee85"},
-    {file = "pymssql-2.3.9-cp313-cp313-macosx_13_0_x86_64.whl", hash = "sha256:8c4e389da9d545829db0d51bf1555bdb866ecabd61a3eb6fd6a8198c425adedc"},
-    {file = "pymssql-2.3.9-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:b589e035a98149148239bf78a9c38eb2d255f1f943633d30dd3dff6c2c23e9cd"},
-    {file = "pymssql-2.3.9-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:5b4741fbec26e9f63ae66afc971a00b7365eec4b6a619dd2aff3abe0fa8f75ee"},
-    {file = "pymssql-2.3.9-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:100bcd948247c7eae9f951a3f33a1fdd952bd2c683a7ce277066d4f38a960d83"},
-    {file = "pymssql-2.3.9-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:fada474823586b4c417f57d6256ddc05ced313c2306c67d6677427dff488f70a"},
-    {file = "pymssql-2.3.9-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:eaaa72530af8012b7d3d7d01e5d5a44b2f7dc04abb9e36a1eb30b914f68ae060"},
-    {file = "pymssql-2.3.9-cp313-cp313-win32.whl", hash = "sha256:734397cc4ffc5aecb2b312adb940b8bd6df0b5a8f52f9207157f06fe5fdacf26"},
-    {file = "pymssql-2.3.9-cp313-cp313-win_amd64.whl", hash = "sha256:87282bf2cc318f2c87d3a26e86b9287d863d3f67d31cad077614046d60b8bcd6"},
-    {file = "pymssql-2.3.9-cp314-cp314-macosx_13_0_x86_64.whl", hash = "sha256:437071819b3c864f9c810f2d186df147ccd89eb5923dfc7a8a3dea4cc41005a1"},
-    {file = "pymssql-2.3.9-cp314-cp314-macosx_14_0_arm64.whl", hash = "sha256:e2c64e55389b849fc84ebabdac5b3a3089e2f86eaeaa9768daf6589ef456bcbd"},
-    {file = "pymssql-2.3.9-cp314-cp314-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:11f4743ff85bf40a248cba03f0ef1aec36c4748bd8c1b1c1940db04989d542b3"},
-    {file = "pymssql-2.3.9-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:aeb65c9397ea345148e47cf4c5f4c04280c954d6d5779d9257289cc3321ea34f"},
-    {file = "pymssql-2.3.9-cp314-cp314-musllinux_1_2_aarch64.whl", hash = "sha256:12e069f058eeec41c6b3e6ca54081df6a4efeca8bd85bbc0790c439f2a1ba0d5"},
-    {file = "pymssql-2.3.9-cp314-cp314-musllinux_1_2_x86_64.whl", hash = "sha256:05ef3b3e2fb08e8c19226d5ed38838107842b8ceb03c2ee4095ccf7cd19c7154"},
-    {file = "pymssql-2.3.9-cp314-cp314-win32.whl", hash = "sha256:2b15cf0614b3a77e344c1f81d6564c4ae14e9f61f7407b6df801d4034e4c94d8"},
-    {file = "pymssql-2.3.9-cp314-cp314-win_amd64.whl", hash = "sha256:3f6dfde0c1123f5e01b29683456e422472c0af5a533a0f46a1cbb359602ade72"},
-    {file = "pymssql-2.3.9-cp39-cp39-macosx_13_0_x86_64.whl", hash = "sha256:c78d33ccd4d6e80d4713e25995c9d43ef5e89fd1d7886a0e7cb90f1e090cc01b"},
-    {file = "pymssql-2.3.9-cp39-cp39-macosx_14_0_arm64.whl", hash = "sha256:894f8afc37daedc0330836ea88f8171251b62caf4eaaa10e54d7d3e375dfede5"},
-    {file = "pymssql-2.3.9-cp39-cp39-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:81f29505e74f5e2de0b221e51fe02d155c56689f283f836520b0a7205db5cce4"},
-    {file = "pymssql-2.3.9-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:ea9cc08d9b4dd870102595ee8033c3a10ad70bd4084044daf5325f746c38fc8d"},
-    {file = "pymssql-2.3.9-cp39-cp39-musllinux_1_2_aarch64.whl", hash = "sha256:98ef889811d1e2439c25c0ee30072492e4852f278f94467a06bdfe73e973b592"},
-    {file = "pymssql-2.3.9-cp39-cp39-musllinux_1_2_x86_64.whl", hash = "sha256:945ade5b6a06eb35ad513e1af627e5b147c27d7314b9c878e8c9b8501cec54e2"},
-    {file = "pymssql-2.3.9-cp39-cp39-win32.whl", hash = "sha256:61f33900c5010c1185338db4738f6634d4646e3c6fb93c7172f2018408fbcea0"},
-    {file = "pymssql-2.3.9-cp39-cp39-win_amd64.whl", hash = "sha256:43e90ab0f2961724a7a069878add65193ff903df6cbb16dfef524c9c8a5954e0"},
-    {file = "pymssql-2.3.9.tar.gz", hash = "sha256:00aa861936374f251b8e1e4535f26daed32c2fc365b891fedcd97d7863d7321b"},
+    {file = "pymssql-2.3.10-cp310-cp310-macosx_13_0_x86_64.whl", hash = "sha256:f3113def69009ff93b4a911819337ba34075a99eccdab64ae86feb363a9c3a39"},
+    {file = "pymssql-2.3.10-cp310-cp310-macosx_14_0_arm64.whl", hash = "sha256:4e81bc084d1f4f6a61d7a19f4ffe5b4f605a19da47e8b82b0b9492bac92dbe65"},
+    {file = "pymssql-2.3.10-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:83cea5a3275b44fbfee8f98d042c21e06e4958ac84fa4ea0651aba631281ef6e"},
+    {file = "pymssql-2.3.10-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:acf4d0a9365042d28ca3b0c650930fd160460d6f6260ff5236111a500ee9f335"},
+    {file = "pymssql-2.3.10-cp310-cp310-musllinux_1_2_aarch64.whl", hash = "sha256:04a9e3c8901b1bdac48f7d0b1805cba2a00c9925edf1e5706afd1f5e8920bd9b"},
+    {file = "pymssql-2.3.10-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:2665bfba071554ec3a931bfc16ed04acf372ca5cf32a5b12af9ff20322ae22f5"},
+    {file = "pymssql-2.3.10-cp310-cp310-win32.whl", hash = "sha256:9fe40c418c95c1eb0762a970bc9d1059be8ab4fcc2b3fdd39adaed2543ea64bb"},
+    {file = "pymssql-2.3.10-cp310-cp310-win_amd64.whl", hash = "sha256:98346c847d4572e93e63a347772cde4eb27ccc084db4456045b9a3b09b1c464f"},
+    {file = "pymssql-2.3.10-cp311-cp311-macosx_13_0_x86_64.whl", hash = "sha256:ad6bb81cacca7fa9f9776561951d87181047c358aef13a00af51068171ea38a3"},
+    {file = "pymssql-2.3.10-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:475a63eb9b7c9e4a41f13aa837bf4bb1f9f4611c0b2afee3a008e207ce8901b2"},
+    {file = "pymssql-2.3.10-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:c7a5b39aea19ba1772f1c4ba43580522dc22e08cd649d441359ef88d0c79d19c"},
+    {file = "pymssql-2.3.10-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:16857629c81e80f265a5dcc69b26fcf508e082a31fa86352895084a4d22f452d"},
+    {file = "pymssql-2.3.10-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:783c887c25aa893ebad6ab12f359414426ab2179e9a984ac7594df5a9f44ff12"},
+    {file = "pymssql-2.3.10-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:22b2a93bae4246e459857e5ad80b3d72b738ed18a190f2da78626e0e006fdccc"},
+    {file = "pymssql-2.3.10-cp311-cp311-win32.whl", hash = "sha256:f277dc62bc734a9f280ae0900eee7feb0d3f684fc8163e958a6af50f17569695"},
+    {file = "pymssql-2.3.10-cp311-cp311-win_amd64.whl", hash = "sha256:5e45469f4ac9405ddcc258d9b352dc92a5264d2c111507c2ee9311215cefd532"},
+    {file = "pymssql-2.3.10-cp312-cp312-macosx_13_0_x86_64.whl", hash = "sha256:e24d8ae53ea409177e1be3fc1d47c492998b865b1b384b5076fb05440625b9a4"},
+    {file = "pymssql-2.3.10-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:077db036c80ff18d05274b5b712afca89d988179bef3b825f99929ee0e78b429"},
+    {file = "pymssql-2.3.10-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:ac7d1ed4e1744e07c41bb6d8fea5c5cc9105a8d23afdc062fb72e96c8054e464"},
+    {file = "pymssql-2.3.10-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:1f6361f2efddb848018bf3abde9a51468bb693173d241aad08e1d7687e904c65"},
+    {file = "pymssql-2.3.10-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:73fa3c0a861a8d51198c7d8a917492fc850551a5fdcb06115532f629b03c54f6"},
+    {file = "pymssql-2.3.10-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:60c68ba0d0be8ebedf8a384c7889e2389d42790701cd11e5f6ef4dee4a069d5e"},
+    {file = "pymssql-2.3.10-cp312-cp312-win32.whl", hash = "sha256:993686017e4847eceb971be067edcf60e31b95b956fd07531b3148a31b0f206d"},
+    {file = "pymssql-2.3.10-cp312-cp312-win_amd64.whl", hash = "sha256:323f94068c4276eeffd3671b7895605b957753828f7afc443156b96f5787dce7"},
+    {file = "pymssql-2.3.10-cp313-cp313-macosx_13_0_x86_64.whl", hash = "sha256:a90d82eca4fe1812be8c7e2fa48912f8c0a671c141be66c6b7056612f56dec1e"},
+    {file = "pymssql-2.3.10-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:a77c080437f2cc0500f1c8fee0852acb871e6d3f91e2bb51afba5c91dd45de2d"},
+    {file = "pymssql-2.3.10-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:db4dd0539a2a06907e34234ecfb13e8445885102161dc2ff090f11b3d514c886"},
+    {file = "pymssql-2.3.10-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:865656cb8a83e6a5b0bb439b8ed3395c3ca0e55bb2656f71c5901f8db3c69104"},
+    {file = "pymssql-2.3.10-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:97a374528fcebf2cb22087f4e21459768ceda8058373de88b2fff57bdf01b3db"},
+    {file = "pymssql-2.3.10-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:8dca43142f21a899db43657ce3d9a58d1f389b780c2891100ed5bb3ef6f94459"},
+    {file = "pymssql-2.3.10-cp313-cp313-win32.whl", hash = "sha256:bc31fbe43d64196364a3eb5b1231f09e74ffac51735ec781dc20eed67c6fc87f"},
+    {file = "pymssql-2.3.10-cp313-cp313-win_amd64.whl", hash = "sha256:665d95d8d826e779a6e4b6e88dc31a4a486ccfb0f7179c7250c1b770c18addfd"},
+    {file = "pymssql-2.3.10-cp314-cp314-macosx_13_0_x86_64.whl", hash = "sha256:23ed73a35772462e09b0c6bee05f576185fe6df40ecbc6b1ff84f32457ae0c44"},
+    {file = "pymssql-2.3.10-cp314-cp314-macosx_14_0_arm64.whl", hash = "sha256:d8d8978214745377839d677afc5e35973cc88b9411239135a41a864ce64e57a7"},
+    {file = "pymssql-2.3.10-cp314-cp314-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:5f1b73f61554d676047e60d775c26ee2555bb7d41cfc5aa61c17a345f241510f"},
+    {file = "pymssql-2.3.10-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:6559ed0fffd00a8ef855f4ec4d6794711428610ca75ce3661428fb22766bd38e"},
+    {file = "pymssql-2.3.10-cp314-cp314-musllinux_1_2_aarch64.whl", hash = "sha256:bc192853c43f28dc4e5f3e77c159d7ded7a291e3550f3f4effa616908d6d3bf8"},
+    {file = "pymssql-2.3.10-cp314-cp314-musllinux_1_2_x86_64.whl", hash = "sha256:cb37a6bcba5bb8627163b7907187153bb8336961b80a5324a2e2e2d83e6c8c09"},
+    {file = "pymssql-2.3.10-cp314-cp314-win32.whl", hash = "sha256:aa141499a40f8a97488e8020c39566a6e6fe742911fa79e016e2f0e134e546ad"},
+    {file = "pymssql-2.3.10-cp314-cp314-win_amd64.whl", hash = "sha256:8a4e5f104db516840415774b24a465d171ba923fbb6cd865eff94b0c176d918a"},
+    {file = "pymssql-2.3.10-cp39-cp39-macosx_13_0_x86_64.whl", hash = "sha256:471ec024324a933427f9385285bbb3200f1fa0e645fb91c7e254394418d4a98c"},
+    {file = "pymssql-2.3.10-cp39-cp39-macosx_14_0_arm64.whl", hash = "sha256:6b1454b03c63277efe7e223d57fed23c0a42474e840772b8c78d19f70b5b1662"},
+    {file = "pymssql-2.3.10-cp39-cp39-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:b3adc827d8d127c936a5ff7b61537871d13fcbb3b413c2863c9f2c2a21316315"},
+    {file = "pymssql-2.3.10-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:c63a3dd1370e3b38f642c5b63fc609a5238fb6da0b93be554c5ceab2b118d332"},
+    {file = "pymssql-2.3.10-cp39-cp39-musllinux_1_2_aarch64.whl", hash = "sha256:9aa7ef5422c5d0aeac4976127f1f2eac9cfc9e28d802b83e7545483c790183fd"},
+    {file = "pymssql-2.3.10-cp39-cp39-musllinux_1_2_x86_64.whl", hash = "sha256:2683ca38482d7fa838281095cbd0ebee1b3a5268c5e8453c381c3a42387b88ca"},
+    {file = "pymssql-2.3.10-cp39-cp39-win32.whl", hash = "sha256:3c804832d4a32f287ed9ff2ffd00e09400755f3e99d1c24478c3a967fb6a7ed9"},
+    {file = "pymssql-2.3.10-cp39-cp39-win_amd64.whl", hash = "sha256:c5625c363a2224c39b6796837efa97dc64dd852dfdb33bc95651b4c1c8af809f"},
+    {file = "pymssql-2.3.10.tar.gz", hash = "sha256:4e86c28fa71a66da3a89584b16b69dec09fed97feadb7eaf487c70493653fc63"},
 ]
 
 [[package]]
@@ -3786,14 +3786,14 @@ pyasn1 = ">=0.1.3"
 
 [[package]]
 name = "s3transfer"
-version = "0.15.0"
+version = "0.16.0"
 description = "An Amazon S3 Transfer Manager"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "s3transfer-0.15.0-py3-none-any.whl", hash = "sha256:6f8bf5caa31a0865c4081186689db1b2534cef721d104eb26101de4b9d6a5852"},
-    {file = "s3transfer-0.15.0.tar.gz", hash = "sha256:d36fac8d0e3603eff9b5bfa4282c7ce6feb0301a633566153cbd0b93d11d8379"},
+    {file = "s3transfer-0.16.0-py3-none-any.whl", hash = "sha256:18e25d66fed509e3868dc1572b3f427ff947dd2c56f844a5bf09481ad3f3b2fe"},
+    {file = "s3transfer-0.16.0.tar.gz", hash = "sha256:8e990f13268025792229cd52fa10cb7163744bf56e719e0b9cb925ab79abf920"},
 ]
 
 [package.dependencies]
@@ -4498,4 +4498,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<4.0"
-content-hash = "4e020d18c338157ad6842aeaa39f39535457325b6ed438448727598ba9b4b868"
+content-hash = "7afd8d4190364250716f9cc5393a4cfff8382bc5aa3e8bbd51971c41418dc078"
