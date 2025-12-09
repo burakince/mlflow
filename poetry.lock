@@ -287,13 +287,13 @@ aio = ["azure-core[aio] (>=1.30.0)"]
 
 [[package]]
 name = "azureml-core"
-version = "1.61.0"
+version = "1.61.0.post1"
 description = "Azure Machine Learning core packages, modules, and classes"
 optional = false
 python-versions = "<4.0,>=3.8"
 groups = ["main"]
 files = [
-    {file = "azureml_core-1.61.0-py3-none-any.whl", hash = "sha256:1bd0863a2b0f37f271428056b9a6bae3840a332ad70c12d6a95d47b41181dcc9"},
+    {file = "azureml_core-1.61.0.post1-py3-none-any.whl", hash = "sha256:a7cb96d7f36830b2ca7f21669716731d087cb139eea3a98ebe28aa79b2c7b1a7"},
 ]
 
 [package.dependencies]
@@ -1326,14 +1326,14 @@ grpc = ["grpcio (>=1.38.0,<2.0.0) ; python_version < \"3.14\"", "grpcio (>=1.75.
 
 [[package]]
 name = "google-cloud-storage"
-version = "3.6.0"
+version = "3.7.0"
 description = "Google Cloud Storage API client library"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "google_cloud_storage-3.6.0-py3-none-any.whl", hash = "sha256:5decbdddd63b7d1fc3e266a393ad6453d2e27d172bd982b1e2f15481668db097"},
-    {file = "google_cloud_storage-3.6.0.tar.gz", hash = "sha256:29cc6b9a6c0fc9cdad071e375d540a5a50fbc9a7fad8300fa02fb904f6fe2ca2"},
+    {file = "google_cloud_storage-3.7.0-py3-none-any.whl", hash = "sha256:469bc9540936e02f8a4bfd1619e9dca1e42dec48f95e4204d783b36476a15093"},
+    {file = "google_cloud_storage-3.7.0.tar.gz", hash = "sha256:9ce59c65f4d6e372effcecc0456680a8d73cef4f2dc9212a0704799cb3d69237"},
 ]
 
 [package.dependencies]
@@ -1345,6 +1345,7 @@ google-resumable-media = ">=2.7.2,<3.0.0"
 requests = ">=2.22.0,<3.0.0"
 
 [package.extras]
+grpc = ["google-api-core[grpc] (>=2.27.0,<3.0.0)", "grpc-google-iam-v1 (>=0.14.0,<1.0.0)", "grpcio (>=1.33.2,<2.0.0) ; python_version < \"3.14\"", "grpcio (>=1.75.1,<2.0.0) ; python_version >= \"3.14\"", "grpcio-status (>=1.76.0,<2.0.0)", "proto-plus (>=1.22.3,<2.0.0) ; python_version < \"3.13\"", "proto-plus (>=1.25.0,<2.0.0) ; python_version >= \"3.13\"", "protobuf (>=3.20.2,!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<7.0.0)"]
 protobuf = ["protobuf (>=3.20.2,<7.0.0)"]
 tracing = ["opentelemetry-api (>=1.1.0,<2.0.0)"]
 
@@ -4480,4 +4481,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<4.0"
-content-hash = "0620337e460c10cc86f5fe31c43ef7fa2cd5bd2ea1bc876312f3b5427efbc72b"
+content-hash = "d57ba3977b7923594224b2f3e3e2e31b34f3878cf7f5e147663e9b3eef51e547"
