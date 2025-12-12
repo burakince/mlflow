@@ -1,0 +1,154 @@
+services:
+  minio:
+    container_name: minio-oidc-auth-pg-test
+    hostname: minio
+    image: minio/minio:${MINIO_VERSION}
+    entrypoint: sh
+    command: -c 'mkdir -p /data/mlflow && minio server /data --console-address ":9001"'
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live || exit 1"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - oidc_auth_pg_test_nw
+
+  postgres:
+    image: "postgres:${POSTGRES_VERSION}"
+    container_name: mlflow-oidc-auth-pg-db
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: mlflow
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mlflow"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - oidc_auth_pg_test_nw
+
+  oidc-users-db:
+    image: "postgres:${POSTGRES_VERSION}"
+    container_name: mlflow-oidc-auth-users-pg-db
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: oidc_users
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d oidc_users"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - oidc_auth_pg_test_nw
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:-25.0.0}
+    container_name: keycloak-oidc-auth-test
+    hostname: keycloak
+    command: start-dev --http-port=8090 --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL_HOST: keycloak-db
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME: keycloak
+      KC_HOSTNAME_PORT: "8090"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+    ports:
+      - "8090:8090"
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8090 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
+    networks:
+      - oidc_auth_pg_test_nw
+    volumes:
+      - ./test-containers/oidc-auth/keycloak-realm.json:/opt/keycloak/data/import/realm.json
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+
+  keycloak-db:
+    image: "postgres:${POSTGRES_VERSION}"
+    container_name: keycloak-db-oidc-auth-test
+    environment:
+      POSTGRES_PASSWORD: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_DB: keycloak
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - oidc_auth_pg_test_nw
+
+  mlflow:
+    container_name: mlflow-oidc-auth-pg-test
+    build:
+      context: .
+      dockerfile: "Dockerfile-${DISTRO:-debian}"
+    command: "mlflow server --backend-store-uri=postgresql:// --default-artifact-root=s3://mlflow/ --host=0.0.0.0 --port=8080 --app-name oidc-auth"
+    environment:
+      MLFLOW_FLASK_SERVER_SECRET_KEY: 0123456789
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      MLFLOW_DISABLE_TELEMETRY: "true"
+      DO_NOT_TRACK: "true"
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
+      PGHOST: postgres
+      PGPORT: 5432
+      PGDATABASE: mlflow
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      # OIDC Configuration
+      OIDC_DISCOVERY_URL: http://keycloak:8090/realms/mlflow-test/.well-known/openid-configuration
+      OIDC_CLIENT_ID: mlflow-client
+      OIDC_CLIENT_SECRET: mlflow-client-secret
+      OIDC_REDIRECT_URI: http://mlflow:8080/oidc/callback
+      OIDC_SCOPE: openid,email,profile,groups
+      OIDC_USERS_DB_URI: postgresql://postgres:postgres@oidc-users-db:5432/oidc_users
+      OIDC_GROUP_NAME: mlflow-users
+      OIDC_ADMIN_GROUP_NAME: mlflow-admin
+      DEFAULT_MLFLOW_PERMISSION: MANAGE
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - oidc_auth_pg_test_nw
+    depends_on:
+      minio:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      oidc-users-db:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+
+networks:
+  oidc_auth_pg_test_nw:
+    driver: bridge
