@@ -75,17 +75,30 @@ healthcheck:
 Without it, `docker compose up --wait` returns before MLflow finishes DB migrations. With `restart: always` + dynamic ports, a container restart assigns a **new** random host port — the test then connects to the dead old one.
 
 ### `wait_for_logs` uses container port, not host port
-Gunicorn/uvicorn logs `Listening at: http://0.0.0.0:8080` using the **container-internal** port (8080), not the dynamic host-mapped port. The pattern in basic-auth tests is:
+Uvicorn logs `Uvicorn running on http://0.0.0.0:8080` using the **container-internal** port (8080), not the dynamic host-mapped port. The pattern in basic-auth tests uses a broad match that covers both uvicorn and gunicorn startup messages:
 ```python
-log_message = r".*Listening at: http://0\.0\.0\.0:8080.*"  # container port, always 8080
+log_message = r".*http://0\.0\.0\.0:8080.*"  # container port, always 8080
 ```
-Not `f".*Listening at: {re.escape(base_url)}.*"` which would embed the host port.
+Do not use `f".*{re.escape(base_url)}.*"` — that embeds the dynamic host port which will never match the container log.
 
 ### Alembic migration log (`8606fa83a998`) does not appear in MLflow 3.x
-The `alembic.runtime.migration` logger is not configured in MLflow 3.x, so revision IDs never appear in container output. Waiting for the `Listening at:` log is sufficient — migrations complete before gunicorn binds.
+The `alembic.runtime.migration` logger is not configured in MLflow 3.x, so revision IDs never appear in container output. Waiting for the startup URL log is sufficient — migrations complete before uvicorn binds.
 
-### Uvicorn is the server; `wait_for_logs` pattern matches both servers
-Basic-auth compose files use `--uvicorn-opts='--log-level debug'`. The `wait_for_logs` pattern `r".*http://0\.0\.0\.0:8080.*"` matches both uvicorn (`Uvicorn running on http://0.0.0.0:8080`) and gunicorn (`Listening at: http://0.0.0.0:8080`) startup messages.
+### Uvicorn is the server
+Basic-auth compose files use `--uvicorn-opts='--log-level debug'`. Non-auth compose files run uvicorn in single-worker mode (no `--workers` flag).
+
+### MySQL requires `--log-bin-trust-function-creators=1`
+MLflow 3.12+ creates triggers (e.g. `prevent_secrets_aad_mutation` on the `secrets` table) during migration. MySQL 8+/9+ blocks trigger creation for non-SUPER users when binary logging is enabled. All primary MySQL services (not `usersdb`) must include this flag:
+```yaml
+command: --innodb-buffer-pool-size=256m --log-bin-trust-function-creators=1
+```
+Without it, `docker compose up --wait` fails because the mlflow container exits with `OperationalError: (1419, 'You do not have the SUPER privilege and binary logging is enabled')`.
+
+### MySQL and MSSQL memory limits (GitHub Actions)
+All MySQL and MSSQL services include startup options to stay within the 7 GB GitHub Actions runner limit:
+- MySQL primary: `command: --innodb-buffer-pool-size=256m --log-bin-trust-function-creators=1`
+- MySQL `usersdb`: `command: --innodb-buffer-pool-size=128m`
+- MSSQL: `MSSQL_MEMORY_LIMIT_MB: "1500"` (SQL Server's native env var)
 
 ## Architecture
 
