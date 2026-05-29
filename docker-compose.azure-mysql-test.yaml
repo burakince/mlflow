@@ -14,8 +14,8 @@ services:
       AZURE_STORAGE_ACCESS_KEY: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
       COMMA_SEPARATED_CONTAINER_NAMES: "mlflow"
     ports:
-      - "10000:10000"
-      - "10001:10001"
+      - "0:10000"
+      - "0:10001"
     volumes:
       - ./test-containers/azurite/create-container.js:/create-container.js
       - ./test-containers/azurite/run.sh:/run.sh
@@ -25,14 +25,13 @@ services:
   mysql:
     image: "mysql:${MYSQL_VERSION}"
     container_name: mlflow-azure-mysql-db
+    command: --innodb-buffer-pool-size=256m
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: mlflow
       MYSQL_USER: mlflow
       MYSQL_PASSWORD: password
       MYSQL_TCP_PORT: 3306
-    ports:
-      - "3306:3306"
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -prootpassword || exit 1"]
       interval: 5s
@@ -54,7 +53,13 @@ services:
       DO_NOT_TRACK: "true"
       AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1
     ports:
-      - "8080:8080"
+      - "0:8080"
+    healthcheck:
+      test: ["CMD", "/opt/venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
     networks:
       - azure_mysql_test_nw
     depends_on:

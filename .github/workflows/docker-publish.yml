@@ -148,6 +148,36 @@ jobs:
             mcr.microsoft.com/mssql/server:${{ matrix.database-combo.mssql }}
 
       #----------------------------------------------
+      #  pre-build MLflow images with layer cache
+      #  (separates build RAM from test RAM, and
+      #   shares layers across matrix jobs via GHA)
+      #----------------------------------------------
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Pre-build MLflow debian image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile-debian
+          push: false
+          load: true
+          tags: mlflow-mlflow:debian
+          cache-from: type=gha,scope=mlflow-debian
+          cache-to: type=gha,mode=max,scope=mlflow-debian
+
+      - name: Pre-build MLflow alpine image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile-alpine
+          push: false
+          load: true
+          tags: mlflow-mlflow:alpine
+          cache-from: type=gha,scope=mlflow-alpine
+          cache-to: type=gha,mode=max,scope=mlflow-alpine
+
+      #----------------------------------------------
       #              run test suite
       #----------------------------------------------
       - name: Run tests
