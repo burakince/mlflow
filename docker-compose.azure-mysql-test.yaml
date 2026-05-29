@@ -25,7 +25,7 @@ services:
   mysql:
     image: "mysql:${MYSQL_VERSION}"
     container_name: mlflow-azure-mysql-db
-    command: --innodb-buffer-pool-size=256m
+    command: --innodb-buffer-pool-size=256m --log-bin-trust-function-creators=1
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: mlflow
