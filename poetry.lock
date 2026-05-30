@@ -4459,10 +4459,10 @@ files = [
 ]
 
 [package.dependencies]
-botocore = ">=1.37.4,<2.0a0"
+botocore = ">=1.37.4,<2.0a.0"
 
 [package.extras]
-crt = ["botocore[crt] (>=1.37.4,<2.0a0)"]
+crt = ["botocore[crt] (>=1.37.4,<2.0a.0)"]
 
 [[package]]
 name = "scikit-learn"
