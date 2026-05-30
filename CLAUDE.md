@@ -133,6 +133,8 @@ Both Dockerfiles use a two-stage build:
 1. **`foundation`** stage — installs Poetry, builds the `mlflowstack` wheel via `poetry build`, creates `/opt/venv`, and installs the wheel into it.
 2. **Final slim stage** — copies only `/opt/venv` from foundation, creates a non-root `mlflow` user (UID/GID 1001), exposes port 5000.
 
+When updating the Python base image patch version in the Dockerfiles, also update the Image Variants table in `README.md` to match. The CI runner in `docker-publish.yml` uses a floating `python-version: '3.13'` — this is intentional, do not pin it to a patch version.
+
 The `DISTRO` env var (set in integration tests via `os.environ["DISTRO"]`) controls which Dockerfile (`Dockerfile-debian` or `Dockerfile-alpine`) Docker Compose uses for the `mlflow` service in each test.
 
 ### CI/CD (`.github/workflows/docker-publish.yml`)

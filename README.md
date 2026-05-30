@@ -11,8 +11,8 @@ A production-ready MLflow Docker image with multi-cloud artifact storage and opt
 
 | Tag suffix | Base |
 |---|---|
-| *(none)* / `latest` | `python:3.13-slim` (Debian) |
-| `-alpine` | `python:3.13-alpine` |
+| *(none)* / `latest` | `python:3.13.13-slim` (Debian) |
+| `-alpine` | `python:3.13.13-alpine` |
 
 Both variants run as a non-root `mlflow` user (UID/GID 1001) and install all dependencies into `/opt/venv`.
 
