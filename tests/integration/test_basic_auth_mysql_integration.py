@@ -1,5 +1,4 @@
 import os
-import re
 import time
 
 import requests
@@ -37,9 +36,8 @@ def test_mysql_backended_model_upload_and_access_with_basic_auth(
 
         base_url = f"http://{mlflow_host}:{mlflow_port}"
 
-        log_message = f".*Listening at: {re.escape(base_url)}.*"
+        log_message = r".*http://0\.0\.0\.0:8080.*"
         compose.wait_for_logs("mlflow", log_message)
-        compose.wait_for_logs("mlflow", ".*8606fa83a998, initial_migration")
         time.sleep(5)  # Wait 5 seconds more the get flask ready
 
         experiment_name = "basic-auth-mysql-experiment"

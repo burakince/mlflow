@@ -1,15 +1,10 @@
 import re
 import time
 
-import docker
 from testcontainers.compose import DockerCompose
 
 
 class ExtendedDockerCompose(DockerCompose):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.docker_client = docker.from_env()
-
     def wait_for_logs(self, service_name, expected_log, timeout=300, interval=5):
         """
         Wait for a specific log entry in the Docker service's logs.
@@ -37,19 +32,13 @@ class ExtendedDockerCompose(DockerCompose):
 
     def get_service_logs(self, service_name):
         """
-        Fetch logs for a specific service using the Docker SDK.
+        Fetch logs for a specific service scoped to this compose project.
 
         :param service_name: The name of the service in the Docker Compose file.
-        :return: The logs as a decoded string.
+        :return: The logs as a decoded string (stdout and stderr merged).
         """
         try:
-            containers = self.docker_client.containers.list(filters={"name": service_name})
-            if not containers:
-                print(f"No container found for service '{service_name!r}'. Probably it's not ready yet.")
-                return ""
-
-            logs = containers[0].logs().decode("utf-8")
-            return logs
+            stdout, stderr = self.get_logs(service_name)
+            return stdout + stderr
         except Exception as e:
-            # Explicitly re-raise the exception with additional context
             raise RuntimeError(f"Error fetching logs for service '{service_name!r}': {e}") from e

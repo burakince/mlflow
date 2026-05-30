@@ -9,8 +9,7 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "0:9000"
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live || exit 1"]
       interval: 5s
@@ -23,14 +22,13 @@ services:
   mysql:
     image: "mysql:${MYSQL_VERSION}"
     container_name: mlflow-basic-auth-mysql-db
+    command: --innodb-buffer-pool-size=256m --log-bin-trust-function-creators=1
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: mlflow
       MYSQL_USER: mlflow
       MYSQL_PASSWORD: password
       MYSQL_TCP_PORT: 3306
-    ports:
-      - "3306:3306"
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -prootpassword || exit 1"]
       interval: 5s
@@ -43,14 +41,13 @@ services:
   usersdb:
     image: "mysql:${MYSQL_VERSION}"
     container_name: mlflow-basic-auth-users-mysql-db
+    command: --innodb-buffer-pool-size=128m
     environment:
       MYSQL_ROOT_PASSWORD: rootuserpassword
       MYSQL_DATABASE: users
       MYSQL_USER: users
       MYSQL_PASSWORD: userspassword
       MYSQL_TCP_PORT: 3306
-    ports:
-      - "3307:3306"
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -prootuserpassword || exit 1"]
       interval: 5s
@@ -65,7 +62,7 @@ services:
     build:
       context: .
       dockerfile: "Dockerfile-${DISTRO:-debian}"
-    command: "mlflow server --backend-store-uri=mysql+pymysql://mlflow:password@mysql:3306/mlflow --default-artifact-root=s3://mlflow/ --host=0.0.0.0 --port=8080  --workers 4 --gunicorn-opts='--timeout=120 --log-level=debug' --app-name basic-auth"
+    command: "mlflow server --backend-store-uri=mysql+pymysql://mlflow:password@mysql:3306/mlflow --default-artifact-root=s3://mlflow/ --host=0.0.0.0 --port=8080 --workers 2 --uvicorn-opts='--log-level debug' --app-name basic-auth"
     environment:
       MLFLOW_FLASK_SERVER_SECRET_KEY: 0123456789
       MLFLOW_S3_ENDPOINT_URL: http://minio:9000
@@ -79,7 +76,13 @@ services:
       DEBUG: True
     restart: always
     ports:
-      - "8080:8080"
+      - "0:8080"
+    healthcheck:
+      test: ["CMD", "/opt/venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
     networks:
       - basic_auth_mysql_test_nw
     volumes:
