@@ -8,8 +8,8 @@ Welcome to our MLflow Docker repository! You can find all our Docker files in ou
 
 # Simple Tags
 
-- [latest](https://github.com/burakince/mlflow/blob/3.12.0/Dockerfile-debian), [3](https://github.com/burakince/mlflow/blob/3.12.0/Dockerfile-debian), [3.12](https://github.com/burakince/mlflow/blob/3.12.0/Dockerfile-debian), [3.12.0](https://github.com/burakince/mlflow/blob/3.12.0/Dockerfile-debian)
-- [3-alpine](https://github.com/burakince/mlflow/blob/3.12.0/Dockerfile-alpine), [3.12-alpine](https://github.com/burakince/mlflow/blob/3.12.0/Dockerfile-alpine), [3.12.0-alpine](https://github.com/burakince/mlflow/blob/3.12.0/Dockerfile-alpine)
+- [latest](https://github.com/burakince/mlflow/blob/3.13.0/Dockerfile-debian), [3](https://github.com/burakince/mlflow/blob/3.13.0/Dockerfile-debian), [3.13](https://github.com/burakince/mlflow/blob/3.13.0/Dockerfile-debian), [3.13.0](https://github.com/burakince/mlflow/blob/3.13.0/Dockerfile-debian)
+- [3-alpine](https://github.com/burakince/mlflow/blob/3.13.0/Dockerfile-alpine), [3.13-alpine](https://github.com/burakince/mlflow/blob/3.13.0/Dockerfile-alpine), [3.13.0-alpine](https://github.com/burakince/mlflow/blob/3.13.0/Dockerfile-alpine)
 - [3.5.1](https://github.com/burakince/mlflow/blob/3.5.1/Dockerfile)
 - [3.5.0](https://github.com/burakince/mlflow/blob/3.5.0/Dockerfile)
 - [3.4.0](https://github.com/burakince/mlflow/blob/3.4.0/Dockerfile)
