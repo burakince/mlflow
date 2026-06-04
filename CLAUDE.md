@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Repo Is
 
-A custom MLflow Docker image distribution (`burakince/mlflow`) that packages MLflow with multi-cloud support (AWS S3/MinIO, GCP Cloud Storage, Azure Blob Storage) and optional LDAP authentication. The `mlflowstack` Python package is built via Poetry, installed into a venv inside the Docker image, and published to Docker Hub as both `debian` and `alpine` variants.
+A custom MLflow Docker image distribution (`burakince/mlflow`) that packages MLflow with multi-cloud support (AWS S3/MinIO, GCP Cloud Storage, Azure Blob Storage), optional LDAP authentication, and optional OIDC authentication via `mlflow-oidc-auth`. The `mlflowstack` Python package is built via Poetry, installed into a venv inside the Docker image, and published to Docker Hub as both `debian` and `alpine` variants.
 
 ## Commands
 
@@ -60,7 +60,7 @@ export DOCKER_HOST="unix://${HOME}/.colima/docker.sock"
 ### Port mappings must be dynamic
 All `docker-compose.*-test.yaml` files use `"0:PORT"` (never `"PORT:PORT"`). Tests are parametrized over `["debian", "alpine"]` and run sequentially with the same container names — fixed ports cause `address already in use` failures. `compose.get_service_host/port()` queries the actual assigned port at runtime so no test code changes are needed.
 
-Services accessed **only within the compose network** (postgres, mysql, mssql, lldap, usersdb) have **no** `ports:` section at all — only services the test code connects to directly (mlflow, minio, azurite, fake-gcs) use `"0:PORT"`.
+Services accessed **only within the compose network** (postgres, mysql, mssql, lldap, usersdb, keycloak-db) have **no** `ports:` section at all — only services the test code connects to directly (mlflow, minio, azurite, fake-gcs, keycloak, oidc-users-db) use `"0:PORT"`.
 
 ### MLflow healthcheck is required in all compose files
 All compose files include a Python-based healthcheck on `/health`:
@@ -94,6 +94,17 @@ command: --innodb-buffer-pool-size=256m --log-bin-trust-function-creators=1
 ```
 Without it, `docker compose up --wait` fails because the mlflow container exits with `OperationalError: (1419, 'You do not have the SUPER privilege and binary logging is enabled')`.
 
+### OIDC auth test constraints (mlflow-oidc-auth 7.x)
+
+The OIDC test (`test_oidc_auth_postgres_integration.py`) has two non-obvious requirements:
+
+**Keycloak `frontendUrl` must be set in the realm JSON.** Without it, Keycloak derives the `iss` claim from the external request URL (`http://localhost:DYNAMIC_PORT`). The mlflow-oidc-auth plugin validates tokens against `OIDC_DISCOVERY_URL` (`http://keycloak:8090`), so issuer mismatch → 401. Fix is in `test-containers/oidc-auth/keycloak-realm.json`:
+```json
+"attributes": { "frontendUrl": "http://keycloak:8090" }
+```
+
+**Users must be pre-created; mlflow-oidc-auth 7.x does not auto-provision.** The auth DB store initializes lazily on the first authenticated request (Alembic migrations run at that point). The test triggers initialization with a preliminary GET to `/api/2.0/mlflow/users`, then inserts the user via psycopg2 before making mlflow SDK calls. Do not attempt the psycopg2 insert before the trigger request — the `users` table will not exist yet.
+
 ### MySQL and MSSQL memory limits (GitHub Actions)
 All MySQL and MSSQL services include startup options to stay within the 7 GB GitHub Actions runner limit:
 - MySQL primary: `command: --innodb-buffer-pool-size=256m --log-bin-trust-function-creators=1`
@@ -126,6 +137,7 @@ Each `docker-compose.*-test.yaml` file maps to one integration test file. The na
 | Basic auth | postgres, mysql |
 | LDAP auth | postgres (lldap container) |
 | LDAP + SSL auth | postgres (lldap + generated certs) |
+| OIDC auth (Keycloak) | postgres |
 
 ### Docker image build
 
@@ -139,11 +151,18 @@ The `DISTRO` env var (set in integration tests via `os.environ["DISTRO"]`) contr
 
 ### CI/CD (`.github/workflows/docker-publish.yml`)
 
-Pipeline order: `integrationtest` → `buildtestpush` → `deprecationandcleaning`. Integration tests run against three Postgres/MySQL version combos from `.env`. After tests pass, both variants are built for `linux/amd64` and `linux/arm64/v8`, scanned with Snyk, and pushed to Docker Hub + GHCR on semver tags only. Images are signed with Cosign.
+Pipeline order: `setup` + `unittest` (parallel) → `integrationtest` → `buildtestpush` → `deprecationandcleaning`.
+
+- `unittest` runs `pytest tests/unit/` as a fast-fail gate (no Docker needed).
+- `integrationtest` runs `pytest tests/integration/` against three Postgres/MySQL version combos from `.env`, in parallel matrix jobs.
+- Docker build layer caches use explicit scopes (`scope=mlflow-debian`, `scope=mlflow-alpine`) shared between `integrationtest` (where images are pre-built) and `buildtestpush` (where images are scanned and pushed). Do not remove the scope — without it every `buildtestpush` run is a cold cache miss causing 90min+ Alpine builds.
+- `buildtestpush` only builds `linux/arm64` on semver tag pushes; PR and main-branch builds use `linux/amd64` only to avoid QEMU overhead.
+- After tests pass, both variants are scanned with Snyk, and pushed to Docker Hub + GHCR on semver tags only. Images are signed with Cosign.
 
 ### Key configuration files
 
-- **`.env`** — Canonical versions for all external services (Postgres, MySQL, MinIO, MSSQL, lldap, fake-gcs-server, Azurite). Used both locally and in CI.
+- **`.env`** — Canonical versions for all external services (Postgres, MySQL, MinIO, MSSQL, lldap, fake-gcs-server, Azurite, Keycloak). Used both locally and in CI.
+- **`test-containers/oidc-auth/keycloak-realm.json`** — Keycloak realm config for OIDC tests. Must include `"attributes": {"frontendUrl": "http://keycloak:8090"}` so all tokens carry `iss=http://keycloak:8090` regardless of the external host port used to fetch them.
 - **`test-containers/basic-auth/*/basic_auth.ini`** — MLflow auth config files mounted into the container during integration tests. The LDAP variant points `authorization_function` at `mlflowstack.auth.ldap:authenticate_request_basic_auth`.
 - **`poetry.toml`** — Forces Poetry to create the venv in-project (`.venv/`).
 
