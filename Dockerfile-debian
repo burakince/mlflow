@@ -39,16 +39,20 @@ COPY mlflowstack ./mlflowstack
 
 # Upgrade pip and install Poetry with no cache
 RUN python -m pip install --upgrade pip --no-cache-dir && \
-    pip install poetry wheel --no-cache-dir
+    pip install poetry wheel poetry-plugin-export --no-cache-dir
 
 RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=cache,target=/root/.cache/pypoetry \
     poetry build --no-interaction
 
-# Create venv and install wheel
+# Export pinned requirements from lock file so pip respects exact versions
+RUN poetry export --without-hashes -o /tmp/requirements.txt
+
+# Create venv, install locked deps first, then the wheel without re-resolving
 RUN python -m venv /opt/venv
 RUN --mount=type=cache,target=/root/.cache/pip \
-    /opt/venv/bin/pip install --prefer-binary /mlflow-build/dist/mlflowstack-*.whl
+    /opt/venv/bin/pip install --prefer-binary -r /tmp/requirements.txt && \
+    /opt/venv/bin/pip install --prefer-binary --no-deps /mlflow-build/dist/mlflowstack-*.whl
 
 # Stage 2: Final slim image
 FROM python:3.13.13-slim
