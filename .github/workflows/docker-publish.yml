@@ -59,8 +59,44 @@ jobs:
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
         shell: /usr/bin/bash -e {0}
 
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up python
+        id: setup-python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v5
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root
+
+      - name: Install library
+        run: poetry install --no-interaction
+
+      - name: Run unit tests
+        run: poetry run pytest tests/unit/
+
   integrationtest:
-    needs: setup
+    needs: [setup, unittest]
     runs-on: ubuntu-latest
 
     strategy:
@@ -112,40 +148,59 @@ jobs:
       - name: Install library
         run: poetry install --no-interaction
 
-      - name: Cache Docker images
-        id: cache-docker-images
+      - name: Cache shared service Docker images
+        id: cache-shared-images
         uses: actions/cache@v5
         with:
-          path: ${{ github.workspace }}/.docker-cache
-          key: ${{ runner.os }}-docker-images-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}-${{ matrix.database-combo.lldap }}-${{ matrix.database-combo.mssql }}
+          path: ${{ github.workspace }}/.docker-cache/shared
+          key: ${{ runner.os }}-docker-shared-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}-${{ matrix.database-combo.lldap }}-${{ matrix.database-combo.mssql }}
           restore-keys: |
-            ${{ runner.os }}-docker-images-
+            ${{ runner.os }}-docker-shared-
 
-      - name: Load Cached Docker Images
-        if: steps.cache-docker-images.outputs.cache-hit == 'true'
+      - name: Cache database Docker images
+        id: cache-db-images
+        uses: actions/cache@v5
+        with:
+          path: ${{ github.workspace }}/.docker-cache/db
+          key: ${{ runner.os }}-docker-db-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}
+          restore-keys: |
+            ${{ runner.os }}-docker-db-
+
+      - name: Load Cached Shared Service Images
+        if: steps.cache-shared-images.outputs.cache-hit == 'true'
+        run: docker load --input ${{ github.workspace }}/.docker-cache/shared/shared-images.tar
+
+      - name: Load Cached Database Images
+        if: steps.cache-db-images.outputs.cache-hit == 'true'
+        run: docker load --input ${{ github.workspace }}/.docker-cache/db/db-images.tar
+
+      - name: Pull and Save Shared Service Images if not Cached
+        if: steps.cache-shared-images.outputs.cache-hit != 'true'
         run: |
-          docker load --input ${{ github.workspace }}/.docker-cache/docker-images.tar
-
-      - name: Pull and Save Docker Images if not Cached
-        if: steps.cache-docker-images.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p ${{ github.workspace }}/.docker-cache
-          docker pull postgres:${{ matrix.database-combo.postgres }}
-          docker pull mysql:${{ matrix.database-combo.mysql }}
-          docker pull minio/minio:${{ matrix.database-combo.minio }}
-          docker pull fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }}
-          docker pull mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }}
-          docker pull lldap/lldap:${{ matrix.database-combo.lldap }}
-          docker pull mcr.microsoft.com/mssql/server:${{ matrix.database-combo.mssql }}
-
-          docker save -o ${{ github.workspace }}/.docker-cache/docker-images.tar \
-            postgres:${{ matrix.database-combo.postgres }} \
-            mysql:${{ matrix.database-combo.mysql }} \
+          mkdir -p ${{ github.workspace }}/.docker-cache/shared
+          docker pull minio/minio:${{ matrix.database-combo.minio }} &
+          docker pull fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }} &
+          docker pull mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }} &
+          docker pull lldap/lldap:${{ matrix.database-combo.lldap }} &
+          docker pull mcr.microsoft.com/mssql/server:${{ matrix.database-combo.mssql }} &
+          wait
+          docker save -o ${{ github.workspace }}/.docker-cache/shared/shared-images.tar \
             minio/minio:${{ matrix.database-combo.minio }} \
             fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }} \
             mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }} \
             lldap/lldap:${{ matrix.database-combo.lldap }} \
             mcr.microsoft.com/mssql/server:${{ matrix.database-combo.mssql }}
+
+      - name: Pull and Save Database Images if not Cached
+        if: steps.cache-db-images.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ${{ github.workspace }}/.docker-cache/db
+          docker pull postgres:${{ matrix.database-combo.postgres }} &
+          docker pull mysql:${{ matrix.database-combo.mysql }} &
+          wait
+          docker save -o ${{ github.workspace }}/.docker-cache/db/db-images.tar \
+            postgres:${{ matrix.database-combo.postgres }} \
+            mysql:${{ matrix.database-combo.mysql }}
 
       #----------------------------------------------
       #  pre-build MLflow images with layer cache
@@ -192,7 +247,7 @@ jobs:
           MSSQL_VERSION: ${{ matrix.database-combo.mssql }}
         run: |
           source .venv/bin/activate
-          poetry run pytest
+          poetry run pytest tests/integration/
 
   buildtestpush:
     runs-on: ubuntu-latest
@@ -218,7 +273,7 @@ jobs:
 
       - name: Install ORAS
         id: install_oras
-        uses: oras-project/setup-oras@main
+        uses: oras-project/setup-oras@v1
 
       - name: Install Cosign
         id: install_cosign
@@ -300,8 +355,8 @@ jobs:
           load: true
           tags: ${{ env.IMAGE_NAME }}:scan-${{ matrix.variant }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=mlflow-${{ matrix.variant }}
+          cache-to: type=gha,mode=max,scope=mlflow-${{ matrix.variant }}
 
       - name: Run Snyk to check Docker image for vulnerabilities
         id: docker-image-scan
@@ -325,13 +380,13 @@ jobs:
         with:
           context: .
           file: Dockerfile-${{ matrix.variant }}
-          platforms: linux/arm64/v8,linux/amd64
+          platforms: ${{ contains(github.ref, 'refs/tags/') && 'linux/arm64/v8,linux/amd64' || 'linux/amd64' }}
           push: ${{ github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/') }}
           provenance: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=mlflow-${{ matrix.variant }}
+          cache-to: type=gha,mode=max,scope=mlflow-${{ matrix.variant }}
 
       - name: Sign the published Docker images
         if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
@@ -346,6 +401,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-      
+
       - name: Image Version Deprecation & Cleaning
         run: echo "This is a placeholder!"
