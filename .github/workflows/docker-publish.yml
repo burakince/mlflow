@@ -281,7 +281,7 @@ jobs:
 
       - name: Install ORAS
         id: install_oras
-        uses: oras-project/setup-oras@v1
+        uses: oras-project/setup-oras@v2
 
       - name: Install Cosign
         id: install_cosign
