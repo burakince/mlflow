@@ -54,7 +54,7 @@ services:
       - oidc_auth_redis_pg_test_nw
 
   redis:
-    image: "redis:${REDIS_VERSION:-7}"
+    image: "redis:${REDIS_VERSION}"
     container_name: redis-oidc-auth-test
     hostname: redis
     ports:
@@ -69,7 +69,7 @@ services:
       - oidc_auth_redis_pg_test_nw
 
   keycloak:
-    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:-25.0.0}
+    image: keycloak/keycloak:${KEYCLOAK_VERSION}
     container_name: keycloak-oidc-auth-redis-test
     hostname: keycloak
     command: start-dev --http-port=8090 --import-realm

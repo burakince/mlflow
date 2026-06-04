@@ -54,7 +54,7 @@ services:
       - oidc_auth_pg_test_nw
 
   keycloak:
-    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:-25.0.0}
+    image: keycloak/keycloak:${KEYCLOAK_VERSION}
     container_name: keycloak-oidc-auth-test
     hostname: keycloak
     command: start-dev --http-port=8090 --import-realm

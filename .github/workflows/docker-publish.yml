@@ -185,7 +185,7 @@ jobs:
           docker pull mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }} &
           docker pull lldap/lldap:${{ matrix.database-combo.lldap }} &
           docker pull mcr.microsoft.com/mssql/server:${{ matrix.database-combo.mssql }} &
-          docker pull quay.io/keycloak/keycloak:${{ matrix.database-combo.keycloak }} &
+          docker pull keycloak/keycloak:${{ matrix.database-combo.keycloak }} &
           docker pull redis:${{ matrix.database-combo.redis }} &
           wait
           docker save -o ${{ github.workspace }}/.docker-cache/shared/shared-images.tar \
@@ -194,7 +194,7 @@ jobs:
             mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }} \
             lldap/lldap:${{ matrix.database-combo.lldap }} \
             mcr.microsoft.com/mssql/server:${{ matrix.database-combo.mssql }} \
-            quay.io/keycloak/keycloak:${{ matrix.database-combo.keycloak }} \
+            keycloak/keycloak:${{ matrix.database-combo.keycloak }} \
             redis:${{ matrix.database-combo.redis }}
 
       - name: Pull and Save Database Images if not Cached
