@@ -85,9 +85,6 @@ def test_postgres_backended_model_upload_and_access_with_oidc_auth(
         model_name = "test-oidc-auth-pg-model"
         stage_name = "Staging"
 
-        # Clear basic-auth credentials that may have been set by earlier tests in the same process
-        os.environ.pop("MLFLOW_TRACKING_USERNAME", None)
-        os.environ.pop("MLFLOW_TRACKING_PASSWORD", None)
         os.environ["MLFLOW_TRACKING_TOKEN"] = access_token
         os.environ["MLFLOW_S3_ENDPOINT_URL"] = f"http://{minio_host}:{minio_port}"
         os.environ["AWS_ACCESS_KEY_ID"] = "minioadmin"

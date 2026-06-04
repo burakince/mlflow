@@ -45,3 +45,16 @@ def skip_amd64_only(request):
     if request.node.get_closest_marker("amd64_only"):
         if platform.machine() != "x86_64":
             pytest.skip("This test only runs on amd64 (x86_64)")
+
+
+@pytest.fixture(autouse=True)
+def clean_mlflow_env(monkeypatch):
+    for var in (
+        "MLFLOW_TRACKING_USERNAME",
+        "MLFLOW_TRACKING_PASSWORD",
+        "MLFLOW_TRACKING_TOKEN",
+        "MLFLOW_S3_ENDPOINT_URL",
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY",
+    ):
+        monkeypatch.delenv(var, raising=False)
