@@ -1,7 +1,10 @@
 # syntax=docker/dockerfile:1.4
 
 # Stage 1: Build and dependencies
-FROM python:3.13.10-alpine AS foundation
+FROM python:3.13.13-alpine AS foundation
+
+# Upgrade xz to patch CVE-2026-34743 (heap buffer overflow in xz < 5.8.3-r0)
+RUN apk upgrade --no-cache xz
 
 # Install build deps
 RUN apk add --no-cache \
@@ -36,9 +39,12 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     /opt/venv/bin/pip install --prefer-binary /mlflow-build/dist/mlflowstack-*.whl
 
 # Stage 2: Final Runtime
-FROM python:3.13.10-alpine
+FROM python:3.13.13-alpine
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
+
+# Upgrade xz to patch CVE-2026-34743 (heap buffer overflow in xz < 5.8.3-r0)
+RUN apk upgrade --no-cache xz
 
 # Runtime deps
 RUN apk add --no-cache \

@@ -60,8 +60,44 @@ jobs:
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
         shell: /usr/bin/bash -e {0}
 
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up python
+        id: setup-python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v5
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root
+
+      - name: Install library
+        run: poetry install --no-interaction
+
+      - name: Run unit tests
+        run: poetry run pytest tests/unit/
+
   integrationtest:
-    needs: setup
+    needs: [setup, unittest]
     runs-on: ubuntu-latest
 
     strategy:
@@ -95,7 +131,7 @@ jobs:
       #----------------------------------------------
       - name: Load cached venv
         id: cached-poetry-dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
@@ -113,17 +149,34 @@ jobs:
       - name: Install library
         run: poetry install --no-interaction
 
-      - name: Cache Docker images
-        id: cache-docker-images
-        uses: actions/cache@v4
+      - name: Cache shared service Docker images
+        id: cache-shared-images
+        uses: actions/cache@v5
         with:
           path: ${{ github.workspace }}/.docker-cache
           key: ${{ runner.os }}-docker-images-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}-${{ matrix.database-combo.lldap }}-${{ matrix.database-combo.mssql }}-${{ matrix.database-combo.keycloak }}
           restore-keys: |
-            ${{ runner.os }}-docker-images-
+            ${{ runner.os }}-docker-shared-
 
-      - name: Load Cached Docker Images
-        if: steps.cache-docker-images.outputs.cache-hit == 'true'
+      - name: Cache database Docker images
+        id: cache-db-images
+        uses: actions/cache@v5
+        with:
+          path: ${{ github.workspace }}/.docker-cache/db
+          key: ${{ runner.os }}-docker-db-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}
+          restore-keys: |
+            ${{ runner.os }}-docker-db-
+
+      - name: Load Cached Shared Service Images
+        if: steps.cache-shared-images.outputs.cache-hit == 'true'
+        run: docker load --input ${{ github.workspace }}/.docker-cache/shared/shared-images.tar
+
+      - name: Load Cached Database Images
+        if: steps.cache-db-images.outputs.cache-hit == 'true'
+        run: docker load --input ${{ github.workspace }}/.docker-cache/db/db-images.tar
+
+      - name: Pull and Save Shared Service Images if not Cached
+        if: steps.cache-shared-images.outputs.cache-hit != 'true'
         run: |
           docker load --input ${{ github.workspace }}/.docker-cache/docker-images.tar
 
@@ -150,6 +203,47 @@ jobs:
             mcr.microsoft.com/mssql/server:${{ matrix.database-combo.mssql }} \
             quay.io/keycloak/keycloak:${{ matrix.database-combo.keycloak }}
 
+      - name: Pull and Save Database Images if not Cached
+        if: steps.cache-db-images.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ${{ github.workspace }}/.docker-cache/db
+          docker pull postgres:${{ matrix.database-combo.postgres }} &
+          docker pull mysql:${{ matrix.database-combo.mysql }} &
+          wait
+          docker save -o ${{ github.workspace }}/.docker-cache/db/db-images.tar \
+            postgres:${{ matrix.database-combo.postgres }} \
+            mysql:${{ matrix.database-combo.mysql }}
+
+      #----------------------------------------------
+      #  pre-build MLflow images with layer cache
+      #  (separates build RAM from test RAM, and
+      #   shares layers across matrix jobs via GHA)
+      #----------------------------------------------
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Pre-build MLflow debian image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: Dockerfile-debian
+          push: false
+          load: true
+          tags: mlflow-mlflow:debian
+          cache-from: type=gha,scope=mlflow-debian
+          cache-to: type=gha,mode=max,scope=mlflow-debian
+
+      - name: Pre-build MLflow alpine image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: Dockerfile-alpine
+          push: false
+          load: true
+          tags: mlflow-mlflow:alpine
+          cache-from: type=gha,scope=mlflow-alpine
+          cache-to: type=gha,mode=max,scope=mlflow-alpine
+
       #----------------------------------------------
       #              run test suite
       #----------------------------------------------
@@ -166,7 +260,7 @@ jobs:
           KEYCLOAK_VERSION: ${{ matrix.database-combo.keycloak }}
         run: |
           source .venv/bin/activate
-          poetry run pytest
+          poetry run pytest tests/integration/
 
   buildtestpush:
     runs-on: ubuntu-latest
@@ -192,24 +286,24 @@ jobs:
 
       - name: Install ORAS
         id: install_oras
-        uses: oras-project/setup-oras@main
+        uses: oras-project/setup-oras@v1
 
       - name: Install Cosign
         id: install_cosign
-        uses: sigstore/cosign-installer@v4.0.0
+        uses: sigstore/cosign-installer@v4.1.2
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3.7.0
+        uses: docker/setup-qemu-action@v4.1.0
         with:
           platforms: all
 
       - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Login to Docker Hub
         id: docker_hub_login
         if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
@@ -217,7 +311,7 @@ jobs:
       - name: Login to GHCR
         id: ghcr_login
         if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -240,7 +334,7 @@ jobs:
 
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: |
             ${{ env.IMAGE_NAME }}
@@ -265,7 +359,7 @@ jobs:
 
       - name: Build image for local analysis
         id: build-docker-image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: Dockerfile-${{ matrix.variant }}
@@ -274,8 +368,8 @@ jobs:
           load: true
           tags: ${{ env.IMAGE_NAME }}:scan-${{ matrix.variant }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=mlflow-${{ matrix.variant }}
+          cache-to: type=gha,mode=max,scope=mlflow-${{ matrix.variant }}
 
       - name: Run Snyk to check Docker image for vulnerabilities
         id: docker-image-scan
@@ -295,17 +389,17 @@ jobs:
 
       - name: Build and push Docker image
         id: build-and-push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: Dockerfile-${{ matrix.variant }}
-          platforms: linux/arm64/v8,linux/amd64
+          platforms: ${{ contains(github.ref, 'refs/tags/') && 'linux/arm64/v8,linux/amd64' || 'linux/amd64' }}
           push: ${{ github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/') }}
           provenance: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=mlflow-${{ matrix.variant }}
+          cache-to: type=gha,mode=max,scope=mlflow-${{ matrix.variant }}
 
       - name: Sign the published Docker images
         if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
