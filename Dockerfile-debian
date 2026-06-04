@@ -59,6 +59,14 @@ FROM python:3.13.13-slim
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
+# Remove perl-base — not needed at runtime; eliminates CVE-2026-42496 (Critical),
+# CVE-2026-42497 and CVE-2026-9538 (High) introduced by the base image
+RUN apt-get update && \
+    apt-get purge -y --allow-remove-essential perl-base && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Create a non-root mlflow user and group
 RUN groupadd -r -g 1001 mlflow && useradd -r -u 1001 -g mlflow -m -d /home/mlflow mlflow
 
