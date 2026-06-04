@@ -22,7 +22,8 @@ dependencies = [
   "urllib3 (>=2.7.0,<3.0.0)",
   "prometheus-flask-exporter (>=0.23.2,<0.24.0)",
   "requests-auth-aws-sigv4 (>=0.7,<0.8)",
-  "pysftp (>=0.2.9,<0.3.0)"
+  "pysftp (>=0.2.9,<0.3.0)",
+  "pyopenssl (>=26.2.0,<27.0.0)"
 ]
 
 [tool.poetry]
