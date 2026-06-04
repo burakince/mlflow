@@ -10,8 +10,8 @@ services:
       test: ["CMD-SHELL", "curl -fsS http://localhost:4443/storage/v1/b || exit 1"]
       interval: 5s
       timeout: 10s
-      retries: 3
-      start_period: 5s
+      retries: 10
+      start_period: 30s
     networks:
       - gcp_mssql_test_nw
 
