@@ -52,10 +52,11 @@ jobs:
             --arg lldap "$LLDAP_VERSION" \
             --arg mssql "$MSSQL_VERSION" \
             --arg keycloak "${KEYCLOAK_VERSION:-25.0.0}" \
+            --arg redis "${REDIS_VERSION:-7}" \
             '[
-              { "postgres": $pg1, "mysql": $my1, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap, "mssql": $mssql, "keycloak": $keycloak },
-              { "postgres": $pg2, "mysql": $my2, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap, "mssql": $mssql, "keycloak": $keycloak },
-              { "postgres": $pg3, "mysql": $my3, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap, "mssql": $mssql, "keycloak": $keycloak }
+              { "postgres": $pg1, "mysql": $my1, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap, "mssql": $mssql, "keycloak": $keycloak, "redis": $redis },
+              { "postgres": $pg2, "mysql": $my2, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap, "mssql": $mssql, "keycloak": $keycloak, "redis": $redis },
+              { "postgres": $pg3, "mysql": $my3, "minio": $minio, "gcs": $gcs, "azurite": $azurite, "azure-storage-blob": $azure_blob, "lldap": $lldap, "mssql": $mssql, "keycloak": $keycloak, "redis": $redis }
             ]')
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
         shell: /usr/bin/bash -e {0}
@@ -154,7 +155,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ${{ github.workspace }}/.docker-cache/shared
-          key: ${{ runner.os }}-docker-shared-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}-${{ matrix.database-combo.lldap }}-${{ matrix.database-combo.mssql }}-${{ matrix.database-combo.keycloak }}
+          key: ${{ runner.os }}-docker-shared-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}-${{ matrix.database-combo.lldap }}-${{ matrix.database-combo.mssql }}-${{ matrix.database-combo.keycloak }}-${{ matrix.database-combo.redis }}
           restore-keys: |
             ${{ runner.os }}-docker-shared-
 
@@ -185,6 +186,7 @@ jobs:
           docker pull lldap/lldap:${{ matrix.database-combo.lldap }} &
           docker pull mcr.microsoft.com/mssql/server:${{ matrix.database-combo.mssql }} &
           docker pull quay.io/keycloak/keycloak:${{ matrix.database-combo.keycloak }} &
+          docker pull redis:${{ matrix.database-combo.redis }} &
           wait
           docker save -o ${{ github.workspace }}/.docker-cache/shared/shared-images.tar \
             minio/minio:${{ matrix.database-combo.minio }} \
@@ -192,7 +194,8 @@ jobs:
             mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }} \
             lldap/lldap:${{ matrix.database-combo.lldap }} \
             mcr.microsoft.com/mssql/server:${{ matrix.database-combo.mssql }} \
-            quay.io/keycloak/keycloak:${{ matrix.database-combo.keycloak }}
+            quay.io/keycloak/keycloak:${{ matrix.database-combo.keycloak }} \
+            redis:${{ matrix.database-combo.redis }}
 
       - name: Pull and Save Database Images if not Cached
         if: steps.cache-db-images.outputs.cache-hit != 'true'
@@ -249,6 +252,7 @@ jobs:
           LLDAP_VERSION: ${{ matrix.database-combo.lldap }}
           MSSQL_VERSION: ${{ matrix.database-combo.mssql }}
           KEYCLOAK_VERSION: ${{ matrix.database-combo.keycloak }}
+          REDIS_VERSION: ${{ matrix.database-combo.redis }}
         run: |
           source .venv/bin/activate
           poetry run pytest tests/integration/

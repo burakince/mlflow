@@ -138,6 +138,7 @@ Each `docker-compose.*-test.yaml` file maps to one integration test file. The na
 | LDAP auth | postgres (lldap container) |
 | LDAP + SSL auth | postgres (lldap + generated certs) |
 | OIDC auth (Keycloak) | postgres |
+| OIDC auth + Redis cache (Keycloak) | postgres |
 
 ### Docker image build
 

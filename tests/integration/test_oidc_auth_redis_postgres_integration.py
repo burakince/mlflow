@@ -4,6 +4,7 @@ import time
 
 import psycopg2
 import pytest
+import redis
 import requests
 
 import mlflow
@@ -13,14 +14,14 @@ from ..helpers.extended_docker_compose import ExtendedDockerCompose
 
 
 @pytest.mark.parametrize("distro", ["debian", "alpine"])
-def test_postgres_backended_model_upload_and_access_with_oidc_auth(
+def test_postgres_redis_backended_model_upload_and_access_with_oidc_auth(
     distro, test_model, training_params, conda_env
 ):
     os.environ["DISTRO"] = distro
 
     with ExtendedDockerCompose(
         context=".",
-        compose_file_name=["docker-compose.oidc-auth-postgres-test.yaml"],
+        compose_file_name=["docker-compose.oidc-auth-redis-postgres-test.yaml"],
         build=True,
     ) as compose:
         mlflow_host = compose.get_service_host("mlflow", 8080)
@@ -81,8 +82,8 @@ def test_postgres_backended_model_upload_and_access_with_oidc_auth(
                 )
                 conn.commit()
 
-        experiment_name = "oidc-auth-postgres-experiment"
-        model_name = "test-oidc-auth-pg-model"
+        experiment_name = "oidc-auth-redis-postgres-experiment"
+        model_name = "test-oidc-auth-redis-pg-model"
         stage_name = "Staging"
 
         # Clear basic-auth credentials that may have been set by earlier tests in the same process
@@ -123,5 +124,12 @@ def test_postgres_backended_model_upload_and_access_with_oidc_auth(
         assert "1" == r.json()["model_version"]["version"]
         assert "READY" == r.json()["model_version"]["status"]
         assert "Staging" == r.json()["model_version"]["aliases"][0]
+
+        # Verify Redis cache is being used by confirming keys were written
+        redis_host = compose.get_service_host("redis", 6379)
+        redis_port = compose.get_service_port("redis", 6379)
+        redis_client = redis.Redis(host=redis_host, port=int(redis_port), decode_responses=True)
+        cache_keys = redis_client.keys("mlflow_oidc_auth:*")
+        assert len(cache_keys) > 0, "Expected Redis cache keys from mlflow-oidc-auth but found none"
 
         compose.stop()
