@@ -1,12 +1,10 @@
-import base64
-import json
 import os
+import secrets
 import time
 
 import psycopg2
 import pytest
 import requests
-from werkzeug.security import generate_password_hash
 
 import mlflow
 from mlflow import MlflowClient
@@ -55,16 +53,16 @@ def test_postgres_backended_model_upload_and_access_with_oidc_auth(
         assert token_response.status_code == 200, f"Failed to get token: {token_response.text}"
         access_token = token_response.json()["access_token"]
 
-        # Decode JWT to get user info (mlflow-oidc-auth requires user in DB for Bearer tokens)
-        token_parts = access_token.split(".")
-        payload = token_parts[1] + "=" * (4 - len(token_parts[1]) % 4)
-        token_data = json.loads(base64.urlsafe_b64decode(payload))
-        user_email = (token_data.get("email") or token_data.get("preferred_username")).lower()
-        user_name = token_data.get("name") or user_email
-        user_groups = token_data.get("groups", [])
-        is_admin = any("mlflow-admin" in g for g in user_groups)
+        # Trigger lazy store initialization so Alembic migrations run in oidc_users DB.
+        # The 404 response is expected — token is valid but user not yet provisioned.
+        requests.get(
+            f"{base_url}/api/2.0/mlflow/users",
+            headers={"Authorization": f"Bearer {access_token}"},
+            timeout=30,
+        )
 
-        # Create user in OIDC database (required for Bearer token auth)
+        # Pre-create user in OIDC database.
+        # mlflow-oidc-auth 7.x requires users to pre-exist for Bearer token auth.
         oidc_db_host = compose.get_service_host("oidc-users-db", 5432)
         oidc_db_port = compose.get_service_port("oidc-users-db", 5432)
         with psycopg2.connect(
@@ -75,14 +73,13 @@ def test_postgres_backended_model_upload_and_access_with_oidc_auth(
             password="postgres",
         ) as conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT 1 FROM users WHERE username = %s", (user_email,))
-                if not cur.fetchone():
-                    cur.execute(
-                        """INSERT INTO users (username, display_name, password_hash, is_admin)
-                           VALUES (%s, %s, %s, %s)""",
-                        (user_email, user_name, generate_password_hash("x"), is_admin),
-                    )
-                    conn.commit()
+                cur.execute(
+                    """INSERT INTO users (username, display_name, password_hash, is_admin, is_service_account)
+                       VALUES (%s, %s, %s, %s, %s)
+                       ON CONFLICT (username) DO NOTHING""",
+                    ("testuser@mlflow.test", "Test User", secrets.token_hex(32), False, False),
+                )
+                conn.commit()
 
         experiment_name = "oidc-auth-postgres-experiment"
         model_name = "test-oidc-auth-pg-model"
