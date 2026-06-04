@@ -38,14 +38,7 @@ class ExtendedDockerCompose(DockerCompose):
         :return: The logs as a decoded string (stdout and stderr merged).
         """
         try:
-            containers = self.docker_client.containers.list(filters={"name": service_name})
-            if not containers:
-                print(
-                    f"No container found for service '{service_name!r}'. Probably it's not ready yet."
-                )
-                return ""
-
-            logs = containers[0].logs().decode("utf-8")
-            return logs
+            stdout, stderr = self.get_logs(service_name)
+            return stdout + stderr
         except Exception as e:
             raise RuntimeError(f"Error fetching logs for service '{service_name!r}': {e}") from e

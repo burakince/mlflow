@@ -9,8 +9,7 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "0:9000"
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live || exit 1"]
       interval: 5s
@@ -27,8 +26,6 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: mlflow
-    ports:
-      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d mlflow"]
       interval: 5s
@@ -46,7 +43,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: oidc_users
     ports:
-      - "5434:5432"
+      - "0:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d oidc_users"]
       interval: 5s
@@ -75,7 +72,7 @@ services:
       KC_HOSTNAME_STRICT: "false"
       KC_HOSTNAME_STRICT_HTTPS: "false"
     ports:
-      - "8090:8090"
+      - "0:8090"
     healthcheck:
       test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8090 || exit 1"]
       interval: 10s
@@ -136,7 +133,13 @@ services:
       DEFAULT_MLFLOW_PERMISSION: MANAGE
     restart: always
     ports:
-      - "8080:8080"
+      - "0:8080"
+    healthcheck:
+      test: ["CMD", "/opt/venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
     networks:
       - oidc_auth_pg_test_nw
     depends_on:

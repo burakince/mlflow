@@ -2,6 +2,9 @@
   "realm": "mlflow-test",
   "enabled": true,
   "displayName": "MLflow Test Realm",
+  "attributes": {
+    "frontendUrl": "http://keycloak:8090"
+  },
   "clientScopes": [
     {
       "name": "openid",

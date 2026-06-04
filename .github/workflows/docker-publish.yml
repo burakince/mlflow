@@ -153,8 +153,8 @@ jobs:
         id: cache-shared-images
         uses: actions/cache@v5
         with:
-          path: ${{ github.workspace }}/.docker-cache
-          key: ${{ runner.os }}-docker-images-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}-${{ matrix.database-combo.lldap }}-${{ matrix.database-combo.mssql }}-${{ matrix.database-combo.keycloak }}
+          path: ${{ github.workspace }}/.docker-cache/shared
+          key: ${{ runner.os }}-docker-shared-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}-${{ matrix.database-combo.lldap }}-${{ matrix.database-combo.mssql }}-${{ matrix.database-combo.keycloak }}
           restore-keys: |
             ${{ runner.os }}-docker-shared-
 
@@ -178,24 +178,15 @@ jobs:
       - name: Pull and Save Shared Service Images if not Cached
         if: steps.cache-shared-images.outputs.cache-hit != 'true'
         run: |
-          docker load --input ${{ github.workspace }}/.docker-cache/docker-images.tar
-
-      - name: Pull and Save Docker Images if not Cached
-        if: steps.cache-docker-images.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p ${{ github.workspace }}/.docker-cache
-          docker pull postgres:${{ matrix.database-combo.postgres }}
-          docker pull mysql:${{ matrix.database-combo.mysql }}
-          docker pull minio/minio:${{ matrix.database-combo.minio }}
-          docker pull fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }}
-          docker pull mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }}
-          docker pull lldap/lldap:${{ matrix.database-combo.lldap }}
-          docker pull mcr.microsoft.com/mssql/server:${{ matrix.database-combo.mssql }}
-          docker pull quay.io/keycloak/keycloak:${{ matrix.database-combo.keycloak }}
-
-          docker save -o ${{ github.workspace }}/.docker-cache/docker-images.tar \
-            postgres:${{ matrix.database-combo.postgres }} \
-            mysql:${{ matrix.database-combo.mysql }} \
+          mkdir -p ${{ github.workspace }}/.docker-cache/shared
+          docker pull minio/minio:${{ matrix.database-combo.minio }} &
+          docker pull fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }} &
+          docker pull mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }} &
+          docker pull lldap/lldap:${{ matrix.database-combo.lldap }} &
+          docker pull mcr.microsoft.com/mssql/server:${{ matrix.database-combo.mssql }} &
+          docker pull quay.io/keycloak/keycloak:${{ matrix.database-combo.keycloak }} &
+          wait
+          docker save -o ${{ github.workspace }}/.docker-cache/shared/shared-images.tar \
             minio/minio:${{ matrix.database-combo.minio }} \
             fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }} \
             mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }} \

@@ -28,9 +28,29 @@ Set `--default-artifact-root` to the appropriate URI when starting the server.
 
 ## Authentication
 
+### Basic auth
+
 Pass `--app-name basic-auth` to enable MLflow's built-in basic authentication.
 
-For LDAP/LDAPS authentication, point `authorization_function` in `basic_auth.ini` at `mlflowstack.auth.ldap:authenticate_request_basic_auth` and configure via environment variables:
+### OIDC authentication
+
+Pass `--app-name oidc-auth` to enable [mlflow-oidc-auth](https://github.com/data-platform-hq/mlflow-oidc-auth) and configure via environment variables:
+
+| Variable | Description |
+|---|---|
+| `OIDC_DISCOVERY_URL` | OpenID Connect discovery endpoint, e.g. `https://keycloak/realms/myrealm/.well-known/openid-configuration` |
+| `OIDC_CLIENT_ID` | OAuth2 client ID |
+| `OIDC_CLIENT_SECRET` | OAuth2 client secret |
+| `OIDC_REDIRECT_URI` | Callback URI, e.g. `http://mlflow:8080/oidc/callback` |
+| `OIDC_SCOPE` | Requested scopes, e.g. `openid,email,profile,groups` |
+| `OIDC_USERS_DB_URI` | SQLAlchemy URI for the OIDC users database |
+| `OIDC_GROUP_NAME` | Group that grants regular-user access |
+| `OIDC_ADMIN_GROUP_NAME` | Group that grants admin access |
+| `DEFAULT_MLFLOW_PERMISSION` | Default permission for authenticated users, e.g. `MANAGE` |
+
+### LDAP/LDAPS authentication
+
+Point `authorization_function` in `basic_auth.ini` at `mlflowstack.auth.ldap:authenticate_request_basic_auth` and configure via environment variables:
 
 | Variable | Description |
 |---|---|
@@ -69,6 +89,10 @@ docker run -d -p 5000:5000 burakince/mlflow
 ```
 
 The server exposes a `/health` endpoint that returns `200 OK` once fully initialised (migrations complete, ready to accept requests).
+
+## Prometheus Metrics
+
+The image includes [prometheus-flask-exporter](https://github.com/rycus86/prometheus_flask_exporter). MLflow exposes a `/metrics` endpoint when the exporter is enabled via the standard Flask/Prometheus integration.
 
 ## Security Context
 
