@@ -21,13 +21,14 @@ RUN apk add --no-cache \
 
 WORKDIR /mlflow-build/
 
+# Upgrade pip and install Poetry before copying project files so this layer
+# is cached independently of poetry.lock changes
+RUN python -m pip install --upgrade pip --no-cache-dir && \
+    pip install poetry wheel poetry-plugin-export --no-cache-dir
+
 # Copy only necessary files for dependency installation
 COPY pyproject.toml poetry.toml poetry.lock LICENSE README.md ./
 COPY mlflowstack ./mlflowstack
-
-# Upgrade pip and install Poetry with no cache
-RUN python -m pip install --upgrade pip --no-cache-dir && \
-    pip install poetry wheel poetry-plugin-export --no-cache-dir
 
 RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=cache,target=/root/.cache/pypoetry \
