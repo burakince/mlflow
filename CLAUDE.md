@@ -143,7 +143,7 @@ Each `docker-compose.*-test.yaml` file maps to one integration test file. The na
 ### Docker image build
 
 Both Dockerfiles use a two-stage build:
-1. **`foundation`** stage — installs Poetry + `poetry-plugin-export`, builds the `mlflowstack` wheel via `poetry build`, exports a pinned requirements file from `poetry.lock` via `poetry export`, creates `/opt/venv`, installs dependencies at exact locked versions, then installs the wheel with `--no-deps`.
+1. **`foundation`** stage — installs Poetry + `poetry-plugin-export` (before `COPY`, so this layer is cached independently of `poetry.lock` changes), builds the `mlflowstack` wheel via `poetry build`, exports a pinned requirements file from `poetry.lock` via `poetry export`, creates `/opt/venv`, installs dependencies at exact locked versions, then installs the wheel with `--no-deps`.
 2. **Final slim stage** — copies only `/opt/venv` from foundation, creates a non-root `mlflow` user (UID/GID 1001), exposes port 5000.
 
 **Always use `poetry export` to install dependencies** — using `pip install wheel.whl` directly lets pip re-resolve versions from PyPI and ignores the lock file, making builds non-reproducible across tags (see issue #425).
