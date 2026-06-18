@@ -32,7 +32,6 @@ version = "1.0"
 
 [tool.poetry.dependencies]
 python = ">=3.13,<4.0"
-pyopenssl = ">=26.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.0"
