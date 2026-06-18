@@ -17,7 +17,8 @@ RUN apk add --no-cache \
     freetds-dev \
     openblas-dev \
     lapack-dev \
-    pkgconfig
+    pkgconfig \
+    patch
 
 WORKDIR /mlflow-build/
 
