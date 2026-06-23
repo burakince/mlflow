@@ -82,7 +82,7 @@ jobs:
 
       - name: Load cached venv
         id: cached-poetry-dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
@@ -132,7 +132,7 @@ jobs:
       #----------------------------------------------
       - name: Load cached venv
         id: cached-poetry-dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
@@ -152,7 +152,7 @@ jobs:
 
       - name: Cache shared service Docker images
         id: cache-shared-images
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ${{ github.workspace }}/.docker-cache/shared
           key: ${{ runner.os }}-docker-shared-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}-${{ matrix.database-combo.lldap }}-${{ matrix.database-combo.mssql }}-${{ matrix.database-combo.keycloak }}-${{ matrix.database-combo.redis }}
@@ -161,7 +161,7 @@ jobs:
 
       - name: Cache database Docker images
         id: cache-db-images
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ${{ github.workspace }}/.docker-cache/db
           key: ${{ runner.os }}-docker-db-${{ matrix.database-combo.postgres }}-${{ matrix.database-combo.mysql }}
