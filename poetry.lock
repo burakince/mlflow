@@ -1294,14 +1294,14 @@ smmap = ">=3.0.1,<6"
 
 [[package]]
 name = "gitpython"
-version = "3.1.56"
+version = "3.1.57"
 description = "GitPython is a Python library used to interact with Git repositories"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "gitpython-3.1.56-py3-none-any.whl", hash = "sha256:bedffdc4bdd2e3cf21b328711a552b0529751f08bff6591339d18492291ad035"},
-    {file = "gitpython-3.1.56.tar.gz", hash = "sha256:127adf5c73f1a822e368301c4d5ffa5d305ce611eccab76f3336f9380a78ad0b"},
+    {file = "gitpython-3.1.57-py3-none-any.whl", hash = "sha256:4ccf7d73c10f5c9e76043fbb2675ac5a1b3ff5b41e648f56bcbed5f63792ecaf"},
+    {file = "gitpython-3.1.57.tar.gz", hash = "sha256:c493ec57c0ef6b19743798b6a5af859c71814b524e7e6f97baa2f8e658961488"},
 ]
 
 [package.dependencies]
@@ -1309,7 +1309,7 @@ gitdb = ">=4.0.1,<5"
 
 [package.extras]
 doc = ["sphinx (>=7.4.7,<8)", "sphinx-autodoc-typehints", "sphinx_rtd_theme"]
-test = ["coverage[toml]", "ddt (>=1.1.1,!=1.4.3)", "mock ; python_version < \"3.8\"", "mypy (==1.18.2) ; python_version >= \"3.9\"", "pre-commit", "pytest (>=7.3.1)", "pytest-cov", "pytest-instafail", "pytest-mock", "pytest-sugar", "typing-extensions ; python_version < \"3.11\""]
+test = ["basedpyright (==1.39.9) ; python_version >= \"3.9\" and sys_platform != \"cygwin\"", "coverage[toml]", "ddt (>=1.1.1,!=1.4.3)", "mock ; python_version < \"3.8\"", "mypy (==1.18.2) ; python_version >= \"3.9\"", "pre-commit", "pytest (>=7.3.1)", "pytest-cov", "pytest-instafail", "pytest-mock", "pytest-sugar", "typing-extensions ; python_version < \"3.11\""]
 
 [[package]]
 name = "google-api-core"
@@ -2276,14 +2276,14 @@ sqlserver = ["mlflow-dbstore"]
 
 [[package]]
 name = "mlflow-oidc-auth"
-version = "7.4.7"
+version = "7.4.8"
 description = "OpenID Connect (OIDC) auth plugin for MLflow"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "mlflow_oidc_auth-7.4.7-py3-none-any.whl", hash = "sha256:cea356d482d246a1d9d555e0b0af96db48729c39b2bdf73829a96949ce50a7e3"},
-    {file = "mlflow_oidc_auth-7.4.7.tar.gz", hash = "sha256:668337dae168a5bdd70a3c2780e1ee11bd31f80628a38ade2b0fc82e2dac33c0"},
+    {file = "mlflow_oidc_auth-7.4.8-py3-none-any.whl", hash = "sha256:4ec9ac447a49d52d1c034ea99bc73a861f067a7e2d6a77688861a2833e14077e"},
+    {file = "mlflow_oidc_auth-7.4.8.tar.gz", hash = "sha256:5eddedd29e22c849bba5afee7c54b074dbeb3ec1cd1eeaff44a1293e68958611"},
 ]
 
 [package.dependencies]
@@ -4748,4 +4748,4 @@ type = ["pytest-mypy (>=1.0.1) ; platform_python_implementation != \"PyPy\""]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<4.0"
-content-hash = "cf96c9cb487d9528ce374df43e7ef05b3fe4754ce6d06d39b269b0b278051c02"
+content-hash = "8454ebd6721d26a4464665dd21dad13b3921b4a0fea11700db7a91bc82561fed"
