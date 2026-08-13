@@ -406,18 +406,18 @@ files = [
 
 [[package]]
 name = "boto3"
-version = "1.43.70"
+version = "1.43.71"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "boto3-1.43.70-py3-none-any.whl", hash = "sha256:b9399cce51bec9552e61a6b85015c42dea68752e79c00a7005d84eaf7ee15fef"},
-    {file = "boto3-1.43.70.tar.gz", hash = "sha256:4f1e16b9eebbad3f312bb6fbf7685d40abdd52a691485cb9f09e7df60d912b41"},
+    {file = "boto3-1.43.71-py3-none-any.whl", hash = "sha256:3bb46661dc33121e56e3706753069d18f8dbcb644599cf098206546338602e16"},
+    {file = "boto3-1.43.71.tar.gz", hash = "sha256:e3eddb6346ee23c895dd98e5c2cfc72cb5e5ed111aa6d4331f9e903a3e3bf4ee"},
 ]
 
 [package.dependencies]
-botocore = ">=1.43.70,<1.44.0"
+botocore = ">=1.43.71,<1.44.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.19.0,<0.20.0"
 
@@ -426,14 +426,14 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.43.70"
+version = "1.43.71"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "botocore-1.43.70-py3-none-any.whl", hash = "sha256:95bc23a6472f8876349ae334b526e66006f6cf3c87bf39d3e9f057dc8c2eb85f"},
-    {file = "botocore-1.43.70.tar.gz", hash = "sha256:a7bebdd0b1c8265e72759a4f7f61e9e43d57968b2c2a5e1e7b350d0a1e3ce81c"},
+    {file = "botocore-1.43.71-py3-none-any.whl", hash = "sha256:7bc3d5ddaca6f68e2eef707714264789048a6f496d375d976c560674f0cd1d1b"},
+    {file = "botocore-1.43.71.tar.gz", hash = "sha256:2cde7a55aaac86a2e9a3bcd2ce3fad1a31a4711749e10f350af231e55ccef7ed"},
 ]
 
 [package.dependencies]
@@ -988,14 +988,14 @@ tests = ["pytest", "pytest-cov", "pytest-xdist"]
 
 [[package]]
 name = "databricks-sdk"
-version = "0.127.0"
+version = "0.128.0"
 description = "Databricks SDK for Python (Beta)"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "databricks_sdk-0.127.0-py3-none-any.whl", hash = "sha256:085f7a7a9ebf0b9b07ac4b9b1464d06569891a8e9e7bf70171c66bfa81e54822"},
-    {file = "databricks_sdk-0.127.0.tar.gz", hash = "sha256:20443893b3f2720c11df1eb3ad5fbc5df09d3502a8b71789326360c2a40c6dd7"},
+    {file = "databricks_sdk-0.128.0-py3-none-any.whl", hash = "sha256:d03537db38ee4a9f788b6802c4e18376d9255bb5d42489f99a4f0557dadfaddf"},
+    {file = "databricks_sdk-0.128.0.tar.gz", hash = "sha256:da11e8c49b83068ef1a54de9fa7dec6091e42ff3897f88a6f8250b9f27df5d35"},
 ]
 
 [package.dependencies]
@@ -1070,14 +1070,14 @@ standard-no-fastapi-cloud-cli = ["email-validator (>=2.0.0)", "fastapi-cli[stand
 
 [[package]]
 name = "filelock"
-version = "3.32.2"
+version = "3.32.3"
 description = "A platform independent file lock."
 optional = false
 python-versions = ">=3.10"
 groups = ["dev"]
 files = [
-    {file = "filelock-3.32.2-py3-none-any.whl", hash = "sha256:87dd94cf281e586d135fa51132b8e3d9a598b316e90377a288663c9321036c82"},
-    {file = "filelock-3.32.2.tar.gz", hash = "sha256:c33351e1f49cae33414acbc6d56784e6ecee82514ec90795da1161fc4836b5b8"},
+    {file = "filelock-3.32.3-py3-none-any.whl", hash = "sha256:7f0ca4bcc0e181c60dbbd8aa9ab5b120ebb99e4e064e83636340056f833a1f09"},
+    {file = "filelock-3.32.3.tar.gz", hash = "sha256:0ffa185a3540854c95caa7fa76b76cb219d907415e2c5dc9af25fd970563487f"},
 ]
 
 [[package]]
@@ -4328,19 +4328,19 @@ sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
 name = "sqlparse"
-version = "0.5.5"
+version = "0.6.0"
 description = "A non-validating SQL parser."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "sqlparse-0.5.5-py3-none-any.whl", hash = "sha256:12a08b3bf3eec877c519589833aed092e2444e68240a3577e8e26148acc7b1ba"},
-    {file = "sqlparse-0.5.5.tar.gz", hash = "sha256:e20d4a9b0b8585fdf63b10d30066c7c94c5d7a7ec47c889a2d83a3caa93ff28e"},
+    {file = "sqlparse-0.6.0-py3-none-any.whl", hash = "sha256:b861c0288ce2fa56209a9a6412d2e066ac664b3873b89c26c9d8415e8e32996f"},
+    {file = "sqlparse-0.6.0.tar.gz", hash = "sha256:113c35c75365ab9cc9c7231d68c6428fb11c085fc8e9eb1ad659b7ddbf6cd2b9"},
 ]
 
 [package.extras]
 dev = ["build"]
-doc = ["sphinx"]
+doc = ["furo", "sphinx"]
 
 [[package]]
 name = "starlette"
@@ -4487,14 +4487,14 @@ zstd = ["backports-zstd (>=1.0.0) ; python_version < \"3.14\""]
 
 [[package]]
 name = "uvicorn"
-version = "0.52.1"
+version = "0.52.3"
 description = "The lightning-fast ASGI server."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "uvicorn-0.52.1-py3-none-any.whl", hash = "sha256:e4403f9d93188cf9d1088e9f40e3acd12630e2df8675316704379a7fc20fff6a"},
-    {file = "uvicorn-0.52.1.tar.gz", hash = "sha256:112ec661814189acbccd3f7b86460147cc065fc92c0821afa78918780e4354dd"},
+    {file = "uvicorn-0.52.3-py3-none-any.whl", hash = "sha256:116af2710dbf47c80f463cd20ee4884b6662f4c9f227d797ddc7279d2fcc2c7c"},
+    {file = "uvicorn-0.52.3.tar.gz", hash = "sha256:18857b9e6579300be55c91c0a1cfd37d9a2cf0cabea33b88275f199eb73b8b58"},
 ]
 
 [package.dependencies]
@@ -4832,4 +4832,4 @@ type = ["pytest-mypy (>=1.0.1) ; platform_python_implementation != \"PyPy\""]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<4.0"
-content-hash = "1fbb9a9b85b09ef08b9cd394ff80abe2035bb7f3e2e4eb802704b5b3546ca645"
+content-hash = "161fc1698fb84b370047a53a65e1e5c6328b4e47a07b70d887561f7c0cc97acc"
