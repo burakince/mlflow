@@ -988,14 +988,14 @@ tests = ["pytest", "pytest-cov", "pytest-xdist"]
 
 [[package]]
 name = "databricks-sdk"
-version = "0.129.0"
+version = "0.130.0"
 description = "Databricks SDK for Python (Beta)"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "databricks_sdk-0.129.0-py3-none-any.whl", hash = "sha256:102a80bb4e838dfbacd828b2730f692bd79563b4062fb53e496c70ea3504b170"},
-    {file = "databricks_sdk-0.129.0.tar.gz", hash = "sha256:324583d22fa18bd1b3219118743ce53c8261a11254ac5b6ea829cf02e19d751b"},
+    {file = "databricks_sdk-0.130.0-py3-none-any.whl", hash = "sha256:a3f505ff5a46f33e7bd3638a952fb6852249d99c75cda92b54ec68377e1fb364"},
+    {file = "databricks_sdk-0.130.0.tar.gz", hash = "sha256:1ea962d1fd10a0e8eb3b405d6f9023cdb7ef1942b34eaeb02ecf14c84131d4e8"},
 ]
 
 [package.dependencies]
@@ -3859,14 +3859,14 @@ filelock = ">=3.15.4"
 
 [[package]]
 name = "python-dotenv"
-version = "1.2.2"
+version = "1.2.3"
 description = "Read key-value pairs from a .env file and set them as environment variables"
 optional = false
 python-versions = ">=3.10"
 groups = ["main", "dev"]
 files = [
-    {file = "python_dotenv-1.2.2-py3-none-any.whl", hash = "sha256:1d8214789a24de455a8b8bd8ae6fe3c6b69a5e3d64aa8a8e5d68e694bbcb285a"},
-    {file = "python_dotenv-1.2.2.tar.gz", hash = "sha256:2c371a91fbd7ba082c2c1dc1f8bf89ca22564a087c2c287cd9b662adde799cf3"},
+    {file = "python_dotenv-1.2.3-py3-none-any.whl", hash = "sha256:904552145e8bfed22162c09dab1c2b9b54fefa7b23ba780f4f26ca0316b0f0d9"},
+    {file = "python_dotenv-1.2.3.tar.gz", hash = "sha256:a20a594dabeaa385725aa239d5244871c143ecb356add8a20fcf23773a6c3a35"},
 ]
 
 [package.extras]
