@@ -155,9 +155,9 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ${{ github.workspace }}/.docker-cache/shared
-          key: ${{ runner.os }}-docker-shared-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}-${{ matrix.database-combo.lldap }}-${{ matrix.database-combo.mssql }}-${{ matrix.database-combo.keycloak }}-${{ matrix.database-combo.redis }}
+          key: ${{ runner.os }}-docker-shared-thanos-minio-${{ matrix.database-combo.minio }}-${{ matrix.database-combo.gcs }}-${{ matrix.database-combo.azurite }}-${{ matrix.database-combo.lldap }}-${{ matrix.database-combo.mssql }}-${{ matrix.database-combo.keycloak }}-${{ matrix.database-combo.redis }}
           restore-keys: |
-            ${{ runner.os }}-docker-shared-
+            ${{ runner.os }}-docker-shared-thanos-minio-
 
       - name: Cache database Docker images
         id: cache-db-images
@@ -180,7 +180,7 @@ jobs:
         if: steps.cache-shared-images.outputs.cache-hit != 'true'
         run: |
           mkdir -p ${{ github.workspace }}/.docker-cache/shared
-          docker pull minio/minio:${{ matrix.database-combo.minio }} &
+          docker pull quay.io/thanos/minio:${{ matrix.database-combo.minio }} &
           docker pull fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }} &
           docker pull mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }} &
           docker pull lldap/lldap:${{ matrix.database-combo.lldap }} &
@@ -189,7 +189,7 @@ jobs:
           docker pull redis:${{ matrix.database-combo.redis }} &
           wait
           docker save -o ${{ github.workspace }}/.docker-cache/shared/shared-images.tar \
-            minio/minio:${{ matrix.database-combo.minio }} \
+            quay.io/thanos/minio:${{ matrix.database-combo.minio }} \
             fsouza/fake-gcs-server:${{ matrix.database-combo.gcs }} \
             mcr.microsoft.com/azure-storage/azurite:${{ matrix.database-combo.azurite }} \
             lldap/lldap:${{ matrix.database-combo.lldap }} \
