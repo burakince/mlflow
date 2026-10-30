@@ -2,7 +2,7 @@ services:
   minio:
     container_name: minio-pg-test
     hostname: minio
-    image: minio/minio:${MINIO_VERSION}
+    image: quay.io/thanos/minio:${MINIO_VERSION}
     entrypoint: sh
     command: -c 'mkdir -p /data/mlflow && minio server /data --console-address ":9001"'
     environment:
