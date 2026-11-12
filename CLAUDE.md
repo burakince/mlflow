@@ -131,7 +131,7 @@ Each `docker-compose.*-test.yaml` file maps to one integration test file. The na
 
 | Cloud / Auth | Databases |
 |---|---|
-| AWS (MinIO for S3) | postgres, mysql, mssql |
+| AWS (Silo, a MinIO fork, for S3) | postgres, mysql, mssql |
 | Azure (Azurite) | postgres, mysql, mssql |
 | GCP (fake-gcs-server) | postgres, mysql, mssql |
 | Basic auth | postgres, mysql |
@@ -166,7 +166,7 @@ Pipeline order: `setup` + `unittest` (parallel) → `integrationtest` → `build
 
 ### Key configuration files
 
-- **`.env`** — Canonical versions for all external services (Postgres, MySQL, MinIO, MSSQL, lldap, fake-gcs-server, Azurite, Keycloak). Used both locally and in CI.
+- **`.env`** — Canonical versions for all external services (Postgres, MySQL, Silo via `MINIO_VERSION`, MSSQL, lldap, fake-gcs-server, Azurite, Keycloak). Used both locally and in CI.
 - **`test-containers/oidc-auth/keycloak-realm.json`** — Keycloak realm config for OIDC tests. Must include `"attributes": {"frontendUrl": "http://keycloak:8090"}` so all tokens carry `iss=http://keycloak:8090` regardless of the external host port used to fetch them.
 - **`test-containers/basic-auth/*/basic_auth.ini`** — MLflow auth config files mounted into the container during integration tests. The LDAP variant points `authorization_function` at `mlflowstack.auth.ldap:authenticate_request_basic_auth`.
 - **`poetry.toml`** — Forces Poetry to create the venv in-project (`.venv/`).
